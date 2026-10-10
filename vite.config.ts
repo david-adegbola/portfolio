@@ -5,6 +5,11 @@ import { loadContent, missingFiles } from './src/content/load.ts';
 import { renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.ts';
 
 const root = process.cwd();
+// Repo is david-adegbola/portfolio, so GitHub Pages serves the site at /portfolio/.
+const base = '/portfolio/';
+
+/** Content paths are written root-relative ("/cv.pdf", "/media/<id>/x.webp"); point them at the base. */
+const withBase = (html: string) => html.replace(/\b(href|src)="\/(?!\/)/g, `$1="${base}`);
 
 /** Pre-renders content/*.json into index.html, in dev and in the build. */
 function content(): Plugin {
@@ -25,15 +30,15 @@ function content(): Plugin {
       const opts = { hasCv: fs.existsSync(path.join(root, 'public/cv.pdf')), missing: new Set(missing) };
       return html
         .replace('<!--head-->', renderHead(site))
-        .replace('<!--header-->', renderHeader(site, opts))
-        .replace('<!--main-->', renderMain(site, entries, opts))
+        .replace('<!--header-->', withBase(renderHeader(site, opts)))
+        .replace('<!--main-->', withBase(renderMain(site, entries, opts)))
         .replace('<!--footer-->', renderFooter(site))
-        .replace('<!--templates-->', renderTemplates(entries, opts));
+        .replace('<!--templates-->', withBase(renderTemplates(entries, opts)));
     },
   };
 }
 
 export default defineConfig({
-  base: '/',
+  base,
   plugins: [content()],
 });

@@ -1,6 +1,6 @@
-# david-adegbola.github.io
+# portfolio
 
-Personal portfolio of David Adegbola. Live at https://david-adegbola.github.io/
+Personal portfolio of David Adegbola. Live at https://david-adegbola.github.io/portfolio/
 
 Every push to `main` builds the site and deploys it to GitHub Pages (`.github/workflows/deploy.yml`).
 
@@ -43,7 +43,7 @@ Copy this into the list in `content/projects.json`. Only `id`, `zone` and `title
 }
 ```
 
-- `id`: lowercase words joined by dashes. It is also the URL: `/#p/forest-cover-change`.
+- `id`: lowercase words joined by dashes. It is also the URL: `/portfolio/#p/forest-cover-change`.
 - `zone`: `"forest"` for main work, `"lake"` for side work ("Off the clock").
 - Images go in `public/media/<id>/` as `.webp`. A missing file is left out, never shown broken.
 - Not finished yet? Add `"status": "in-progress"`. It shows as a faint "In progress" card with no detail panel.
@@ -74,5 +74,7 @@ Drop the file in as `public/cv.pdf`. The CV button appears in the header automat
 
 ## First-time GitHub setup
 
-1. Create the repo `david-adegbola.github.io` on GitHub and push this folder to `main`.
+Repo: https://github.com/david-adegbola/portfolio. Paths in the JSON stay root-relative (`/media/...`); the build adds the `/portfolio/` prefix.
+
+1. Push to `main`.
 2. In the repo, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
