@@ -3,6 +3,7 @@ import '@fontsource/fraunces/latin-400.css';
 import '@fontsource/fraunces/latin-ext-400.css';
 import './styles.css';
 import { readEntries } from './content/entries.ts';
+import { flyTo } from './nav.ts';
 import { initCards } from './ui/Cards.ts';
 import { initHeader } from './ui/Header.ts';
 import { initProjectPanel } from './ui/ProjectPanel.ts';
@@ -16,6 +17,16 @@ initProjectPanel();
 initCards();
 initSearch();
 initSeasons();
+
+// Links marked data-fly travel to an entry (camera and page together) instead of jumping, then
+// land keyboard focus on it. Without JS they're plain anchors.
+document.addEventListener('click', (event) => {
+  const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-fly]');
+  if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return;
+  event.preventDefault();
+  const id = link.dataset.fly!;
+  flyTo(id).then(() => document.querySelector<HTMLElement>(`[id="${id}"] .card-link`)?.focus({ preventScroll: true }));
+});
 
 /**
  * Only load the forest where it can run: WebGL2 present and the visitor not saving data. The

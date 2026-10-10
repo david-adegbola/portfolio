@@ -157,13 +157,21 @@ a:hover {
   gap: 0.25rem;
 }
 .header-link {
-  padding: 0.5rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.95rem;
   font-size: var(--fs-14);
   font-weight: 500;
   letter-spacing: 0.01em;
   text-decoration: none;
+  /* Email and CV are the page's two actions: pills, like the other controls. */
+  border: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
   border-radius: 999px;
-  transition: background-color 0.2s var(--ease);
+  transition: background-color 0.15s var(--ease);
+}
+.header-link + .header-link {
+  margin-left: 0.25rem;
 }
 .header-link:hover {
   background: var(--line);
@@ -368,6 +376,19 @@ html:not(.js) .theme-toggle {
 .search-chip:hover {
   border-color: color-mix(in srgb, var(--ink) 35%, transparent);
   background: color-mix(in srgb, var(--panel) 70%, transparent);
+}
+
+/* A plain path to the work, beside the search. */
+.see-work {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.5rem;
+  font-size: var(--fs-16);
+  font-weight: 500;
+}
+.see-work svg {
+  flex: none;
 }
 
 /* Fixed results bar while a search is active, so results stay reachable after the flight. */
@@ -762,11 +783,11 @@ body::before {
       to bottom,
       transparent 0,
       transparent calc(var(--header-h) + 22vh - 5rem),
-      color-mix(in srgb, var(--bg) 86%, transparent) calc(var(--header-h) + 22vh - 0.5rem)
+      color-mix(in srgb, var(--bg) 95%, transparent) calc(var(--header-h) + 22vh - 0.5rem)
     );
   }
   .has-scene .site-footer {
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    background: color-mix(in srgb, var(--bg) 95%, transparent);
   }
 }
 
@@ -778,14 +799,18 @@ body::before {
     text-align: left;
     padding-left: calc(clamp(2rem, 7vw, 8rem) + var(--gutter));
   }
+  /* Near-solid behind the text column, then a quick fade into the forest. Stops follow the
+     column's real edge (margin + measure + gutters), not a share of the window, so text never
+     runs out past the solid part at narrower desktop widths. */
   body::before {
+    --column-end: calc(clamp(2rem, 7vw, 8rem) + var(--measure) + 2 * var(--gutter));
     background: linear-gradient(
       90deg,
-      color-mix(in srgb, var(--bg) 92%, transparent) 0,
-      color-mix(in srgb, var(--bg) 88%, transparent) 46%,
-      color-mix(in srgb, var(--bg) 60%, transparent) 58%,
-      color-mix(in srgb, var(--bg) 25%, transparent) 70%,
-      color-mix(in srgb, var(--bg) 0%, transparent) 84%
+      color-mix(in srgb, var(--bg) 95%, transparent) 0,
+      color-mix(in srgb, var(--bg) 95%, transparent) var(--column-end),
+      color-mix(in srgb, var(--bg) 55%, transparent) calc(var(--column-end) + 5vw),
+      color-mix(in srgb, var(--bg) 15%, transparent) calc(var(--column-end) + 12vw),
+      color-mix(in srgb, var(--bg) 0%, transparent) calc(var(--column-end) + 20vw)
     );
   }
 }

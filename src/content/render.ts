@@ -74,6 +74,8 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
 
 const ICON_SEARCH =
   '<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const ICON_DOWN =
+  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_PREV =
   '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_NEXT =
@@ -166,6 +168,11 @@ export function renderMain(site: Site, all: Entry[], opts: RenderOptions): strin
       <p class="hero-title">${esc(site.title)}</p>
       <p class="hero-intro">${esc(site.intro)}</p>
       ${renderSearch(site)}
+      ${
+        forest.length
+          ? `<p><a class="see-work" href="#work" data-fly="${esc(forest[0].id)}">See my work${ICON_DOWN}</a></p>`
+          : ''
+      }
     </section>
 
     ${
