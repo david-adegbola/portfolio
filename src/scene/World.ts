@@ -31,7 +31,13 @@ export class World {
     private readonly maxPixelRatio: number,
     antialias: boolean,
   ) {
-    this.renderer = new WebGLRenderer({ canvas, antialias, powerPreference: 'low-power' });
+    // Throws on missing or software-only WebGL (it would crawl); the caller then skips the scene.
+    this.renderer = new WebGLRenderer({
+      canvas,
+      antialias,
+      powerPreference: 'low-power',
+      failIfMajorPerformanceCaveat: true,
+    });
     // If the GPU drops the context, fade the scene away and leave the plain page; bring it back
     // if the context is restored.
     canvas.addEventListener('webglcontextlost', (event) => {
@@ -54,6 +60,11 @@ export class World {
   /** Called once, after the next frame has been drawn. */
   onFirstFrame(callback: () => void): void {
     this.firstFrame = callback;
+  }
+
+  /** Compile shaders without blocking (parallel compile where supported) before the first frame. */
+  async compile(): Promise<void> {
+    await this.renderer.compileAsync(this.scene, this.camera);
   }
 
   /** Render now (synchronously), e.g. while the canvas is hidden mid-crossfade. */

@@ -47,7 +47,7 @@ export function loadContent(root: string): { site: Site; entries: Entry[] } {
   const site = readJson(path.join(root, 'content/site.json')) as Site;
   const entries = readJson(path.join(root, 'content/projects.json'));
   const problems = validateEntries(entries);
-  for (const key of ['name', 'title', 'email'] as const) {
+  for (const key of ['name', 'url', 'title', 'email'] as const) {
     if (typeof site[key] !== 'string') problems.push(`site.json: missing "${key}"`);
   }
   if (problems.length) throw new Error(`Content problems:\n  - ${problems.join('\n  - ')}`);

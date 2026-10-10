@@ -76,8 +76,18 @@ function plan(layout: Layout, entries: ClientEntry[]): { placements: Placement[]
   return { placements, stops };
 }
 
-/** Builds the scene behind the page and ties the camera to scroll. */
-export function bootScene(entries: ClientEntry[]): void {
+/** Give the main thread back between boot steps, so the page stays responsive while the scene builds. */
+const yieldToMain = (): Promise<void> => {
+  const scheduler = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+  return scheduler?.yield ? scheduler.yield() : new Promise((resolve) => setTimeout(resolve, 0));
+};
+
+/**
+ * Builds the scene behind the page and ties the camera to scroll. Built in slices (renderer, ground,
+ * trees, objects, shaders) with yields in between, so no single task blocks the page for long.
+ * Resolves false if WebGL isn't usable; the page then simply stays the plain list.
+ */
+export async function bootScene(entries: ClientEntry[]): Promise<boolean> {
   const small = window.matchMedia('(max-width: 48rem), (pointer: coarse)').matches;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -90,11 +100,22 @@ export function bootScene(entries: ClientEntry[]): void {
     entries.filter((e) => e.zone === 'forest').length,
     entries.filter((e) => e.zone === 'lake').length,
   );
-  const world = new World(canvas, small ? 1.5 : 2, !small);
-  const forest = new Forest(layout, small ? 900 : 2400);
+  let world: World;
+  try {
+    world = new World(canvas, small ? 1.5 : 2, !small);
+  } catch {
+    canvas.remove();
+    return false;
+  }
+  await yieldToMain();
+  const forest = new Forest(layout);
+  world.scene.add(forest.group);
+  await yieldToMain();
+  forest.addTrees(layout, small ? 900 : 2400);
+  await yieldToMain();
   const { placements, stops } = plan(layout, entries);
   const objects = new ProjectObjects(placements, () => world.requestRender(), reducedMotion);
-  world.scene.add(forest.group, objects.group);
+  world.scene.add(objects.group);
 
   const applyTheme = () => {
     const palette = palettes[currentTheme()];
@@ -104,6 +125,11 @@ export function bootScene(entries: ClientEntry[]): void {
   };
   applyTheme();
   onThemeChange(applyTheme);
+  try {
+    await world.compile();
+  } catch {
+    // Older browsers: shaders compile on the first frame instead.
+  }
 
   // Smooth scrolling, unless the visitor asked for reduced motion (then native scroll drives the camera).
   let lenis: Lenis | undefined;
@@ -258,4 +284,5 @@ export function bootScene(entries: ClientEntry[]): void {
   );
 
   world.onFirstFrame(() => document.documentElement.classList.add('has-scene'));
+  return true;
 }

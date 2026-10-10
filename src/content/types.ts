@@ -46,6 +46,8 @@ export type Entry = ProjectEntry | ResearchEntry;
 
 export interface Site {
   name: string;
+  /** The live site's address, with trailing slash. Used for the share image and canonical link. */
+  url: string;
   title: string;
   intro: string;
   description: string;

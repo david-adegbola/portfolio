@@ -182,9 +182,6 @@ a:hover {
 .header-search:hover {
   background: var(--line);
 }
-.header-search[hidden] {
-  display: none;
-}
 .header-search .search-icon {
   position: static;
   color: inherit;
@@ -204,9 +201,6 @@ a:hover {
 }
 .theme-toggle:hover {
   background: var(--line);
-}
-.theme-toggle[hidden] {
-  display: none;
 }
 .theme-toggle[aria-pressed='true'] .icon-moon,
 .theme-toggle[aria-pressed='false'] .icon-sun {
@@ -242,14 +236,18 @@ a:hover {
   color: var(--muted-text);
 }
 
+/* JS-only controls: laid out from first paint when JS is available, absent without it. */
+html:not(.js) .search,
+html:not(.js) .header-search,
+html:not(.js) .theme-toggle {
+  display: none;
+}
+
 /* Search */
 .search {
   position: relative;
   margin-top: 3rem;
   max-width: 30rem;
-}
-.search[hidden] {
-  display: none;
 }
 .search-label {
   display: block;
@@ -354,6 +352,8 @@ a:hover {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
+  /* Chips are added by JS after first paint; reserve their row so nothing below shifts. */
+  min-height: 2.25rem;
 }
 .search-chips[hidden] {
   display: none;

@@ -16,19 +16,12 @@ initCards();
 initSearch();
 
 /**
- * Only load the forest where it will run well: WebGL2 on real hardware (software-rendered GL would
- * crawl), and not when the visitor has asked to save data. Otherwise the page is the plain list.
+ * Only load the forest where it can run: WebGL2 present and the visitor not saving data. The
+ * renderer itself then refuses software-only GL (see scene/World.ts), leaving the plain list.
  */
 function sceneWanted(): boolean {
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-  if (connection?.saveData) return false;
-  try {
-    const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
-    gl?.getExtension('WEBGL_lose_context')?.loseContext();
-    return !!gl;
-  } catch {
-    return false;
-  }
+  return !connection?.saveData && 'WebGL2RenderingContext' in window;
 }
 
 if (sceneWanted()) {

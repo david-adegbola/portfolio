@@ -25,6 +25,5 @@ export function initHeader(): void {
   });
   systemDark.addEventListener('change', sync);
 
-  toggle.hidden = false;
   sync();
 }

@@ -29,11 +29,19 @@ const ICON_SUN =
   '<svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 
 export function renderHead(site: Site): string {
+  const image = `${site.url}og.jpg`;
   return `<title>${esc(site.name)}: ${esc(site.title)}</title>
     <meta name="description" content="${esc(site.description)}" />
+    <link rel="canonical" href="${esc(site.url)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="${esc(site.name)}" />
-    <meta property="og:description" content="${esc(site.description)}" />`;
+    <meta property="og:url" content="${esc(site.url)}" />
+    <meta property="og:title" content="${esc(site.name)}: ${esc(site.title)}" />
+    <meta property="og:description" content="${esc(site.description)}" />
+    <meta property="og:image" content="${esc(image)}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${esc(site.name)}, ${esc(site.title)}, over a misty low-poly forest" />
+    <meta name="twitter:card" content="summary_large_image" />`;
 }
 
 export function renderHeader(site: Site, opts: RenderOptions): string {
@@ -45,8 +53,8 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
     <nav class="header-actions" aria-label="Contact">
       <a class="header-link" href="mailto:${esc(site.email)}">Email</a>
       ${cv}
-      <button class="header-search" type="button" aria-label="Search" aria-controls="search-input" hidden>${ICON_SEARCH}</button>
-      <button class="theme-toggle" type="button" aria-pressed="false" hidden>
+      <button class="header-search" type="button" aria-label="Search" aria-controls="search-input">${ICON_SEARCH}</button>
+      <button class="theme-toggle" type="button" aria-pressed="false">
         <span class="visually-hidden">Dark mode</span>${ICON_MOON}${ICON_SUN}
       </button>
     </nav>
@@ -68,9 +76,9 @@ const ICON_PREV =
 const ICON_NEXT =
   '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-/** The search form. Hidden until JavaScript wires it up (ui/Search.ts); the page works without it. */
+/** The search form. Shown only when JavaScript runs (the `js` class, see index.html); the page works without it. */
 function renderSearch(site: Site): string {
-  return `<form class="search" role="search" hidden data-chips="${esc(JSON.stringify(site.searchChips ?? []))}">
+  return `<form class="search" role="search" data-chips="${esc(JSON.stringify(site.searchChips ?? []))}">
       <label class="search-label" for="search-input">What are you looking for?</label>
       <div class="search-field">
         ${ICON_SEARCH}

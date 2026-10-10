@@ -38,9 +38,34 @@ function content(): Plugin {
   };
 }
 
+/**
+ * Inlines the page's (small) stylesheet into index.html, so first paint doesn't wait on a second
+ * request. Lazy-loaded CSS (the scene chunk's) stays a separate file.
+ */
+function inlineCss(): Plugin {
+  return {
+    name: 'inline-css',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_, bundle) {
+      const html = bundle['index.html'];
+      if (!html || html.type !== 'asset') return;
+      let source = String(html.source);
+      for (const [name, file] of Object.entries(bundle)) {
+        if (file.type !== 'asset' || !name.endsWith('.css')) continue;
+        const link = new RegExp(`<link rel="stylesheet"[^>]*href="${base}${name}"[^>]*>`);
+        if (!link.test(source)) continue;
+        source = source.replace(link, () => `<style>${file.source}</style>`);
+        delete bundle[name];
+      }
+      html.source = source;
+    },
+  };
+}
+
 export default defineConfig({
   base,
-  plugins: [content()],
+  plugins: [content(), inlineCss()],
   // three.js is one ~190 KB gzipped chunk, loaded after the page is readable; budget is ~300 KB total.
   build: { chunkSizeWarningLimit: 800 },
 });

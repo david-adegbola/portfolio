@@ -60,7 +60,7 @@ export class Forest {
 
   private readonly heightAt: (x: number, z: number) => number;
 
-  constructor(layout: Layout, treeCount: number) {
+  constructor(layout: Layout) {
     const random = rng(7);
     const phase = [random() * 10, random() * 10, random() * 10];
     // Flat along the path, gently rolling away from it, sunk under the lake.
@@ -82,7 +82,6 @@ export class Forest {
       birchTrunk: mat(),
     };
     this.group.add(this.ground(layout), this.lakeMesh(layout));
-    this.trees(layout, treeCount);
   }
 
   setPalette(p: Palette): void {
@@ -119,7 +118,8 @@ export class Forest {
     return mesh;
   }
 
-  private trees(layout: Layout, count: number): void {
+  /** Separate from the constructor so the boot can yield to the main thread in between. */
+  addTrees(layout: Layout, count: number): void {
     const random = rng(42);
     const zStart = 6;
     const zEnd = layout.end - 50;
