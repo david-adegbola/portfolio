@@ -7,6 +7,15 @@
   "about": "I grew up in Nigeria and came to Finland to study IT at VAMK in Vaasa. A summer contract at UPM Kaukas changed my direction. Watching logs float on Lake Saimaa beside the mill, I started asking where they came from and how the forests behind them are managed. That question took me to Sustainable Forest Bioeconomy at UEF. Now I'm focused on GIS and remote sensing: reading forests from data, and checking what that data means on the ground.",
   "skills": [],
   "links": [
-    { "label": "GitHub", "href": "https://github.com/david-adegbola" }
+    {
+      "label": "GitHub",
+      "href": "https://github.com/david-adegbola"
+    }
+  ],
+  "searchChips": [
+    "GIS",
+    "remote sensing",
+    "forestry",
+    "CV"
   ]
 }

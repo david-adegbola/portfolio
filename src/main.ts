@@ -6,12 +6,14 @@ import { readEntries } from './content/entries.ts';
 import { initCards } from './ui/Cards.ts';
 import { initHeader } from './ui/Header.ts';
 import { initProjectPanel } from './ui/ProjectPanel.ts';
+import { initSearch } from './ui/Search.ts';
 
 // The page is already fully rendered HTML. Wire up the UI first, so it works before, without, or
 // if the scene fails; then load the scene as a separate chunk once the page is idle.
 initHeader();
 initProjectPanel();
 initCards();
+initSearch();
 
 function hasWebGL(): boolean {
   try {

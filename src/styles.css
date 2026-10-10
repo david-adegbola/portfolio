@@ -220,6 +220,212 @@ a:hover {
   color: var(--muted-text);
 }
 
+/* Search */
+.search {
+  position: relative;
+  margin-top: 3rem;
+  max-width: 30rem;
+}
+.search[hidden] {
+  display: none;
+}
+.search-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-20);
+}
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 0.9rem;
+  color: var(--muted-text);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 2.75rem 0.6rem 2.6rem;
+  font: inherit;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  outline: none;
+  transition: border-color 0.2s var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search-input::placeholder {
+  color: var(--muted-text);
+}
+.search-input:hover {
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+.search-input:focus-visible {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 1px var(--focus);
+}
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+.search-kbd {
+  position: absolute;
+  right: 0.9rem;
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  font: 500 0.75rem var(--font-sans);
+  color: var(--muted-text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.search-input:focus + .search-kbd {
+  display: none;
+}
+@media (pointer: coarse) {
+  .search-kbd {
+    display: none;
+  }
+}
+.search-results {
+  margin: 0.5rem 0 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  max-height: 18rem;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.08);
+}
+.search-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+.search-option[aria-selected='true'] {
+  background: var(--line);
+}
+.search-option-meta {
+  flex: none;
+  font-size: var(--fs-14);
+  color: var(--muted-text);
+}
+.search-empty {
+  margin-top: 0.75rem;
+  font-size: var(--fs-14);
+  color: var(--muted-text);
+}
+.search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.search-chips[hidden] {
+  display: none;
+}
+.search-chip {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.9rem;
+  font: 500 var(--fs-14) var(--font-sans);
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+.search-chip:hover {
+  border-color: color-mix(in srgb, var(--ink) 35%, transparent);
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+}
+
+/* Fixed results bar while a search is active, so results stay reachable after the flight. */
+.search-status {
+  position: fixed;
+  top: calc(var(--header-h) + 0.25rem);
+  left: 50%;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: calc(100% - 2 * var(--gutter));
+  padding: 0.35rem 0.4rem 0.35rem 1rem;
+  translate: -50% 0;
+  font-size: var(--fs-14);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.06);
+}
+.search-status[hidden] {
+  display: none;
+}
+.search-summary {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-status-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.15rem;
+}
+.search-step,
+.search-clear {
+  display: grid;
+  place-items: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.6rem;
+  font: 500 var(--fs-14) var(--font-sans);
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.search-step {
+  padding: 0;
+}
+.search-step[hidden] {
+  display: none;
+}
+.search-step:hover,
+.search-clear:hover {
+  background: var(--line);
+}
+@media (min-width: 64rem) {
+  .search-status {
+    left: calc(clamp(2rem, 7vw, 8rem) + var(--gutter));
+    translate: none;
+  }
+}
+
+/* Cards that don't match an active search step back. */
+.card > * {
+  transition: opacity 0.45s var(--ease);
+}
+.card.is-dimmed > * {
+  opacity: 0.35;
+}
+
 .section {
   padding-block: clamp(3rem, 8vh, 5rem);
   border-top: 1px solid var(--line);

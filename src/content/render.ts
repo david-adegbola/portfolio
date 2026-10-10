@@ -49,7 +49,39 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
         <span class="visually-hidden">Dark mode</span>${ICON_MOON}${ICON_SUN}
       </button>
     </nav>
-  </header>`;
+  </header>
+  <div class="search-status" role="region" aria-label="Search results" hidden>
+    <p class="search-summary" aria-live="polite"></p>
+    <div class="search-status-actions">
+      <button class="search-step" type="button" data-step="-1" aria-label="Previous result">${ICON_PREV}</button>
+      <button class="search-step" type="button" data-step="1" aria-label="Next result">${ICON_NEXT}</button>
+      <button class="search-clear" type="button">Clear</button>
+    </div>
+  </div>`;
+}
+
+const ICON_SEARCH =
+  '<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const ICON_PREV =
+  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_NEXT =
+  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/** The search form. Hidden until JavaScript wires it up (ui/Search.ts); the page works without it. */
+function renderSearch(site: Site): string {
+  return `<form class="search" role="search" hidden data-chips="${esc(JSON.stringify(site.searchChips ?? []))}">
+      <label class="search-label" for="search-input">What are you looking for?</label>
+      <div class="search-field">
+        ${ICON_SEARCH}
+        <input id="search-input" class="search-input" type="search" autocomplete="off" spellcheck="false"
+          enterkeyhint="search" placeholder="A project, a tool, a topic"
+          role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list" />
+        <kbd class="search-kbd" aria-hidden="true">/</kbd>
+      </div>
+      <ul class="search-results" id="search-results" role="listbox" aria-label="Matches" hidden></ul>
+      <p class="search-empty" hidden></p>
+      <div class="search-chips" role="group" aria-label="Suggestions"></div>
+    </form>`;
 }
 
 function meta(e: Entry): string {
@@ -122,6 +154,7 @@ export function renderMain(site: Site, all: Entry[], opts: RenderOptions): strin
       <h1 class="hero-name" id="hero-name">${esc(site.name)}</h1>
       <p class="hero-title">${esc(site.title)}</p>
       <p class="hero-intro">${esc(site.intro)}</p>
+      ${renderSearch(site)}
     </section>
 
     ${

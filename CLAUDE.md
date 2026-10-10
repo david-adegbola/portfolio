@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-Build steps 1 (static site), 2 (3D scene) and 3 (project objects) are done. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
+Build steps 1–4 (static site, 3D scene, project objects, search) are done. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
 
 ## Commands
 
@@ -22,6 +22,8 @@ Build steps 1 (static site), 2 (3D scene) and 3 (project objects) are done. `por
 - Scene (`src/scene/`): `main.ts` lazy-loads it as its own chunk after `load` + idle, only if WebGL2 exists. `World` renders **on demand** (only when the camera or theme changes), no continuous loop. `Path.buildLayout` sizes the forest/lake/clearing zones from entry counts (read from the `#entries-data` JSON the build embeds). `Forest` = 4 `InstancedMesh`es (pine/birch × trunk/crown) sharing matrices, seeded RNG so the forest is identical every visit. Colours per theme in `scene/palette.ts`; theme changes are observed, not pushed.
 - Scroll → camera: Lenis (skipped under reduced motion) + one ScrollTrigger over the whole document. `ScrollMap` keyframes map scroll px → path progress so the camera frames each object exactly when its HTML card (`#projects .card[id]`, page order) is mid-screen; contact → progress 1. Keyframes are re-measured on every ScrollTrigger refresh.
 - `ProjectObjects`: one object per card (marker, log-pile, floating log, clearing, tree-ring stump; a lamp for `#contact`), placed right of the path. Reaching one tweens its "paint" part from grey to the accent (found, persists) and moves a single warm PointLight to it (fade out → move → fade in). The scene fires `entry:active`; `ui/Cards.ts` marks the card. In-progress entries are faint, set back in the fog, never found.
+- Search (`ui/Search.ts`, Fuse.js in the main bundle): combobox while typing; Enter / chip / option click commits → `setFilter` (cards dim, objects fade into the fog) → after the fade, `flyTo(id)`. Fuse results scoring above 0.5 are dropped (short words fuzzy-match junk otherwise). Keyword shortcuts: cv/contact/email… → `contact`; research/paper… → all research entries. Chips come from `site.json` `searchChips` and are hidden when they'd find nothing. `/` focuses search, `Esc` clears. A fixed `.search-status` bar keeps prev/next/clear reachable after the flight.
+- `src/nav.ts` bridges UI and scene: `flyTo` falls back to `scrollIntoView` until the scene calls `provideFlight` (Lenis `scrollTo`, 1.6 s ease-in-out cubic, `lock`; a cut under reduced motion). Each flight settles exactly once (arrival, safety timeout, or superseded); while flying, passed objects don't become active.
 - Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.

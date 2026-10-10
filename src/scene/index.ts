@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import type { ClientEntry } from '../content/entries.ts';
+import { provideFlight } from '../nav.ts';
 import { Forest } from './Forest.ts';
 import { currentTheme, onThemeChange, palettes } from './palette.ts';
 import { buildLayout, type Layout, poseAt, ScrollMap } from './Path.ts';
@@ -103,13 +104,14 @@ export function bootScene(entries: ClientEntry[]): void {
   onThemeChange(applyTheme);
 
   // Smooth scrolling, unless the visitor asked for reduced motion (then native scroll drives the camera).
+  let lenis: Lenis | undefined;
   if (!reducedMotion) {
-    const lenis = new Lenis({ autoRaf: false });
+    lenis = new Lenis({ autoRaf: false });
     lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.add((time) => lenis!.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
-    document.addEventListener('panel:open', () => lenis.stop());
-    document.addEventListener('panel:close', () => lenis.start());
+    document.addEventListener('panel:open', () => lenis!.stop());
+    document.addEventListener('panel:close', () => lenis!.start());
     // A deep link (#p/<id>) may have opened the panel before the scene loaded.
     if (document.querySelector<HTMLDialogElement>('dialog.panel')?.open) lenis.stop();
   }
@@ -133,9 +135,13 @@ export function bootScene(entries: ClientEntry[]): void {
   };
 
   let active: string | null = null;
+  // While flying to a search result, objects passed on the way aren't "reached": no light hopping
+  // from object to object, just the one at the destination.
+  let flying = false;
   const update = (scroll: number) => {
     poseAt(layout, map.progress(scroll), world.camera.position, world.cameraTarget);
     world.requestRender();
+    if (flying) return;
 
     // The stop nearest to its mid-screen position, if it's close enough.
     let best: string | null = null;
@@ -162,6 +168,46 @@ export function bootScene(entries: ClientEntry[]): void {
   });
   measure();
   update(trigger.scroll());
+
+  document.addEventListener('search:filter', (event) => objects.setFilter((event as CustomEvent<string[] | null>).detail));
+
+  // Camera flights: a scroll to the stop's position, so camera, card and page stay in step.
+  // 1.6 s ease-in-out, no overshoot; under reduced motion, a cut.
+  const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // Each flight settles exactly once: on arrival, on a safety timeout (if the scroll library never
+  // reports completion), or when a newer flight replaces it.
+  let settle: (() => void) | null = null;
+  provideFlight(
+    (target) =>
+      new Promise((resolve) => {
+        settle?.();
+        const limit = lenis ? lenis.limit : ScrollTrigger.maxScroll(window);
+        const i = stops.findIndex((s) => s.id === target);
+        const wanted = target === 'top' ? 0 : target === CONTACT ? limit : i >= 0 ? stopScroll[i] : null;
+        if (wanted === null) return resolve();
+        const to = Math.min(Math.max(wanted, 0), limit);
+
+        let timer = 0;
+        const done = () => {
+          if (settle !== done) return;
+          settle = null;
+          clearTimeout(timer);
+          flying = false;
+          update(window.scrollY);
+          resolve();
+        };
+        settle = done;
+
+        if (!lenis || Math.abs(window.scrollY - to) < 2) {
+          window.scrollTo(0, to);
+          return void requestAnimationFrame(done);
+        }
+        flying = true;
+        const duration = 1.6;
+        timer = window.setTimeout(done, duration * 1000 + 400);
+        lenis.scrollTo(to, { duration, easing: easeInOutCubic, force: true, lock: true, onComplete: done });
+      }),
+  );
 
   world.onFirstFrame(() => document.documentElement.classList.add('has-scene'));
 }

@@ -53,6 +53,8 @@ export interface Site {
   about?: string;
   skills?: string[];
   links?: Link[];
+  /** Suggestion chips under the search input. Chips with no matches are hidden automatically. */
+  searchChips?: string[];
 }
 
 export const isResearch = (e: Entry): e is ResearchEntry => e.type === 'research';

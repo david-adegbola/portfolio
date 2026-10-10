@@ -26,13 +26,25 @@ export interface Placement {
   faint: boolean;
 }
 
+interface Materials {
+  wood: MeshLambertMaterial;
+  grain: MeshLambertMaterial;
+  stone: MeshLambertMaterial;
+  paint: MeshLambertMaterial;
+}
+
 interface Item {
   placement: Placement;
   root: Group;
-  paint: MeshLambertMaterial;
+  /** Per object, so a search can fade non-matches individually. */
+  mats: Materials;
   /** 0 = unfound (grey paint), 1 = found (accent). */
   found: number;
+  /** 1 = fully there, low = faded into the fog by a search filter. */
+  presence: number;
 }
+
+const FADED = 0.08;
 
 const ACCENT = new Color('#C9A46A');
 const LAMP = '#FFD8A0';
@@ -45,10 +57,6 @@ const LAMP = '#FFD8A0';
 export class ProjectObjects {
   readonly group = new Group();
   private readonly items = new Map<string, Item>();
-  private readonly wood = new MeshLambertMaterial({ flatShading: true });
-  private readonly grain = new MeshLambertMaterial({ flatShading: true });
-  private readonly stone = new MeshLambertMaterial({ flatShading: true });
-  private readonly faint = new MeshLambertMaterial({ flatShading: true });
   private readonly light = new PointLight(LAMP, 0, 10, 1.5);
   private palette?: Palette;
   private active: string | null = null;
@@ -59,24 +67,48 @@ export class ProjectObjects {
     private readonly requestRender: () => void,
     private readonly reducedMotion: boolean,
   ) {
+    // Transparent from the start (at opacity 1), so fading never needs a material rebuild.
+    const mat = () => new MeshLambertMaterial({ flatShading: true, transparent: true });
     for (const p of placements) {
-      const paint = new MeshLambertMaterial({ flatShading: true });
-      const root = this.build(p, paint);
+      const mats = { wood: mat(), grain: mat(), stone: mat(), paint: mat() };
+      const root = this.build(p, mats);
       root.position.set(p.x, p.y, p.z);
       root.rotation.y = p.yaw;
       this.group.add(root);
-      this.items.set(p.id, { placement: p, root, paint, found: 0 });
+      this.items.set(p.id, { placement: p, root, mats, found: 0, presence: 1 });
     }
     this.group.add(this.light);
   }
 
   setPalette(p: Palette): void {
     this.palette = p;
-    this.wood.color.set(p.wood);
-    this.grain.color.set(p.grain);
-    this.stone.color.set(p.stone);
-    this.faint.color.set(p.faintObject);
-    this.items.forEach((item) => this.applyPaint(item));
+    this.items.forEach((item) => {
+      const { wood, grain, stone } = item.mats;
+      const faint = item.placement.faint;
+      wood.color.set(faint ? p.faintObject : p.wood);
+      grain.color.set(faint ? p.faintObject : p.grain);
+      stone.color.set(faint ? p.faintObject : p.stone);
+      this.applyPaint(item);
+    });
+  }
+
+  /** Keep these entries; fade every other object into the fog. null brings everything back. */
+  setFilter(ids: string[] | null): void {
+    const keep = ids ? new Set(ids) : null;
+    this.items.forEach((item) => {
+      const to = !keep || keep.has(item.placement.id) ? 1 : FADED;
+      if (item.presence === to) return;
+      gsap.to(item, {
+        presence: to,
+        duration: this.reducedMotion ? 0 : 0.45,
+        ease: 'power1.inOut',
+        onUpdate: () => {
+          Object.values(item.mats).forEach((m) => (m.opacity = item.presence));
+          item.root.visible = item.presence > 0.01;
+          this.requestRender();
+        },
+      });
+    });
   }
 
   /** Highlight the object for the entry in view (or none). Reaching an object marks it found. */
@@ -109,16 +141,14 @@ export class ProjectObjects {
 
   private applyPaint(item: Item): void {
     if (!this.palette) return;
-    if (item.placement.faint) item.paint.color.set(this.palette.faintObject);
-    else item.paint.color.set(this.palette.paint).lerp(ACCENT, item.found);
+    const { paint } = item.mats;
+    if (item.placement.faint) paint.color.set(this.palette.faintObject);
+    else paint.color.set(this.palette.paint).lerp(ACCENT, item.found);
     this.requestRender();
   }
 
-  private build(p: Placement, paint: MeshLambertMaterial): Group {
+  private build(p: Placement, { wood, grain, stone, paint }: Materials): Group {
     const g = new Group();
-    const wood = p.faint ? this.faint : this.wood;
-    const grain = p.faint ? this.faint : this.grain;
-    const stone = p.faint ? this.faint : this.stone;
     const add = (geo: BufferGeometry, mat: MeshLambertMaterial, x = 0, y = 0, z = 0) => {
       const mesh = new Mesh(geo, mat);
       mesh.position.set(x, y, z);
