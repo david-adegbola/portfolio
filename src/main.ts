@@ -15,15 +15,23 @@ initProjectPanel();
 initCards();
 initSearch();
 
-function hasWebGL(): boolean {
+/**
+ * Only load the forest where it will run well: WebGL2 on real hardware (software-rendered GL would
+ * crawl), and not when the visitor has asked to save data. Otherwise the page is the plain list.
+ */
+function sceneWanted(): boolean {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (connection?.saveData) return false;
   try {
-    return !!document.createElement('canvas').getContext('webgl2');
+    const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return !!gl;
   } catch {
     return false;
   }
 }
 
-if (hasWebGL()) {
+if (sceneWanted()) {
   const boot = () =>
     import('./scene/index.ts')
       .then(({ bootScene }) => bootScene(readEntries()))

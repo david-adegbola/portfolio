@@ -11,6 +11,8 @@ import { type ObjectKind, type Placement, ProjectObjects } from './ProjectObject
 import { World } from './World.ts';
 
 gsap.registerPlugin(ScrollTrigger);
+// Mobile address bars resize the viewport while scrolling; don't re-measure for that.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const CONTACT = 'contact';
 
@@ -88,7 +90,7 @@ export function bootScene(entries: ClientEntry[]): void {
     entries.filter((e) => e.zone === 'forest').length,
     entries.filter((e) => e.zone === 'lake').length,
   );
-  const world = new World(canvas, small ? 1.5 : 2);
+  const world = new World(canvas, small ? 1.5 : 2, !small);
   const forest = new Forest(layout, small ? 900 : 2400);
   const { placements, stops } = plan(layout, entries);
   const objects = new ProjectObjects(placements, () => world.requestRender(), reducedMotion);
@@ -134,13 +136,59 @@ export function bootScene(entries: ClientEntry[]): void {
     ]);
   };
 
+  // Reduced motion: the camera never glides. It holds at a stop and cuts to the next one, with a
+  // short crossfade of the canvas, as the visitor scrolls from card to card.
+  // Holds at whichever stop is nearest (the top of the page counts as one), matching the active card.
+  const stepProgress = (scroll: number) => {
+    let u = 0;
+    let nearest = scroll;
+    stops.forEach((s, i) => {
+      const d = Math.abs(scroll - stopScroll[i]);
+      if (d < nearest) [u, nearest] = [s.u, d];
+    });
+    return u;
+  };
+  let shownU = -1;
+  let wantedU = 0;
+  let cutting = false;
+  const cutTo = (u: number) => {
+    wantedU = u;
+    if (shownU < 0) {
+      // First frame: no fade.
+      shownU = u;
+      poseAt(layout, u, world.camera.position, world.cameraTarget);
+      return world.requestRender();
+    }
+    if (cutting || u === shownU) return;
+    cutting = true;
+    // Web Animations, not CSS transitions: the reduced-motion stylesheet zeroes transitions.
+    const out = canvas.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-in', fill: 'forwards' });
+    out.onfinish = () => {
+      shownU = wantedU;
+      poseAt(layout, shownU, world.camera.position, world.cameraTarget);
+      world.renderNow();
+      const back = canvas.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease-out', fill: 'forwards' });
+      out.cancel();
+      back.onfinish = () => {
+        // Hand opacity back to the stylesheet (it hides the canvas if the GPU context is lost).
+        back.cancel();
+        cutting = false;
+        // The visitor may have scrolled on during the fade.
+        if (wantedU !== shownU) cutTo(wantedU);
+      };
+    };
+  };
+
   let active: string | null = null;
   // While flying to a search result, objects passed on the way aren't "reached": no light hopping
   // from object to object, just the one at the destination.
   let flying = false;
   const update = (scroll: number) => {
-    poseAt(layout, map.progress(scroll), world.camera.position, world.cameraTarget);
-    world.requestRender();
+    if (reducedMotion) cutTo(stepProgress(scroll));
+    else {
+      poseAt(layout, map.progress(scroll), world.camera.position, world.cameraTarget);
+      world.requestRender();
+    }
     if (flying) return;
 
     // The stop nearest to its mid-screen position, if it's close enough.

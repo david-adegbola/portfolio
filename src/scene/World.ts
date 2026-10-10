@@ -29,8 +29,19 @@ export class World {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly maxPixelRatio: number,
+    antialias: boolean,
   ) {
-    this.renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
+    this.renderer = new WebGLRenderer({ canvas, antialias, powerPreference: 'low-power' });
+    // If the GPU drops the context, fade the scene away and leave the plain page; bring it back
+    // if the context is restored.
+    canvas.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      document.documentElement.classList.remove('has-scene');
+    });
+    canvas.addEventListener('webglcontextrestored', () => {
+      document.documentElement.classList.add('has-scene');
+      this.requestRender();
+    });
     this.scene.fog = this.fog;
     this.scene.background = new Color();
     this.sun.position.set(-30, 40, 20);
@@ -40,9 +51,15 @@ export class World {
     this.resize();
   }
 
-  /** Called once, after the first frame has been drawn. */
+  /** Called once, after the next frame has been drawn. */
   onFirstFrame(callback: () => void): void {
     this.firstFrame = callback;
+  }
+
+  /** Render now (synchronously), e.g. while the canvas is hidden mid-crossfade. */
+  renderNow(): void {
+    this.camera.lookAt(this.cameraTarget);
+    this.renderer.render(this.scene, this.camera);
   }
 
   setPalette(p: Palette): void {

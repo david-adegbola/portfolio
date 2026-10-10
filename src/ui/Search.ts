@@ -242,11 +242,19 @@ export function initSearch(): void {
     if (typing || panelOpen || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === '/') {
       e.preventDefault();
-      flyTo('top').then(() => input.focus({ preventScroll: true }));
+      toSearch();
     } else if (e.key === 'Escape' && committed) {
       clear();
     }
   });
+
+  // The header button keeps search one tap away once the hero has scrolled off (vital on phones).
+  const headerButton = document.querySelector<HTMLButtonElement>('.header-search');
+  const toSearch = () => flyTo('top').then(() => input.focus({ preventScroll: true }));
+  if (headerButton) {
+    headerButton.addEventListener('click', toSearch);
+    headerButton.hidden = false;
+  }
 
   form.hidden = false;
 }

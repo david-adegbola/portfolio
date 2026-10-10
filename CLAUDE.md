@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-Build steps 1–4 (static site, 3D scene, project objects, search) are done. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
+Build steps 1–5 (static site, 3D scene, project objects, search, reduced-motion/mobile/fallback) are done. Step 6 (performance + Lighthouse) is next. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
 
 ## Commands
 
@@ -24,6 +24,9 @@ Build steps 1–4 (static site, 3D scene, project objects, search) are done. `po
 - `ProjectObjects`: one object per card (marker, log-pile, floating log, clearing, tree-ring stump; a lamp for `#contact`), placed right of the path. Reaching one tweens its "paint" part from grey to the accent (found, persists) and moves a single warm PointLight to it (fade out → move → fade in). The scene fires `entry:active`; `ui/Cards.ts` marks the card. In-progress entries are faint, set back in the fog, never found.
 - Search (`ui/Search.ts`, Fuse.js in the main bundle): combobox while typing; Enter / chip / option click commits → `setFilter` (cards dim, objects fade into the fog) → after the fade, `flyTo(id)`. Fuse results scoring above 0.5 are dropped (short words fuzzy-match junk otherwise). Keyword shortcuts: cv/contact/email… → `contact`; research/paper… → all research entries. Chips come from `site.json` `searchChips` and are hidden when they'd find nothing. `/` focuses search, `Esc` clears. A fixed `.search-status` bar keeps prev/next/clear reachable after the flight.
 - `src/nav.ts` bridges UI and scene: `flyTo` falls back to `scrollIntoView` until the scene calls `provideFlight` (Lenis `scrollTo`, 1.6 s ease-in-out cubic, `lock`; a cut under reduced motion). Each flight settles exactly once (arrival, safety timeout, or superseded); while flying, passed objects don't become active.
+- Fallbacks: `main.ts` loads the scene only if WebGL2 works without `failIfMajorPerformanceCaveat` (no software GL) and `saveData` is off; otherwise the page is the plain list and search uses the scroll fallback. `webglcontextlost` removes `.has-scene` (canvas + veil fade away); restore brings it back.
+- Reduced motion: no Lenis, no glide. The camera holds at the nearest stop and cuts between stops with a canvas crossfade via the Web Animations API (the reduced-motion stylesheet zeroes CSS transitions, WAAPI isn't affected; animations are cancelled after so CSS owns opacity again).
+- Mobile (< 64rem): the veil is the `.page` background (scrolls with content) with a clear window onto the forest above the name; no fixed `body::before` veil. Header search button (`.header-search`) flies to top and focuses the input. Canvas uses `100lvh`; `ScrollTrigger.config({ ignoreMobileResize: true })`; no antialias on small screens.
 - Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.

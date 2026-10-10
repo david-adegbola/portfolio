@@ -45,6 +45,7 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
     <nav class="header-actions" aria-label="Contact">
       <a class="header-link" href="mailto:${esc(site.email)}">Email</a>
       ${cv}
+      <button class="header-search" type="button" aria-label="Search" aria-controls="search-input" hidden>${ICON_SEARCH}</button>
       <button class="theme-toggle" type="button" aria-pressed="false" hidden>
         <span class="visually-hidden">Dark mode</span>${ICON_MOON}${ICON_SUN}
       </button>
