@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-All six build steps are done. Last Lighthouse (2026-10-10, production preview): mobile 99 / 100 / 100 / 100, desktop 100 across the board (Performance / Accessibility / Best Practices / SEO). `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
+All six build steps are done, plus the v0.3 visual pass (natural colours, seasons, wind). Last Lighthouse (2026-10-10, production preview): mobile 99 / 100 / 100 / 100, desktop 100 across the board (Performance / Accessibility / Best Practices / SEO). `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
 
 ## Commands
 
@@ -27,9 +27,14 @@ All six build steps are done. Last Lighthouse (2026-10-10, production preview): 
 - `src/nav.ts` bridges UI and scene: `flyTo` falls back to `scrollIntoView` until the scene calls `provideFlight` (Lenis `scrollTo`, 1.6 s ease-in-out cubic, `lock`; a cut under reduced motion). Each flight settles exactly once (arrival, safety timeout, or superseded); while flying, passed objects don't become active.
 - Fallbacks: `main.ts` imports the scene only if `WebGL2RenderingContext` exists and `saveData` is off; the `WebGLRenderer` itself uses `failIfMajorPerformanceCaveat` (no software GL) and `bootScene` resolves false if it can't be created. Otherwise the page is the plain list and search uses the scroll fallback. Don't add a separate probe context: it cost ~1.4 s of blocking time on throttled mobile.
 - Performance: `bootScene` is async and yields (`scheduler.yield`/`setTimeout`) between renderer, ground, trees and objects, then `compileAsync` before the first frame; keep long tasks short. The main stylesheet is inlined into `index.html` at build (`inlineCss` plugin). JS-only controls are shown via the `js` class set in the head script (no layout shift).
-- Share image: `public/og.jpg` (1200×630) is a static render of the real scene with name + title; regenerate it if the name or title changes. `public/apple-touch-icon.png` is the favicon glyph at 180px. `webglcontextlost` removes `.has-scene` (canvas + veil fade away); restore brings it back.
+- Share image: `public/og.jpg` (1200×630) is a static render of the real scene in summer with name + title; regenerate it if the name, title or look changes. `public/apple-touch-icon.png` is the favicon glyph at 180px. `webglcontextlost` removes `.has-scene` (canvas + veil fade away); restore brings it back.
 - Reduced motion: no Lenis, no glide. The camera holds at the nearest stop and cuts between stops with a canvas crossfade via the Web Animations API (the reduced-motion stylesheet zeroes CSS transitions, WAAPI isn't affected; animations are cancelled after so CSS owns opacity again).
 - Mobile (< 64rem): the veil is the `.page` background (scrolls with content) with a clear window onto the forest above the name; no fixed `body::before` veil. Header search button (`.header-search`) flies to top and focuses the input. Canvas uses `100lvh`; `ScrollTrigger.config({ ignoreMobileResize: true })`; no antialias on small screens.
+- Seasons & look (v0.3): `src/seasons.ts` (shared with UI) picks today's season in Finland (Helsinki time: Nov–Mar winter, Apr–May spring, Jun–Aug summer, Sep–Oct autumn) or the visitor's pick (`sessionStorage`, via `ui/Seasons.ts`, event `season:change`). `scene/palette.ts` has one hand-tuned daylight `Look` per season; dark mode derives a night version of each. Season/theme changes crossfade the whole look (`mixLook`, 1.4 s).
+- `scene/vegetation.ts`: one Lambert material for all vegetation and the ground, patched in `onBeforeCompile`. The red channel of the vertex colour (or instance colour) blends `colA`→`colB` (green adds brightness variation); `bloom` scales the mesh about its base (flowers, birch leaves, shrubs come and go with the season); wind sways by (local y / height)², with travelling gusts. Trunk and crown of a species must share wind settings or they separate. A mesh uses either vertex colours or instance colours, never both (they multiply). `customProgramCacheKey` is shared.
+- `Forest`: pine/spruce/birch by site (spruce near water, birch on edges, pine on dry ground), glades, density noise, bilberry/lingonberry, grass, boulders, seven wildflowers in patches (glades/clearing, path edge, lake shore), blob contact shadows. Build is sliced (`addTrees`, `addFloor`, `addFlowers`); the ground is computed per grid point then de-indexed (per-triangle values crack the ground).
+- `World` runs a continuous loop (`startLoop`, 30 fps on phones) to advance `windTime`; under reduced motion it stays on-demand. A sky dome follows the camera.
+- Lighthouse: close or blank the Browser pane's forest tabs first. A tab rendering the forest continuously competes for CPU/GPU and inflated TBT to ~3–5 s in testing.
 - Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.
@@ -53,9 +58,9 @@ Stack: Vite + TypeScript, vanilla three.js, Lenis (smooth scroll), GSAP + Scroll
 ## Constraints that are easy to break
 
 - Build order (brief §7) is incremental: the static site comes first and must deploy on its own. **Stop and show David a preview after each step.**
-- Motion: camera flights take 1.2–2s, ease-in-out, with no overshoot. One moving thing at a time. No particles, bloom, auto-rotation, or shadows. The 3D style is low-poly and flat-shaded with heavy fog. Trees use `InstancedMesh`.
+- Motion: camera flights take 1.2–2s, ease-in-out, with no overshoot. One moving thing at a time for visitor-triggered motion; the ambient wind is the exception (off under reduced motion). No particles, bloom, auto-rotation, or shadow maps (contact shadows only). Low-poly, flat-shaded, natural seasonal colours, light haze. All vegetation uses `InstancedMesh`.
 - `prefers-reduced-motion` → no camera flights (cut or crossfade). No WebGL → show the plain list automatically. Include a "Skip the forest" link at the top.
 - Mobile (375px+): fewer trees, pixel ratio capped at 1.5, touch scroll drives the path.
 - Budget: JS under ~300 KB gzipped, first readable content under 1.5s on 4G, Lighthouse 90+ for Performance and Accessibility. Images are lazy-loaded WebP.
 - Never use stock photos or grey placeholder boxes. Entries without media render as text-only cards. Hide the CV button until `public/cv.pdf` exists.
-- Design tokens (colours, Inter Tight / Fraunces, type scale) are in brief §3. Use the accent `#C9A46A` sparingly; it marks the "found" state and links.
+- Design tokens (colours, Inter Tight / Fraunces, type scale) are in brief §3; they're the page's, not the forest's. Use the accent `#C9A46A` sparingly; it marks the "found" state and links.

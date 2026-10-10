@@ -1,4 +1,6 @@
-# Portfolio Website — Build Brief (v0.2)
+# Portfolio Website — Build Brief (v0.3)
+
+> v0.3 (2026-10-10): natural Finnish colours, four seasons, wind, contact shadows. Replaces v0.2's monochrome, no-shadow, heavy-fog direction.
 
 > Hand this file to Claude Code as the full spec.
 > Anything marked **[TODO]** is still undecided. Ask David before guessing.
@@ -23,9 +25,9 @@ Both live in a small fixed header on every screen and state, including during 3D
 ## 2. Concept: "Etsi" (Finnish: *search / seek*)
 
 ### The scene
-- A long, misty **boreal landscape**: pine and birch trunks, a still lake, low fog, pale sky.
+- A long **boreal landscape**: Scots pine, Norway spruce and birch, a still lake, mossy forest floor with bilberry, grass, boulders and wildflowers, soft haze, a pale northern sky.
 - Projects sit in the scene as objects: floating logs, survey marker posts, clearings. The floating logs reference Lake Saimaa beside UPM Kaukas, where David's interest in forestry began.
-- Near-monochrome palette. Colour only appears when something is "found."
+- Natural Finnish colours, predominantly green and never neon. The forest shows **the season it is in Finland today** (spring, summer, autumn, winter), with a small switcher to see the others. The "found" state stays distinct: a warm lamp light and accent paint on the object.
 
 ### Two zones along one camera path
 1. **The forest (main path):** GIS, remote sensing, and forestry work. This is most of the scroll length, and visitors reach it first.
@@ -42,9 +44,10 @@ Both live in a small fixed header on every screen and state, including during 3D
 
 ### Motion rules
 - Slow and eased: camera flights take 1.2–2s with ease-in-out, no bounce or overshoot.
-- One moving idea at a time.
+- One moving idea at a time for anything the visitor triggers (flights, fades, the light).
+- A gentle, continuous wind sways grass, flowers and leaves: subtle, gusting, never repetitive. It pauses in hidden tabs, runs lighter on phones, and is off with reduced motion.
 - No decorative particles, no bloom-on-everything, no auto-rotating objects.
-- Fog and depth do most of the visual work.
+- Light haze and depth carry the atmosphere.
 
 ---
 
@@ -62,7 +65,7 @@ Both live in a small fixed header on every screen and state, including during 3D
 | Layout | Large margins, text max width ~62ch, generous white space |
 | Mode | Light by default, dark via `prefers-color-scheme`, plus a manual toggle |
 
-3D style: **low-poly, flat-shaded, heavy fog.** No photoreal textures. Trees use `InstancedMesh`.
+3D style: **low-poly and flat-shaded, in natural seasonal colours**, warm low sunlight, light haze, soft contact shadows (no shadow maps). No photoreal textures. All vegetation uses `InstancedMesh`. Dark mode is the same season at night ("polar night").
 
 ---
 
@@ -179,7 +182,7 @@ The site launches with very little content and fills up over time. It must look 
 3. **Reduced motion:** with `prefers-reduced-motion`, there are no camera flights (cut or crossfade instead) and the site stays fully usable.
 4. **No WebGL** → automatically show the plain list.
 5. **Mobile (375px+):** fewer trees, pixel ratio capped at 1.5, touch scroll drives the path, and the search input stays reachable.
-6. **Performance:** JS < ~300 KB gzipped, first readable content < 1.5s on 4G, 60fps on a mid-range laptop. No shadows by default. Images in WebP, lazy-loaded.
+6. **Performance:** JS < ~300 KB gzipped, first readable content < 1.5s on 4G, 60fps on a mid-range laptop. Soft contact shadows only (no real-time shadow maps). Images in WebP, lazy-loaded.
 7. **Accessibility:** keyboard-operable search, results, and panel; visible focus; alt text; WCAG AA contrast in both modes.
 8. **Meta:** `<title>`, description, Open Graph image, favicon (a simple tree or marker glyph).
 

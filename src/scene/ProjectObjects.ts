@@ -11,7 +11,7 @@ import {
   RingGeometry,
   type BufferGeometry,
 } from 'three';
-import type { Palette } from './palette.ts';
+import type { Look } from './palette.ts';
 
 export type ObjectKind = 'marker' | 'log-pile' | 'log' | 'clearing' | 'tree-ring' | 'lamp';
 
@@ -58,7 +58,7 @@ export class ProjectObjects {
   readonly group = new Group();
   private readonly items = new Map<string, Item>();
   private readonly light = new PointLight(LAMP, 0, 10, 1.5);
-  private palette?: Palette;
+  private palette?: Look;
   private active: string | null = null;
   private lightTimeline?: gsap.core.Timeline;
 
@@ -80,7 +80,7 @@ export class ProjectObjects {
     this.group.add(this.light);
   }
 
-  setPalette(p: Palette): void {
+  setLook(p: Look): void {
     this.palette = p;
     this.items.forEach((item) => {
       const { wood, grain, stone } = item.mats;

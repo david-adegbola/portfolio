@@ -1,19 +1,24 @@
 import {
+  BackSide,
   Color,
   DirectionalLight,
   FogExp2,
   HemisphereLight,
+  Mesh,
   PerspectiveCamera,
   Scene,
+  ShaderMaterial,
+  SphereGeometry,
   Vector3,
   WebGLRenderer,
 } from 'three';
-import type { Palette } from './palette.ts';
+import type { Look } from './palette.ts';
+import { windTime } from './vegetation.ts';
 
 /**
- * Renderer, camera, fog and lights. Renders on demand only: a frame is drawn when the camera or
- * theme changes, so an idle page costs nothing. Frames go through requestAnimationFrame, which
- * browsers pause in hidden tabs.
+ * Renderer, camera, sky, haze and light. Two modes: on demand (a frame only when the camera or
+ * look changes; used under reduced motion) or a gentle loop that advances the wind. Frames go
+ * through requestAnimationFrame, which browsers pause in hidden tabs.
  */
 export class World {
   readonly scene = new Scene();
@@ -23,8 +28,12 @@ export class World {
   private readonly fog = new FogExp2(0xffffff, 0.03);
   private readonly hemi = new HemisphereLight();
   private readonly sun = new DirectionalLight();
+  private readonly skyTop = new Color();
+  private readonly skyHorizon = new Color();
+  private readonly sky: Mesh;
   private frameRequested = false;
   private firstFrame?: () => void;
+  private looping = false;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -50,8 +59,35 @@ export class World {
     });
     this.scene.fog = this.fog;
     this.scene.background = new Color();
-    this.sun.position.set(-30, 40, 20);
-    this.scene.add(this.hemi, this.sun);
+    // Low northern sun, high to the left and a little behind the camera.
+    this.sun.position.set(-30, 34, 22);
+    // A sky dome that follows the camera: horizon colour (= the haze) fading up to the sky.
+    this.sky = new Mesh(
+      new SphereGeometry(300, 24, 12),
+      new ShaderMaterial({
+        side: BackSide,
+        depthWrite: false,
+        fog: false,
+        uniforms: { uTop: { value: this.skyTop }, uHorizon: { value: this.skyHorizon } },
+        vertexShader: /* glsl */ `
+          varying vec3 vDir;
+          void main() {
+            vDir = normalize(position);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }`,
+        fragmentShader: /* glsl */ `
+          uniform vec3 uTop;
+          uniform vec3 uHorizon;
+          varying vec3 vDir;
+          void main() {
+            gl_FragColor = vec4(mix(uHorizon, uTop, smoothstep(0.02, 0.55, vDir.y)), 1.0);
+            #include <colorspace_fragment>
+          }`,
+      }),
+    );
+    this.sky.renderOrder = -1;
+    this.sky.frustumCulled = false;
+    this.scene.add(this.hemi, this.sun, this.sky);
 
     new ResizeObserver(() => this.resize()).observe(canvas);
     this.resize();
@@ -69,33 +105,60 @@ export class World {
 
   /** Render now (synchronously), e.g. while the canvas is hidden mid-crossfade. */
   renderNow(): void {
-    this.camera.lookAt(this.cameraTarget);
-    this.renderer.render(this.scene, this.camera);
+    this.draw();
   }
 
-  setPalette(p: Palette): void {
-    (this.scene.background as Color).set(p.fog);
-    this.fog.color.set(p.fog);
-    this.fog.density = p.fogDensity;
-    this.hemi.color.set(p.sky);
-    this.hemi.groundColor.set(p.skyGround);
-    this.hemi.intensity = p.hemi;
-    this.sun.intensity = p.sun;
+  setLook(look: Look): void {
+    (this.scene.background as Color).set(look.horizon);
+    this.fog.color.set(look.horizon);
+    this.fog.density = look.fogDensity;
+    this.skyHorizon.set(look.horizon);
+    this.skyTop.set(look.skyTop);
+    this.hemi.color.set(look.hemiSky);
+    this.hemi.groundColor.set(look.hemiGround);
+    this.hemi.intensity = look.hemi;
+    this.sun.color.set(look.sunColor);
+    this.sun.intensity = look.sun;
     this.requestRender();
   }
 
+  /**
+   * Keep drawing so the wind can move the vegetation. `fps` caps the rate (phones run at 30).
+   * Paused automatically in hidden tabs, since requestAnimationFrame is.
+   */
+  startLoop(fps: number): void {
+    if (this.looping) return;
+    this.looping = true;
+    const minDelta = 1000 / fps - 2;
+    let last = 0;
+    const tick = (now: number) => {
+      requestAnimationFrame(tick);
+      if (now - last < minDelta) return;
+      // Clamp long gaps (tab was hidden) so the wind doesn't jump.
+      windTime.value += Math.min(now - (last || now), 100) / 1000;
+      last = now;
+      this.draw();
+    };
+    requestAnimationFrame(tick);
+  }
+
   requestRender(): void {
-    if (this.frameRequested) return;
+    if (this.looping || this.frameRequested) return;
     this.frameRequested = true;
     requestAnimationFrame(() => {
       this.frameRequested = false;
-      this.camera.lookAt(this.cameraTarget);
-      this.renderer.render(this.scene, this.camera);
-      if (this.firstFrame) {
-        this.firstFrame();
-        this.firstFrame = undefined;
-      }
+      this.draw();
     });
+  }
+
+  private draw(): void {
+    this.camera.lookAt(this.cameraTarget);
+    this.sky.position.copy(this.camera.position);
+    this.renderer.render(this.scene, this.camera);
+    if (this.firstFrame) {
+      this.firstFrame();
+      this.firstFrame = undefined;
+    }
   }
 
   private resize(): void {

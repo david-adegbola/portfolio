@@ -5,7 +5,8 @@ import 'lenis/dist/lenis.css';
 import type { ClientEntry } from '../content/entries.ts';
 import { provideFlight } from '../nav.ts';
 import { Forest } from './Forest.ts';
-import { currentTheme, onThemeChange, palettes } from './palette.ts';
+import { initialSeason, type Season } from '../seasons.ts';
+import { currentTheme, type Look, lookFor, mixLook, onThemeChange } from './palette.ts';
 import { buildLayout, type Layout, poseAt, ScrollMap } from './Path.ts';
 import { type ObjectKind, type Placement, ProjectObjects } from './ProjectObjects.ts';
 import { World } from './World.ts';
@@ -111,20 +112,45 @@ export async function bootScene(entries: ClientEntry[]): Promise<boolean> {
   const forest = new Forest(layout);
   world.scene.add(forest.group);
   await yieldToMain();
-  forest.addTrees(layout, small ? 900 : 2400);
+  forest.addTrees(small ? 900 : 2400);
+  await yieldToMain();
+  forest.addFloor(small ? { shrubs: 1100, grass: 1800, rocks: 70 } : { shrubs: 3200, grass: 5000, rocks: 140 });
+  await yieldToMain();
+  forest.addFlowers(small ? 1500 : 4000);
   await yieldToMain();
   const { placements, stops } = plan(layout, entries);
   const objects = new ProjectObjects(placements, () => world.requestRender(), reducedMotion);
   world.scene.add(objects.group);
 
-  const applyTheme = () => {
-    const palette = palettes[currentTheme()];
-    world.setPalette(palette);
-    forest.setPalette(palette);
-    objects.setPalette(palette);
+  // The look follows the season (today in Finland, or the visitor's pick) and the theme (day or
+  // polar night). Changes crossfade over ~1.4 s: one gentle change, not a jump.
+  let season: Season = initialSeason();
+  let shown: Look = lookFor(currentTheme(), season);
+  const apply = (look: Look) => {
+    shown = look;
+    world.setLook(look);
+    forest.setLook(look);
+    objects.setLook(look);
   };
-  applyTheme();
-  onThemeChange(applyTheme);
+  apply(shown);
+  const blend = { t: 0 };
+  const changeLook = () => {
+    const from = shown;
+    const to = lookFor(currentTheme(), season);
+    gsap.killTweensOf(blend);
+    blend.t = 0;
+    gsap.to(blend, {
+      t: 1,
+      duration: reducedMotion ? 0 : 1.4,
+      ease: 'power1.inOut',
+      onUpdate: () => apply(mixLook(from, to, blend.t)),
+    });
+  };
+  onThemeChange(changeLook);
+  document.addEventListener('season:change', (event) => {
+    season = (event as CustomEvent<Season>).detail;
+    changeLook();
+  });
   try {
     await world.compile();
   } catch {
@@ -284,5 +310,8 @@ export async function bootScene(entries: ClientEntry[]): Promise<boolean> {
   );
 
   world.onFirstFrame(() => document.documentElement.classList.add('has-scene'));
+  // Wind: a continuous gentle loop (30 fps on phones). Under reduced motion the forest stays still
+  // and only redraws on demand.
+  if (!reducedMotion) world.startLoop(small ? 30 : 60);
   return true;
 }

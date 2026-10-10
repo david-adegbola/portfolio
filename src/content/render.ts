@@ -66,6 +66,19 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
       <button class="search-step" type="button" data-step="1" aria-label="Next result">${ICON_NEXT}</button>
       <button class="search-clear" type="button">Clear</button>
     </div>
+  </div>
+  <div class="seasons" role="group" aria-label="Season in the forest">
+    ${[
+      ['spring', 'Spring', 'Kevät'],
+      ['summer', 'Summer', 'Kesä'],
+      ['autumn', 'Autumn', 'Syksy'],
+      ['winter', 'Winter', 'Talvi'],
+    ]
+      .map(
+        ([id, en, fi]) =>
+          `<button class="season" type="button" data-season="${id}" aria-pressed="false" title="${fi}">${en}<span class="season-now" hidden><span class="visually-hidden">, now in Finland</span></span></button>`,
+      )
+      .join('')}
   </div>`;
 }
 
