@@ -44,6 +44,8 @@ Copy this into the list in `content/projects.json`. Only `id`, `zone` and `title
 ```
 
 - `id`: lowercase words joined by dashes. It is also the URL: `/portfolio/#p/forest-cover-change`.
+- Title in Finnish (or another language)? Add `"lang": "fi"` so screen readers pronounce it correctly.
+- Leave out `summary` if it would only repeat the `subtitle`.
 - `zone`: `"forest"` for main work, `"lake"` for side work ("Off the clock").
 - Images go in `public/media/<id>/` as `.webp`. A missing file is left out, never shown broken.
 - Not finished yet? Add `"status": "in-progress"`. It shows as a faint "In progress" card with no detail panel.

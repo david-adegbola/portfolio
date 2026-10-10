@@ -8,6 +8,9 @@ const marked = new Marked({ async: false });
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/** `lang` for a title in another language (e.g. a Finnish project name on an English page). */
+const langAttr = (e: Entry) => (e.lang ? ` lang="${esc(e.lang)}"` : '');
+
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 const linkAttrs = (href: string) => (isExternal(href) ? ' target="_blank" rel="noopener"' : '');
 
@@ -60,25 +63,12 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
     </nav>
   </header>
   <div class="search-status" role="region" aria-label="Search results" hidden>
-    <p class="search-summary" aria-live="polite"></p>
+    <p class="search-summary"></p>
     <div class="search-status-actions">
       <button class="search-step" type="button" data-step="-1" aria-label="Previous result">${ICON_PREV}</button>
       <button class="search-step" type="button" data-step="1" aria-label="Next result">${ICON_NEXT}</button>
       <button class="search-clear" type="button">Clear</button>
     </div>
-  </div>
-  <div class="seasons" role="group" aria-label="Season in the forest">
-    ${[
-      ['spring', 'Spring', 'Kevät'],
-      ['summer', 'Summer', 'Kesä'],
-      ['autumn', 'Autumn', 'Syksy'],
-      ['winter', 'Winter', 'Talvi'],
-    ]
-      .map(
-        ([id, en, fi]) =>
-          `<button class="season" type="button" data-season="${id}" aria-pressed="false" title="${fi}">${en}<span class="season-now" hidden><span class="visually-hidden">, now in Finland</span></span></button>`,
-      )
-      .join('')}
   </div>`;
 }
 
@@ -98,10 +88,9 @@ function renderSearch(site: Site): string {
         <input id="search-input" class="search-input" type="search" autocomplete="off" spellcheck="false"
           enterkeyhint="search" placeholder="A project, a tool, a topic"
           role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list" />
-        <kbd class="search-kbd" aria-hidden="true">/</kbd>
       </div>
       <ul class="search-results" id="search-results" role="listbox" aria-label="Matches" hidden></ul>
-      <p class="search-empty" hidden></p>
+      <p class="search-empty" role="status"></p>
       <div class="search-chips" role="group" aria-label="Suggestions"></div>
     </form>`;
 }
@@ -121,7 +110,7 @@ function projectCard(e: ProjectEntry): string {
   }
   const small = e.zone === 'lake';
   return `<li class="card${small ? ' card--small' : ''}" id="${esc(e.id)}">
-    <h3 class="card-title"><a class="card-link" href="#p/${esc(e.id)}" data-open="${esc(e.id)}">${esc(e.title)}</a></h3>
+    <h3 class="card-title"><a class="card-link" href="#p/${esc(e.id)}" data-open="${esc(e.id)}"${langAttr(e)}>${esc(e.title)}</a></h3>
     ${e.subtitle ? `<p class="card-subtitle">${esc(e.subtitle)}</p>` : ''}
     ${!small && e.summary ? `<p class="card-summary">${esc(e.summary)}</p>` : ''}
     ${small ? '' : meta(e)}
@@ -214,7 +203,7 @@ function panelContent(e: ProjectEntry, opts: RenderOptions): string {
   const media = (e.media ?? []).filter((m) => !opts.missing.has(m.src));
   return `<header class="panel-header">
       ${eyebrow ? `<p class="eyebrow">${esc(eyebrow)}</p>` : ''}
-      <h2 class="panel-title" id="panel-title">${esc(e.title)}</h2>
+      <h2 class="panel-title" id="panel-title"${langAttr(e)}>${esc(e.title)}</h2>
       ${e.subtitle ? `<p class="panel-subtitle">${esc(e.subtitle)}</p>` : ''}
     </header>
     ${e.summary ? `<p class="panel-summary">${esc(e.summary)}</p>` : ''}
@@ -239,7 +228,22 @@ export function renderTemplates(all: Entry[], opts: RenderOptions): string {
 }
 
 export function renderFooter(site: Site): string {
-  return `<footer class="site-footer"><p>© ${new Date().getFullYear()} ${esc(site.name)}</p></footer>`;
+  // The season switcher and the search announcer sit last, after the content they relate to.
+  return `<footer class="site-footer"><p>© ${new Date().getFullYear()} ${esc(site.name)}</p></footer>
+  <div class="seasons" role="group" aria-label="Season in the forest">
+    ${[
+      ['spring', 'Spring', 'Kevät'],
+      ['summer', 'Summer', 'Kesä'],
+      ['autumn', 'Autumn', 'Syksy'],
+      ['winter', 'Winter', 'Talvi'],
+    ]
+      .map(
+        ([id, en, fi]) =>
+          `<button class="season" type="button" data-season="${id}" aria-pressed="false" title="${fi}">${en}<span class="season-now" hidden><span class="visually-hidden">, now in Finland</span></span></button>`,
+      )
+      .join('')}
+  </div>
+  <p class="visually-hidden" role="status" id="search-announce"></p>`;
 }
 
 /** Minimal entry data for the client (scene now, search later). Same order as the page. */
@@ -249,6 +253,7 @@ export function renderEntriesData(all: Entry[]): string {
     zone: e.zone,
     type: e.type ?? 'project',
     title: e.title,
+    lang: e.lang,
     subtitle: isResearch(e) ? e.context : e.subtitle,
     tags: e.tags ?? [],
     status: e.status,

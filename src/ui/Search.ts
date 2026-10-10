@@ -11,6 +11,7 @@ const RESEARCH_WORDS = ['research', 'paper', 'papers', 'thesis', 'publication', 
 interface Result {
   id: string;
   title: string;
+  lang?: string;
   meta: string;
 }
 
@@ -36,6 +37,8 @@ export function initSearch(): void {
   const empty = form.querySelector<HTMLElement>('.search-empty')!;
   const chipsBox = form.querySelector<HTMLElement>('.search-chips')!;
   const summary = status.querySelector<HTMLElement>('.search-summary')!;
+  // Always in the page (never hidden), so screen readers reliably announce what it says.
+  const announcer = document.getElementById('search-announce');
   const stepButtons = status.querySelectorAll<HTMLButtonElement>('.search-step');
 
   const entries = readEntries();
@@ -53,7 +56,7 @@ export function initSearch(): void {
   // Fuse's threshold lets weak partial hits through on short words ("gis" → "Mistä puu tulee").
   // Real matches score near 0; anything past this is noise.
   const MAX_SCORE = 0.5;
-  const toResult = (e: ClientEntry): Result => ({ id: e.id, title: e.title, meta: metaFor(e) });
+  const toResult = (e: ClientEntry): Result => ({ id: e.id, title: e.title, lang: e.lang, meta: metaFor(e) });
 
   const search = (raw: string): Result[] => {
     const q = raw.trim().toLowerCase();
@@ -73,7 +76,7 @@ export function initSearch(): void {
 
   const closeList = () => {
     list.hidden = true;
-    empty.hidden = true;
+    empty.textContent = '';
     input.setAttribute('aria-expanded', 'false');
     input.removeAttribute('aria-activedescendant');
   };
@@ -92,10 +95,9 @@ export function initSearch(): void {
       empty.textContent = RESEARCH_WORDS.includes(q.toLowerCase())
         ? `No research papers here yet.${tryThese}`
         : `Nothing matches “${q}”.${tryThese}`;
-      empty.hidden = false;
       return;
     }
-    empty.hidden = true;
+    empty.textContent = '';
     list.replaceChildren(
       ...options.map((r, i) => {
         const li = document.createElement('li');
@@ -104,6 +106,7 @@ export function initSearch(): void {
         li.setAttribute('role', 'option');
         li.innerHTML = `<span class="search-option-title"></span><span class="search-option-meta"></span>`;
         li.firstElementChild!.textContent = r.title;
+        if (r.lang) li.firstElementChild!.setAttribute('lang', r.lang);
         li.lastElementChild!.textContent = r.meta;
         // Keep focus in the input while clicking an option.
         li.addEventListener('mousedown', (e) => e.preventDefault());
@@ -155,6 +158,7 @@ export function initSearch(): void {
       results.length > 1
         ? `“${query}”: ${index + 1} of ${results.length}, ${current.title}`
         : `“${query}”: ${current.title}`;
+    if (announcer) announcer.textContent = summary.textContent;
     stepButtons.forEach((b) => (b.hidden = results.length < 2));
     status.hidden = false;
   };
@@ -174,6 +178,7 @@ export function initSearch(): void {
 
   const clear = () => {
     flightToken++;
+    if (announcer) announcer.textContent = committed ? 'Search cleared' : '';
     committed = null;
     input.value = '';
     closeList();
@@ -211,7 +216,7 @@ export function initSearch(): void {
       e.preventDefault();
       highlight(highlighted - 1);
     } else if (e.key === 'Escape') {
-      if (open || !empty.hidden) closeList();
+      if (open || empty.textContent) closeList();
       else if (committed || input.value) clear();
       e.preventDefault();
     }
@@ -235,17 +240,13 @@ export function initSearch(): void {
   );
   status.querySelector('.search-clear')!.addEventListener('click', clear);
 
-  // "/" jumps to search from anywhere; Esc clears a search when nothing else is open.
+  // Esc clears a search when nothing else is open. (No single-letter shortcuts: speech-input users
+  // trigger those by accident, WCAG 2.1.4. The header search button is the way back to search.)
   document.addEventListener('keydown', (e) => {
     const typing = e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]');
     const panelOpen = document.querySelector<HTMLDialogElement>('dialog.panel')?.open;
-    if (typing || panelOpen || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.key === '/') {
-      e.preventDefault();
-      toSearch();
-    } else if (e.key === 'Escape' && committed) {
-      clear();
-    }
+    if (typing || panelOpen) return;
+    if (e.key === 'Escape' && committed) clear();
   });
 
   // The header button keeps search one tap away once the hero has scrolled off (vital on phones).

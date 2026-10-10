@@ -35,6 +35,8 @@ function validateEntries(raw: unknown): string[] {
       if (!Array.isArray(e.authors) || !e.authors.length) problems.push(`${where}: research needs "authors"`);
       if (typeof e.abstract !== 'string') problems.push(`${where}: research needs "abstract"`);
     }
+    if (e.lang !== undefined && (typeof e.lang !== 'string' || !/^[a-z]{2,3}(-[A-Za-z0-9]+)*$/.test(e.lang)))
+      problems.push(`${where}: "lang" must be a language code such as "fi"`);
     if (e.year !== undefined && typeof e.year !== 'number') problems.push(`${where}: "year" must be a number, without quotes`);
     for (const m of e.media ?? []) {
       if (!m.src || !m.alt) problems.push(`${where}: every media item needs "src" and "alt"`);

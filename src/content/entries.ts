@@ -6,6 +6,7 @@ export interface ClientEntry {
   zone: Zone;
   type: 'project' | 'research';
   title: string;
+  lang?: string;
   subtitle?: string;
   tags: string[];
   status?: 'in-progress';

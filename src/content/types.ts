@@ -15,6 +15,8 @@ interface BaseEntry {
   id: string;
   zone: Zone;
   title: string;
+  /** Language of the title when it isn't English, e.g. "fi". */
+  lang?: string;
   tags?: string[];
   year?: number;
   /** In-progress entries show as a faint, one-line card with no detail panel. */

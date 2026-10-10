@@ -3,8 +3,9 @@
   --bg: #eef0ee;
   --ink: #1c1f22;
   --muted: #8a9095;
-  /* #8A9095 is only 2.8:1 on the light background, so muted *text* uses a darker grey in light mode (5.3:1). */
-  --muted-text: #5c6368;
+  /* #8A9095 is only 2.8:1 on the light background, so muted *text* uses a darker grey in light mode: 6.4:1 on the
+     flat background and 4.85:1 over the darkest forest seen through the veil (measured). */
+  --muted-text: #50575c;
   --accent: #c9a46a;
   --line: rgb(28 31 34 / 0.14);
   --panel: #f6f7f6;
@@ -230,6 +231,21 @@ a:hover {
   font-size: var(--fs-20);
   line-height: 1.5;
 }
+.hero-name,
+.section-title,
+.card-title,
+.panel-title {
+  text-wrap: balance;
+}
+.hero-intro,
+.section-intro,
+.about,
+.card-subtitle,
+.card-summary,
+.panel-subtitle,
+.panel-summary {
+  text-wrap: pretty;
+}
 .hero-intro {
   margin-top: 1.5rem;
   max-width: 48ch;
@@ -269,13 +285,12 @@ html:not(.js) .theme-toggle {
 .search-input {
   width: 100%;
   min-height: 3rem;
-  padding: 0.6rem 2.75rem 0.6rem 2.6rem;
+  padding: 0.6rem 1.25rem 0.6rem 2.6rem;
   font: inherit;
   color: var(--ink);
   background: color-mix(in srgb, var(--panel) 85%, transparent);
   border: 1px solid var(--line);
   border-radius: 999px;
-  outline: none;
   transition: border-color 0.2s var(--ease);
   -webkit-appearance: none;
   appearance: none;
@@ -286,33 +301,8 @@ html:not(.js) .theme-toggle {
 .search-input:hover {
   border-color: color-mix(in srgb, var(--ink) 30%, transparent);
 }
-.search-input:focus-visible {
-  border-color: var(--focus);
-  box-shadow: 0 0 0 1px var(--focus);
-}
 .search-input::-webkit-search-cancel-button {
   display: none;
-}
-.search-kbd {
-  position: absolute;
-  right: 0.9rem;
-  display: grid;
-  place-items: center;
-  width: 1.4rem;
-  height: 1.4rem;
-  font: 500 0.75rem var(--font-sans);
-  color: var(--muted-text);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  pointer-events: none;
-}
-.search-input:focus + .search-kbd {
-  display: none;
-}
-@media (pointer: coarse) {
-  .search-kbd {
-    display: none;
-  }
 }
 .search-results {
   margin: 0.5rem 0 0;
@@ -341,6 +331,10 @@ html:not(.js) .theme-toggle {
   flex: none;
   font-size: var(--fs-14);
   color: var(--muted-text);
+}
+.search-empty:empty {
+  display: block;
+  margin: 0;
 }
 .search-empty {
   margin-top: 0.75rem;
@@ -488,9 +482,13 @@ html:not(.js) .theme-toggle {
   width: 0.3rem;
   height: 0.3rem;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--muted-text);
 }
 @media (max-width: 40rem) {
+  /* Room under the footer for the fixed season switcher, so nothing ends up behind it. */
+  .has-scene .site-footer {
+    padding-bottom: 5rem;
+  }
   .seasons {
     left: 50%;
     right: auto;
@@ -556,9 +554,6 @@ html:not(.js) .theme-toggle {
   font-size: var(--fs-20);
   font-weight: 500;
   line-height: 1.4;
-}
-.card-link {
-  text-decoration-color: transparent;
 }
 /* The whole card is the click target. */
 .card-link::after {
@@ -938,6 +933,20 @@ body::before {
   }
   .panel {
     border-left: 0;
+  }
+}
+
+/* Press feedback. */
+@media (prefers-reduced-motion: no-preference) {
+  .button:active,
+  .search-chip:active,
+  .season:active,
+  .header-search:active,
+  .theme-toggle:active,
+  .search-step:active,
+  .search-clear:active,
+  .panel-close:active {
+    scale: 0.96;
   }
 }
 
