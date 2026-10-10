@@ -1,0 +1,57 @@
+[
+  {
+    "id": "mista-puu-tulee",
+    "zone": "forest",
+    "title": "Mistä puu tulee",
+    "subtitle": "A forest learning sim, growing into a 2D forestry game",
+    "tags": ["forestry", "education", "carbon", "game"],
+    "summary": "A forest learning simulation being developed into a 2D forestry sim game for children aged 8–16.",
+    "sceneObject": "marker"
+  },
+  {
+    "id": "sufobe-uef",
+    "zone": "forest",
+    "title": "SuFoBE @ UEF",
+    "subtitle": "Sustainable Forest Bioeconomy studies at the University of Eastern Finland",
+    "tags": ["forestry", "bioeconomy"],
+    "summary": "Studies in sustainable forest bioeconomy at UEF.",
+    "sceneObject": "clearing"
+  },
+  {
+    "id": "upm-kaukas",
+    "zone": "forest",
+    "title": "UPM Kaukas Pulp Mill",
+    "subtitle": "Summer contract on a boiler renovation",
+    "tags": ["forest industry", "pulp"],
+    "summary": "Summer contract work on a boiler renovation at UPM Kaukas, the mill beside Lake Saimaa.",
+    "sceneObject": "log"
+  },
+  {
+    "id": "hetkin",
+    "zone": "lake",
+    "title": "Hetkin",
+    "subtitle": "Startup",
+    "tags": ["startup"],
+    "summary": "A startup David is building.",
+    "links": [{ "label": "hetkin.app", "href": "https://hetkin.app" }],
+    "sceneObject": "log"
+  },
+  {
+    "id": "nidave-films",
+    "zone": "lake",
+    "title": "Nidave Films",
+    "subtitle": "Film and documentary work",
+    "tags": ["film", "documentary"],
+    "summary": "Film and documentary work.",
+    "sceneObject": "log"
+  },
+  {
+    "id": "dust-and-scrolls",
+    "zone": "lake",
+    "title": "Dust and Scrolls",
+    "subtitle": "Writing on cosmology and intellectual inquiry",
+    "tags": ["writing", "cosmology"],
+    "summary": "Writing on cosmology and intellectual inquiry.",
+    "sceneObject": "log"
+  }
+]
