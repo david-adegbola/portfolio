@@ -186,3 +186,18 @@ export function renderTemplates(all: Entry[], opts: RenderOptions): string {
 export function renderFooter(site: Site): string {
   return `<footer class="site-footer"><p>© ${new Date().getFullYear()} ${esc(site.name)}</p></footer>`;
 }
+
+/** Minimal entry data for the client (scene now, search later). Same order as the page. */
+export function renderEntriesData(all: Entry[]): string {
+  const data = sortEntries(all).map((e) => ({
+    id: e.id,
+    zone: e.zone,
+    type: e.type ?? 'project',
+    title: e.title,
+    subtitle: isResearch(e) ? e.context : e.subtitle,
+    tags: e.tags ?? [],
+    status: e.status,
+    sceneObject: e.sceneObject,
+  }));
+  return `<script type="application/json" id="entries-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}

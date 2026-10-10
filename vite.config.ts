@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import { loadContent, missingFiles } from './src/content/load.ts';
-import { renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.ts';
+import { renderEntriesData, renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.ts';
 
 const root = process.cwd();
 // Repo is david-adegbola/portfolio, so GitHub Pages serves the site at /portfolio/.
@@ -33,7 +33,7 @@ function content(): Plugin {
         .replace('<!--header-->', withBase(renderHeader(site, opts)))
         .replace('<!--main-->', withBase(renderMain(site, entries, opts)))
         .replace('<!--footer-->', renderFooter(site))
-        .replace('<!--templates-->', withBase(renderTemplates(entries, opts)));
+        .replace('<!--templates-->', withBase(renderTemplates(entries, opts)) + renderEntriesData(entries));
     },
   };
 }
@@ -41,4 +41,6 @@ function content(): Plugin {
 export default defineConfig({
   base,
   plugins: [content()],
+  // three.js is one ~190 KB gzipped chunk, loaded after the page is readable; budget is ~300 KB total.
+  build: { chunkSizeWarningLimit: 800 },
 });

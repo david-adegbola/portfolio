@@ -374,6 +374,61 @@ a:hover {
   color: var(--muted-text);
 }
 
+/* 3D scene: a fixed background layer. All content stays in the HTML above it. */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.6s var(--ease);
+}
+.has-scene .scene {
+  opacity: 1;
+}
+/* A soft wash of the background colour behind the text keeps contrast at AA over the trees. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  transition: opacity 1.6s var(--ease);
+}
+.has-scene body::before {
+  opacity: 1;
+}
+.page,
+.site-footer {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 64rem) {
+  .page {
+    margin-left: clamp(2rem, 7vw, 8rem);
+  }
+  .site-footer {
+    text-align: left;
+    padding-left: calc(clamp(2rem, 7vw, 8rem) + var(--gutter));
+  }
+  body::before {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bg) 92%, transparent) 0,
+      color-mix(in srgb, var(--bg) 88%, transparent) 46%,
+      color-mix(in srgb, var(--bg) 60%, transparent) 58%,
+      color-mix(in srgb, var(--bg) 25%, transparent) 70%,
+      color-mix(in srgb, var(--bg) 0%, transparent) 84%
+    );
+  }
+}
+
 /* Detail panel: a side sheet on wide screens, full screen on phones. */
 .panel {
   position: fixed;
