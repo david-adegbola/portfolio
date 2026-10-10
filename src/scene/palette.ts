@@ -13,6 +13,12 @@ export interface Palette {
   skyGround: string;
   hemi: number;
   sun: number;
+  wood: string;
+  grain: string;
+  stone: string;
+  /** Unfound paint (marker bands, log ends). Found paint is always the accent. */
+  paint: string;
+  faintObject: string;
 }
 
 // Near-monochrome on purpose: colour is reserved for "found" things (accent, step 3+).
@@ -30,6 +36,11 @@ export const palettes: Record<ThemeName, Palette> = {
     skyGround: '#A8ADA8',
     hemi: 1.1,
     sun: 0.7,
+    wood: '#8F877F',
+    grain: '#CFC6B8',
+    stone: '#A7ACA8',
+    paint: '#B7BCB8',
+    faintObject: '#CDD2CD',
   },
   dark: {
     fog: '#14171A',
@@ -44,6 +55,11 @@ export const palettes: Record<ThemeName, Palette> = {
     skyGround: '#202426',
     hemi: 0.9,
     sun: 0.4,
+    wood: '#4C4741',
+    grain: '#6E655A',
+    stone: '#3C4144',
+    paint: '#41474A',
+    faintObject: '#24292C',
   },
 };
 

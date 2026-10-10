@@ -3,6 +3,7 @@ import '@fontsource/fraunces/latin-400.css';
 import '@fontsource/fraunces/latin-ext-400.css';
 import './styles.css';
 import { readEntries } from './content/entries.ts';
+import { initCards } from './ui/Cards.ts';
 import { initHeader } from './ui/Header.ts';
 import { initProjectPanel } from './ui/ProjectPanel.ts';
 
@@ -10,6 +11,7 @@ import { initProjectPanel } from './ui/ProjectPanel.ts';
 // if the scene fails; then load the scene as a separate chunk once the page is idle.
 initHeader();
 initProjectPanel();
+initCards();
 
 function hasWebGL(): boolean {
   try {

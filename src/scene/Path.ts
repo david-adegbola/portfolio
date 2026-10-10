@@ -15,8 +15,10 @@ export interface Layout {
   clearing: { x: number; z: number; r: number };
   /** Path x at a given z (the path is a function of z, which makes "distance to path" cheap). */
   pathX(z: number): number;
-  /** Signed lake test: < 1 inside the ellipse. */
+  /** Lake test: < 1 inside the ellipse. */
   lakeDistance(x: number, z: number, margin?: number): number;
+  /** Path progress (0–1) at which the camera is at depth z. */
+  uAtZ(z: number): number;
 }
 
 const EYE_LAND = 1.7;
@@ -53,9 +55,10 @@ export function buildLayout(forestCount: number, lakeCount: number): Layout {
     zs[i] = p.z;
     xs[i] = p.x;
   }
-  const pathX = (z: number) => {
-    if (z >= zs[0]) return xs[0];
-    if (z <= zs[samples]) return xs[samples];
+  /** Sample index and blend for depth z (zs decreases monotonically). */
+  const locate = (z: number): [number, number] => {
+    if (z >= zs[0]) return [0, 0];
+    if (z <= zs[samples]) return [samples - 1, 1];
     let lo = 0;
     let hi = samples;
     while (hi - lo > 1) {
@@ -63,8 +66,15 @@ export function buildLayout(forestCount: number, lakeCount: number): Layout {
       if (zs[mid] > z) lo = mid;
       else hi = mid;
     }
-    const t = (z - zs[lo]) / (zs[hi] - zs[lo]);
-    return xs[lo] + (xs[hi] - xs[lo]) * t;
+    return [lo, (z - zs[lo]) / (zs[hi] - zs[lo])];
+  };
+  const pathX = (z: number) => {
+    const [i, t] = locate(z);
+    return xs[i] + (xs[i + 1] - xs[i]) * t;
+  };
+  const uAtZ = (z: number) => {
+    const [i, t] = locate(z);
+    return (i + t) / samples;
   };
 
   const lakeZ = (forestEnd + lakeEnd) / 2;
@@ -75,7 +85,7 @@ export function buildLayout(forestCount: number, lakeCount: number): Layout {
 
   const clearing = { x: pathX(end), z: end - 12, r: 17 };
 
-  return { curve, forestEnd, lakeEnd, end, lake, clearing, pathX, lakeDistance };
+  return { curve, forestEnd, lakeEnd, end, lake, clearing, pathX, lakeDistance, uAtZ };
 }
 
 const ahead = new Vector3();
@@ -97,4 +107,38 @@ export function poseAt(layout: Layout, u: number, position: Vector3, target: Vec
     ahead.addScaledVector(tangent, (lookU - 1) * layout.curve.getLength());
   }
   target.set(ahead.x, position.y - 0.15, ahead.z);
+}
+
+/**
+ * Maps scroll position (px) to path progress through keyframes, so the camera reaches an object
+ * just as its card reaches the middle of the screen. Between keyframes the motion is half linear,
+ * half eased, so the camera settles at each object without stopping dead.
+ */
+export class ScrollMap {
+  private keys: { scroll: number; u: number }[] = [{ scroll: 0, u: 0 }];
+
+  /** Keyframes must be in page order; out-of-order or duplicate scroll positions are dropped. */
+  set(keys: { scroll: number; u: number }[]): void {
+    const sorted: { scroll: number; u: number }[] = [];
+    for (const k of keys) {
+      const prev = sorted[sorted.length - 1];
+      if (!prev || (k.scroll > prev.scroll + 1 && k.u >= prev.u)) sorted.push(k);
+    }
+    this.keys = sorted.length ? sorted : [{ scroll: 0, u: 0 }];
+  }
+
+  progress(scroll: number): number {
+    const keys = this.keys;
+    if (scroll <= keys[0].scroll) return keys[0].u;
+    for (let i = 1; i < keys.length; i++) {
+      const a = keys[i - 1];
+      const b = keys[i];
+      if (scroll <= b.scroll) {
+        const t = (scroll - a.scroll) / (b.scroll - a.scroll);
+        const eased = t * t * (3 - 2 * t);
+        return a.u + (b.u - a.u) * (t + eased) * 0.5;
+      }
+    }
+    return keys[keys.length - 1].u;
+  }
 }

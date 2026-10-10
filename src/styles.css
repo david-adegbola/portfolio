@@ -289,6 +289,58 @@ a:hover {
   text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
 }
+/* Cards fade in as they enter the viewport. Pure CSS, scroll-linked: browsers without support,
+   or visitors with reduced motion, simply see the cards. Nothing can get stuck hidden. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      animation: card-in linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+/* The card whose object the camera has reached: a small accent mark, the "found" colour. */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 1.85rem;
+  left: -1.25rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 0.5s var(--ease),
+    scale 0.5s var(--ease);
+}
+.card.is-active::before {
+  opacity: 1;
+  scale: 1;
+}
+.section--lake .card::before {
+  top: 1.35rem;
+}
+/* Nothing to find yet. */
+.card--in-progress::before {
+  display: none;
+}
+@media (max-width: 40rem) {
+  .card::before {
+    left: -0.875rem;
+  }
+}
+#contact {
+  position: relative;
+}
 .card-subtitle {
   margin-top: 0.25rem;
   color: var(--muted-text);

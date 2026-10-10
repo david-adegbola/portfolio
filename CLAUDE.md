@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-Build steps 1 (static site) and 2 (3D scene) are done. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
+Build steps 1 (static site), 2 (3D scene) and 3 (project objects) are done. `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
 
 ## Commands
 
@@ -20,7 +20,9 @@ Build steps 1 (static site) and 2 (3D scene) are done. `portfolio-brief.md` is t
 - Content paths in the JSON are written root-relative (`/media/...`, `/research/...`); the plugin's `withBase` rewrites `href`/`src` in the rendered fragments to `/portfolio/...`. Don't hardcode `/portfolio/` in content.
 - The CV button is rendered only if `public/cv.pdf` exists at build time. Media/PDF paths that don't exist in `public/` are left out, with a build warning.
 - Scene (`src/scene/`): `main.ts` lazy-loads it as its own chunk after `load` + idle, only if WebGL2 exists. `World` renders **on demand** (only when the camera or theme changes), no continuous loop. `Path.buildLayout` sizes the forest/lake/clearing zones from entry counts (read from the `#entries-data` JSON the build embeds). `Forest` = 4 `InstancedMesh`es (pine/birch × trunk/crown) sharing matrices, seeded RNG so the forest is identical every visit. Colours per theme in `scene/palette.ts`; theme changes are observed, not pushed.
-- Scroll → camera: Lenis (skipped under reduced motion) + one ScrollTrigger over the whole document, progress 0–1 → `poseAt`. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
+- Scroll → camera: Lenis (skipped under reduced motion) + one ScrollTrigger over the whole document. `ScrollMap` keyframes map scroll px → path progress so the camera frames each object exactly when its HTML card (`#projects .card[id]`, page order) is mid-screen; contact → progress 1. Keyframes are re-measured on every ScrollTrigger refresh.
+- `ProjectObjects`: one object per card (marker, log-pile, floating log, clearing, tree-ring stump; a lamp for `#contact`), placed right of the path. Reaching one tweens its "paint" part from grey to the accent (found, persists) and moves a single warm PointLight to it (fade out → move → fade in). The scene fires `entry:active`; `ui/Cards.ts` marks the card. In-progress entries are faint, set back in the fog, never found.
+- Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.
 - Light-mode contrast: `#8A9095` and the accent fail AA on `#EEF0EE`, so light mode uses `--muted-text: #5C6368` and the accent appears only as underlines/decoration, never as text.
