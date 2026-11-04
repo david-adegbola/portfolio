@@ -87,9 +87,19 @@ export function ProjectPanel() {
     requestAnimationFrame(() => document.querySelector<HTMLElement>('[data-slot="sheet-title"]')?.focus());
   };
 
+  // Radix returns focus to its own trigger button, but the panel opens from a card link (or a URL),
+  // so put focus back on the card of the project that was showing (WCAG 2.4.3).
+  const returnFocus = (event: Event) => {
+    const card = shown ? document.querySelector<HTMLElement>(`a[data-open="${shown}"]`) : null;
+    if (!card) return;
+    event.preventDefault();
+    card.focus({ preventScroll: true });
+    card.scrollIntoView({ block: 'nearest' });
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={(o) => !o && close()}>
-      <SheetContent aria-describedby={undefined}>
+      <SheetContent aria-describedby={undefined} onCloseAutoFocus={returnFocus}>
         <div className="panel-inner">
           {tpl && (
             <header className="panel-header">

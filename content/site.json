@@ -1,44 +1,89 @@
 {
   "name": "David Adegbola",
   "url": "https://david-adegbola.github.io/portfolio/",
-  "title": "Forest bioeconomy, GIS and remote sensing",
+  "title": "Forestry student with a computing background",
+  "headline": "Forestry student at the University of Eastern Finland, with a computing background. I can work in the forest, on a research project or on the technical side.",
   "statements": [
-    "Grew up in Nigeria and came to Finland to study IT at VAMK in Vaasa.",
-    "Worked as a fitter at the UPM Kaukas pulp mill, on the electrostatic precipitator rebuild.",
-    "Now studying Sustainable Forest Bioeconomy at UEF, and learning GIS and remote sensing."
+    "I started in computing: an OND in Computer Science in Ibadan, Nigeria, then IT studies at VAMK in Vaasa.",
+    "In 2025 I worked as a fitter at the UPM Kaukas pulp mill. My employer rated my work excellent.",
+    "Now I study Sustainable Forest Bioeconomy at UEF. I measure trees and sample soil on field courses, and I'm learning GIS."
   ],
-  "intro": "Looking for trainee, summer and field work in forestry, GIS and remote sensing in Finland.",
   "location": "Joensuu, Finland",
   "contact": {
-    "heading": "Looking for a forestry trainee or field worker?",
-    "text": "I'm looking for trainee, summer and field work in forestry. I can work full-time, start immediately and travel anywhere in Finland."
+    "heading": "Hiring for forestry, research or technical work?",
+    "text": "I'm looking for forestry trainee and field work, research assistant roles and technical jobs. I can work full-time, start immediately and travel anywhere in Finland."
   },
-  "description": "David Adegbola: Sustainable Forest Bioeconomy student at UEF, working towards GIS, remote sensing and forestry roles in Finland.",
+  "description": "David Adegbola: Sustainable Forest Bioeconomy student at UEF with a computing background, looking for forestry, research assistant and technical work in Finland.",
   "email": "adavidadegbola@gmail.com",
   "cv": "https://david-adegbola.github.io/cv/david-adegbola-forestry-master.pdf",
-  "about": "I grew up in Nigeria and came to Finland to study IT at VAMK in Vaasa. Working as a fitter at the UPM Kaukas pulp mill in 2025 changed my direction. Watching logs float on Lake Saimaa beside the mill, I started asking where they came from and how the forests behind them are managed. That question took me to Sustainable Forest Bioeconomy at UEF. Now I'm learning GIS and remote sensing: reading forests from data, and checking what that data means on the ground.",
+  "about": [
+    "At the mill I watched logs float on Lake Saimaa and started asking where they came from and how the forests behind them are managed. That question is why I study forestry now.",
+    "The computing came first, so I'm at home on the technical side too: Linux, a C program reading a real sensor, and small web services that run on their own."
+  ],
+  "offer": [
+    "Field work: measuring, sampling and recording to a checklist, outdoors in any weather, by the site's safety rules.",
+    "Research projects: collecting data the same way every time, and handling the computing side of it.",
+    "Technical work: hardware, networks, user accounts and web services such as domains and email routing."
+  ],
+  "softwareNote": "For my own software I use an AI coding agent (Claude Code): I write the spec and check the result.",
+  "learningNote": "GIS and remote sensing are what I'm learning now. These are planned or unfinished, not done yet.",
+  "education": [
+    {
+      "title": "B.Sc Sustainable Forest Bioeconomy (SuFoBE)",
+      "place": "University of Eastern Finland, Joensuu",
+      "years": "2026–",
+      "note": "Field course: forest ecology (tree measurement, soil sampling)."
+    },
+    {
+      "title": "Information Technology studies (B.Eng programme)",
+      "place": "VAMK, Vaasa University of Applied Sciences",
+      "years": "2024–2026",
+      "note": "Not completed. Included Microsoft Active Directory."
+    },
+    {
+      "title": "OND in Computer Science",
+      "place": "The Polytechnic, Ibadan, Nigeria",
+      "years": "2019–2022"
+    }
+  ],
+  "computing": [
+    "Set up a domain and email routing with Cloudflare and Resend.",
+    "Connected a store's TV to a server so it could show ads.",
+    "Rack-mounted servers; replaced drives, memory and power supplies.",
+    "Patched and traced network cables, connected switches and access points, checked connectivity.",
+    "Active Directory user accounts and groups, password resets, joining computers to a domain."
+  ],
   "skills": [
-    "Tree mensuration (field course)",
-    "Soil sampling and site description (field course)",
-    "Forest-industry site safety",
-    "Occupational safety card (työturvallisuuskortti)",
-    "Angle grinder and lifting equipment",
-    "Heavy physical outdoor work",
-    "User research: interviews and calls to companies",
-    "Building tools with AI coding agents (Claude Code)",
-    "Learning: GIS, forest measurement, brush saw, chainsaw",
-    "Finnish (basic, actively studying) · English (fluent) · Yoruba (native)"
+    {
+      "group": "Field and site",
+      "items": [
+        "Tree measurement and soil sampling (forest ecology field course)",
+        "Forest-industry site safety",
+        "Angle grinder and lifting equipment",
+        "Heavy physical outdoor work"
+      ]
+    },
+    {
+      "group": "Research",
+      "items": ["Finding out user needs through interviews and calls to companies"]
+    },
+    {
+      "group": "Cards",
+      "items": ["Occupational safety card (työturvallisuuskortti)"]
+    },
+    {
+      "group": "Languages",
+      "items": ["Finnish (basic, actively studying)", "English (fluent)", "Yoruba (native)"]
+    },
+    {
+      "group": "Learning",
+      "items": ["GIS", "Brush saw", "Chainsaw"]
+    }
   ],
   "links": [
     {
       "label": "GitHub",
       "href": "https://github.com/david-adegbola"
     }
-  ],
-  "searchChips": [
-    "GIS",
-    "remote sensing",
-    "forestry",
-    "CV"
   ]
 }

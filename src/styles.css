@@ -1,4 +1,5 @@
-/* Component styles. Tokens live in src/globals.css (Phase 1, "Field notebook"). */
+/* Component styles. Tokens live in src/globals.css ("Field notebook"). Two typefaces only:
+   Fraunces (names, headings, numerals) and Inter Tight (everything else). */
 
 /* Base */
 *,
@@ -19,7 +20,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* The full-width tree drawings use 100vw, which includes a desktop scrollbar: never scroll sideways. */
+  /* The full-width tree drawing uses 100vw, which includes a desktop scrollbar: never scroll sideways. */
   overflow-x: clip;
 }
 h1,
@@ -27,6 +28,7 @@ h2,
 h3,
 p,
 ul,
+ol,
 dl,
 dd,
 figure {
@@ -81,7 +83,7 @@ a:hover {
   translate: -50% 0;
 }
 
-/* Header: fixed, always visible. */
+/* Header: fixed, always visible, on a solid background so text never shows through it. */
 .site-header {
   position: fixed;
   inset: 0 0 auto;
@@ -92,9 +94,8 @@ a:hover {
   gap: 1rem;
   height: var(--header-h);
   padding-inline: var(--gutter);
-  background: color-mix(in srgb, var(--background) 82%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 .brand {
   min-width: 0;
@@ -110,32 +111,45 @@ a:hover {
   display: flex;
   flex: none;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.5rem;
 }
-/* 375px phones: name + Email + CV + the 44px search button must fit in one row. */
 @media (max-width: 40rem) {
-  .site-header {
-    gap: 0.5rem;
+  .brand {
+    font-size: var(--fs-16);
   }
-  .header-actions {
-    gap: 0.25rem;
-  }
-}
-.header-search .search-icon {
-  position: static;
-  color: inherit;
 }
 
-/* Page */
+/* Page: one centred column. */
 .page {
   width: 100%;
   max-width: calc(var(--measure) + 2 * var(--gutter));
   margin-inline: auto;
-  padding: calc(var(--header-h) + clamp(2.5rem, 12vh, 8rem)) var(--gutter) 0;
+  padding: calc(var(--header-h) + clamp(2.5rem, 10vh, 6rem)) var(--gutter) 0;
+}
+.hero-name,
+.section-title,
+.card-title,
+.panel-title,
+.note-heading {
+  text-wrap: balance;
+}
+.hero-headline,
+.section-intro,
+.about p,
+.card-subtitle,
+.card-summary,
+.panel-subtitle,
+.panel-summary,
+.statements li,
+.offer li,
+.ruled li {
+  text-wrap: pretty;
 }
 
+/* Hero (flows/landing.md): name, one plain sentence, three numbered lines that build to a point,
+   the "Currently" line, then Email and CV. */
 .hero {
-  padding-bottom: 0;
+  position: relative;
 }
 .hero-name {
   font-family: var(--font-serif);
@@ -144,54 +158,138 @@ a:hover {
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
-.hero-title {
-  margin-top: 1rem;
+.hero-headline {
+  margin-top: 1.25rem;
+  max-width: 40ch;
   font-size: var(--fs-20);
   line-height: 1.5;
 }
-.hero-name,
-.section-title,
-.card-title,
-.panel-title {
-  text-wrap: balance;
-}
-.hero-intro,
-.section-intro,
-.about,
-.card-subtitle,
-.card-summary,
-.panel-subtitle,
-.panel-summary {
-  text-wrap: pretty;
-}
-.hero-intro {
-  margin-top: 1.5rem;
-  max-width: 48ch;
-  color: var(--muted-foreground);
-}
-
-/* Landing (flows/landing.md): three numbered statements, like the references' numbered lists. */
 .statements {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.875rem;
   margin-top: 2rem;
+  padding: 0;
+  list-style: none;
   max-width: 52ch;
 }
 .statements li {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  column-gap: 0.75rem;
-  text-wrap: pretty;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  column-gap: 0.5rem;
 }
+/* Numerals in Fraunces, in the season colour: the field-notebook hand, not a mono label. */
 .statement-num {
-  padding-top: 0.2em;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
+  font-family: var(--font-serif);
+  font-size: var(--fs-20);
+  line-height: 1.3;
   color: var(--season);
 }
-.statements + .hero-intro {
-  margin-top: 1.25rem;
-  padding-left: 3.5rem;
+.now {
+  margin-top: 1.75rem;
+  max-width: 52ch;
+  padding: 0.625rem 0 0.625rem 1rem;
+  border-left: 2px solid var(--season);
+  font-size: var(--fs-16);
+}
+.now-label {
+  font-weight: var(--weight-semibold);
+}
+.now-date {
+  color: var(--muted-foreground);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 2rem;
+}
+.see-work {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--control-lg);
+  font-weight: var(--weight-medium);
+}
+.see-work svg {
+  flex: none;
+}
+@media (pointer: coarse) {
+  .see-work {
+    min-height: var(--control-touch);
+  }
+}
+
+/* The hero figure: the ring drawing, with the portrait in its centre when there is one. Beside
+   the column on wide screens; above the name on narrow ones, and only with a portrait there. */
+.hero-figure {
+  position: relative;
+  display: none;
+  width: 8rem;
+  aspect-ratio: 1;
+  margin-bottom: 1.5rem;
+}
+.hero--portrait .hero-figure {
+  display: block;
+}
+.hero-figure .rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.portrait {
+  position: absolute;
+  inset: 22%;
+}
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@media (max-width: 79.99rem) {
+  .hero--portrait {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero--portrait .hero-figure {
+    order: -1;
+  }
+}
+@media (min-width: 80rem) {
+  .hero-figure {
+    display: block;
+    position: absolute;
+    top: -1rem;
+    left: calc(100% + 4rem);
+    width: 18rem;
+    margin: 0;
+  }
+}
+
+/* Rings: tree rings and map contours in one drawing (components/patterns/Rings.tsx). */
+.rings {
+  display: block;
+  fill: none;
+  stroke: var(--line-art);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.rings path {
+  vector-effect: non-scaling-stroke;
+}
+.rings .rings-pith {
+  fill: color-mix(in srgb, var(--season) 22%, transparent);
+  stroke: var(--season);
+  stroke-width: 1.5;
+}
+/* Beside a section title: lined up with its first line, even when the title wraps. */
+.rings--mark {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.3rem;
 }
 
 /* Section nav (flows/section-nav.md): Primer UnderlineNav look. Header on wide screens, hero on
@@ -200,13 +298,15 @@ a:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 1.25rem;
+  padding: 0;
+  list-style: none;
 }
 .section-nav a {
   display: inline-flex;
   align-items: center;
   min-height: var(--control-md);
   font-size: var(--fs-14);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   color: var(--muted-foreground);
   text-decoration: none;
   border-bottom: 2px solid transparent;
@@ -220,12 +320,6 @@ a:hover {
 .section-nav a[aria-current] {
   color: var(--foreground);
   border-bottom-color: var(--primary);
-}
-.section-nav-num {
-  margin-right: 0.4rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  font-weight: 400;
 }
 @media (pointer: coarse) {
   .section-nav a {
@@ -248,170 +342,9 @@ a:hover {
   }
 }
 
-/* JS-only controls: laid out from first paint when JS is available, absent without it. */
-html:not(.js) .search,
-html:not(.js) .header-search {
-  display: none;
-}
-
-/* Search */
-.search {
-  position: relative;
-  margin-top: 3rem;
-  max-width: 30rem;
-}
-.search-label {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-family: var(--font-serif);
-  font-size: var(--fs-20);
-}
-.search-field {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.search-icon {
-  position: absolute;
-  left: 0.9rem;
-  color: var(--muted-foreground);
-  pointer-events: none;
-}
-.search-input {
-  width: 100%;
-  min-height: 3rem;
-  padding: 0.6rem 1.25rem 0.6rem 2.6rem;
-  font: inherit;
-  color: var(--foreground);
-  background: color-mix(in srgb, var(--card) 85%, transparent);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  transition: border-color 0.2s var(--ease);
-  -webkit-appearance: none;
-  appearance: none;
-}
-.search-input::placeholder {
-  color: var(--muted-foreground);
-}
-.search-input:hover {
-  border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
-}
-.search-input::-webkit-search-cancel-button {
-  display: none;
-}
-.search-results {
-  margin: 0.5rem 0 0;
-  padding: 0.35rem;
-  list-style: none;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  max-height: 18rem;
-  overflow-y: auto;
-  box-shadow: var(--shadow-floating);
-}
-.search-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-.search-option[aria-selected='true'] {
-  background: var(--border);
-}
-.search-option-meta {
-  flex: none;
-  font-size: var(--fs-14);
-  color: var(--muted-foreground);
-}
-.search-empty:empty {
-  display: block;
-  margin: 0;
-}
-.search-empty {
-  margin-top: 0.75rem;
-  font-size: var(--fs-14);
-  color: var(--muted-foreground);
-}
-.search-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  /* Chips (small outline Buttons) are added by JS after first paint; reserve their row so nothing
-     below shifts. */
-  min-height: var(--control-md);
-}
-@media (pointer: coarse) {
-  .search-chips {
-    min-height: var(--control-touch);
-  }
-}
-.search-chips[hidden] {
-  display: none;
-}
-
-/* A plain path to the work, beside the search. */
-.see-work {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-top: 1.5rem;
-  font-size: var(--fs-16);
-  font-weight: 500;
-}
-.see-work svg {
-  flex: none;
-}
-
-/* Fixed results bar while a search is active, so results stay reachable after the scroll. */
-.search-status {
-  position: fixed;
-  top: calc(var(--header-h) + 0.25rem);
-  left: 50%;
-  z-index: 15;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  max-width: calc(100% - 2 * var(--gutter));
-  padding: 0.35rem 0.4rem 0.35rem 1rem;
-  translate: -50% 0;
-  font-size: var(--fs-14);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-floating);
-}
-.search-status[hidden] {
-  display: none;
-}
-.search-summary {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.search-status-actions {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 0.15rem;
-}
-/* Prev / next / clear are ghost Buttons; the bar is a pill, so they are round too. */
-.search-status .search-step,
-.search-status .search-clear {
-  border-radius: var(--radius-full);
-}
-.search-step[hidden] {
-  display: none;
-}
-
 /* Treeline (components/patterns/Treeline.tsx): a thin line drawing of the forest edge, full
-   width, at the foot of the hero. It carries every season's details; only
-   today's show (<html data-season>). Static: nothing moves. */
+   width, at the foot of the hero. It carries every season's details; only today's show
+   (<html data-season>). Static: nothing moves. */
 .treeline {
   display: block;
   width: 100vw;
@@ -473,18 +406,19 @@ html:not(.js) .header-search {
 .hero + #projects > .section:first-child {
   border-top: 0;
 }
-
-/* Cards that don't match an active search step back. */
-.card > * {
-  transition: opacity 0.45s var(--ease);
-}
-.card.is-dimmed > * {
-  opacity: 0.35;
+#projects:focus {
+  outline: none;
 }
 
+/* Sections */
 .section {
   padding-block: clamp(3rem, 8vh, 5rem);
   border-top: 1px solid var(--border);
+}
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 .section-title {
   font-family: var(--font-serif);
@@ -493,87 +427,53 @@ html:not(.js) .header-search {
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
-.section-intro {
-  margin-top: 0.5rem;
-  color: var(--muted-foreground);
-}
-.about {
-  margin-top: 1.5rem;
-  font-size: var(--fs-20);
-  line-height: 1.6;
-}
-.section-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-}
-.section-count {
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  color: var(--muted-foreground);
-}
 .section-title:focus {
   outline: none;
 }
-/* Skills: a plain list in ruled rows, like a field log. */
-.skills-title {
-  margin-top: 2.5rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  font-weight: 400;
-  letter-spacing: 0.02em;
+.section-intro {
+  margin-top: 0.75rem;
   color: var(--muted-foreground);
 }
-.skills {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
-  gap: 0 1.5rem;
-  margin-top: 0.75rem;
+.sub-title {
+  margin-top: 2.5rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-20);
+  font-weight: 400;
+}
+.software-note {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border);
   font-size: var(--fs-14);
-}
-.skills li {
-  padding-block: 0.6rem;
-  border-top: 1px solid var(--border);
-  text-wrap: pretty;
-}
-#projects:focus {
-  outline: none;
+  color: var(--muted-foreground);
 }
 
-/* Cards: text-only, no boxes. */
+/* Work list: no boxes, ruled like a field log. */
 .card-list {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   padding: 0;
   list-style: none;
 }
-/* Numbered index item (flows/browse-work.md, components/patterns/IndexList.tsx): number and the
-   forest object's glyph on the left, the entry on the right. */
 .card {
   position: relative;
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  column-gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 1.5rem;
   padding-block: 1.5rem;
 }
 .card + .card {
   border-top: 1px solid var(--border);
 }
-.card-marker {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding-top: 0.45rem;
+@media (min-width: 40rem) {
+  .card--cover {
+    grid-template-columns: minmax(0, 1fr) 10rem;
+  }
 }
-.card-num {
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  line-height: 1;
-  color: var(--season);
-}
-.card--in-progress .card-num {
-  color: var(--muted-foreground);
+.card-cover img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
 }
 .card-head {
   display: flex;
@@ -581,15 +481,15 @@ html:not(.js) .header-search {
   justify-content: space-between;
   gap: 1rem;
 }
-.card-year {
+.card-when {
   flex: none;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
+  font-size: var(--fs-14);
+  font-variant-numeric: tabular-nums;
   color: var(--muted-foreground);
 }
 .card-title {
   font-size: var(--fs-20);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1.4;
 }
 /* The arrow says "this opens"; it nudges forward on hover. */
@@ -623,46 +523,7 @@ html:not(.js) .header-search {
 }
 .card:has(.card-link:hover) .card-link,
 .card-link:focus-visible {
-  text-decoration-color: var(--primary);
   text-decoration-thickness: 2px;
-}
-/* Cards fade in as they enter the viewport. Pure CSS, scroll-linked: browsers without support,
-   or visitors with reduced motion, simply see the cards. Nothing can get stuck hidden. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .card {
-      animation: card-in linear both;
-      animation-timeline: view();
-      animation-range: entry 10% entry 90%;
-    }
-  }
-}
-@keyframes card-in {
-  from {
-    opacity: 0;
-    translate: 0 0.75rem;
-  }
-}
-/* Each card carries a small line drawing of a forest thing (marker, log pile, stump…), in the
-   season colour. The card a search or link just went to gets a solid glyph (not colour alone);
-   unfinished work is grey and dashed. */
-.card-glyph {
-  display: block;
-  color: var(--season);
-  transition:
-    fill 0.3s var(--ease),
-    stroke-width 0.3s var(--ease);
-}
-.card.is-active .card-glyph {
-  stroke-width: 2;
-  fill: color-mix(in srgb, var(--season) 22%, transparent);
-}
-.card--in-progress .card-glyph {
-  color: var(--glyph);
-  stroke-dasharray: 2 2.5;
-}
-#contact {
-  position: relative;
 }
 .card-subtitle {
   margin-top: 0.25rem;
@@ -671,39 +532,197 @@ html:not(.js) .header-search {
 .card-summary {
   margin-top: 0.5rem;
 }
-.card-meta {
+/* Card foot: subject tags, then what proof the panel holds. */
+.card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin-top: 0.75rem;
+}
+.card-foot .card-subjects {
+  margin-top: 0;
+}
+.card-proof {
+  font-size: var(--fs-14);
+  color: var(--muted-foreground);
+}
+.card-proof-label {
+  font-weight: var(--weight-medium);
+  color: var(--foreground);
+}
+/* Subject tags: plain words, a small season-coloured mark before them. */
+.card-subjects {
   margin-top: 0.75rem;
   font-size: var(--fs-14);
   color: var(--muted-foreground);
 }
+.card-subjects::before {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.5rem;
+  border: 1.5px solid var(--season);
+  border-radius: 50%;
+  vertical-align: 0.05em;
+}
 
-.section--lake .card {
-  padding-block: 1rem;
+/* Learning now: planned and unfinished work, drawn like pencilled-in plots (dashed). */
+.learning-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
 }
-.card--small .card-marker {
-  padding-top: 0.3rem;
+.learning-item {
+  padding: 0.875rem 1rem;
+  border: 1px dashed var(--input);
+  border-radius: var(--radius-md);
 }
-.card--small .card-title {
-  font-size: var(--fs-16);
+.learning-title {
+  font-weight: var(--weight-medium);
 }
-.card--small .card-subtitle {
-  margin-top: 0;
+.learning-subtitle {
+  margin-top: 0.125rem;
   font-size: var(--fs-14);
-}
-
-.card--in-progress {
   color: var(--muted-foreground);
 }
-/* Holds the "In progress" Badge (components/ui/badge.tsx). */
-.badge {
-  margin-bottom: 0.5rem;
+
+/* About */
+.about {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  font-size: var(--fs-20);
+  line-height: 1.6;
+}
+.offer,
+.ruled {
+  margin-top: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+.offer li,
+.ruled li {
+  padding-block: 0.625rem;
+  border-top: 1px solid var(--border);
+}
+.offer li:last-child,
+.ruled li:last-child {
+  border-bottom: 1px solid var(--border);
 }
 
-.card-actions {
+/* Background: education as a ledger (years | what), skills as label / value rows. */
+.ledger {
+  margin-top: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+.ledger-row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.ledger-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.ledger-when {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+.ledger-what strong {
+  font-weight: var(--weight-semibold);
+}
+.ledger-note {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--fs-14);
+  color: var(--muted-foreground);
+}
+.skills {
+  margin-top: 0.75rem;
+}
+.skills > div {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.625rem;
+  border-top: 1px solid var(--border);
+}
+.skills > div:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.skills dt {
+  color: var(--muted-foreground);
+}
+@media (max-width: 30rem) {
+  .ledger-row,
+  .skills > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.125rem;
+  }
+}
+
+/* Notes */
+.notes-list {
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.notes-list li {
+  padding-block: 1rem;
+  border-top: 1px solid var(--border);
+}
+.note-title {
+  font-size: var(--fs-20);
+  font-weight: var(--weight-medium);
+}
+.note-date {
+  font-size: var(--fs-14);
+  color: var(--muted-foreground);
+}
+.note-summary {
+  margin-top: 0.25rem;
+}
+.notes-all {
+  margin-top: 1.5rem;
+}
+.page--note {
+  padding-bottom: 4rem;
+}
+.page--note:focus {
+  outline: none;
+}
+.note-back {
+  font-size: var(--fs-14);
+}
+.note-heading {
+  margin-top: 1rem;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-40);
+  line-height: 1.15;
+}
+.note-heading + .note-date {
+  margin-top: 0.5rem;
+}
+.note-body {
+  margin-top: 2rem;
+  font-size: 1.0625rem;
+}
+.note-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.section--first {
+  border-top: 0;
 }
 
 /* Contact (flows/contact.md): the end of the page. One question, the email large, two actions. */
@@ -731,8 +750,7 @@ html:not(.js) .header-search {
 }
 .contact-location {
   margin-top: 1.5rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
+  font-size: var(--fs-14);
   color: var(--muted-foreground);
 }
 
@@ -745,6 +763,7 @@ html:not(.js) .header-search {
   padding: 2rem var(--gutter) 3rem;
   font-size: var(--fs-14);
   color: var(--muted-foreground);
+  border-top: 1px solid var(--border);
 }
 .footer-sign {
   font-family: var(--font-serif);
@@ -758,13 +777,12 @@ html:not(.js) .header-search {
 }
 .footer-meta,
 .footer-season {
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
+  font-size: var(--fs-14);
 }
-/* All four season names are in the HTML; only today's shows. */
 .footer-season {
   color: var(--season);
 }
+/* All four season names are in the HTML; only today's shows. */
 [data-season-name] {
   display: none;
 }
@@ -778,16 +796,16 @@ html:not(.js) .header-search {
 /* Detail panel: a shadcn Sheet (components/ui/sheet.tsx, islands/ProjectPanel.tsx). Side sheet on
    wide screens, full screen on phones. Motion here, so reduced motion applies in one place. */
 [data-slot='sheet-content'][data-state='open'] {
-  animation: panel-in 0.45s var(--ease);
+  animation: panel-in 0.35s var(--ease);
 }
 [data-slot='sheet-content'][data-state='closed'] {
-  animation: panel-out 0.3s var(--ease) forwards;
+  animation: panel-out 0.25s var(--ease) forwards;
 }
 [data-slot='sheet-overlay'][data-state='open'] {
-  animation: fade-in 0.45s var(--ease);
+  animation: fade-in 0.35s var(--ease);
 }
 [data-slot='sheet-overlay'][data-state='closed'] {
-  animation: fade-out 0.3s var(--ease) forwards;
+  animation: fade-out 0.25s var(--ease) forwards;
 }
 @keyframes panel-in {
   from {
@@ -818,16 +836,15 @@ html:not(.js) .header-search {
   /* Top padding clears the close button. */
   padding: 4.5rem var(--gutter) 4rem;
 }
-.eyebrow {
-  margin-bottom: 0.5rem;
-  color: var(--muted-foreground);
-}
 .panel-title {
   font-family: var(--font-serif);
   font-weight: 400;
   font-size: var(--fs-32);
   line-height: 1.2;
   letter-spacing: -0.01em;
+}
+.panel-title:focus {
+  outline: none;
 }
 .panel-subtitle {
   margin-top: 0.5rem;
@@ -836,23 +853,35 @@ html:not(.js) .header-search {
   color: var(--muted-foreground);
 }
 .panel-summary {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-size: var(--fs-20);
   line-height: 1.6;
 }
 .facts {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+.facts > div {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 1rem;
+}
+.facts dt {
+  color: var(--muted-foreground);
+}
+.panel-part {
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
 }
-.facts dt {
-  font-size: var(--fs-14);
-  color: var(--muted-foreground);
+.panel-part h3 {
+  font-family: var(--font-serif);
+  font-size: var(--fs-20);
+  font-weight: 400;
 }
-.prose {
-  margin-top: 2rem;
+.panel-part .prose {
+  margin-top: 0.75rem;
 }
 .prose > * + * {
   margin-top: 1em;
@@ -861,11 +890,31 @@ html:not(.js) .header-search {
 .prose h3 {
   margin-top: 2em;
   font-size: var(--fs-20);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 .prose ul,
 .prose ol {
   padding-left: 1.25rem;
+}
+/* Tailwind's reset removes list bullets; bring them back in written content. */
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.375rem;
+}
+.prose code {
+  font-size: 0.9em;
+  padding: 0.1em 0.3em;
+  background: var(--muted);
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+.prose img {
+  border-radius: var(--radius-md);
 }
 .media {
   margin-top: 2rem;
@@ -874,46 +923,27 @@ html:not(.js) .header-search {
   width: 100%;
   border-radius: var(--radius-md);
 }
-.panel-links {
+.media figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--fs-14);
+  color: var(--muted-foreground);
+}
+.proof-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.proof-links .icon-external {
+  margin-left: 0.375rem;
+  flex: none;
+}
+.proof-note {
+  margin-top: 1rem;
+  color: var(--muted-foreground);
+}
+.panel-inner .card-subjects {
   margin-top: 2rem;
-}
-.panel-inner .card-meta {
-  margin-top: 2rem;
-}
-
-@media (max-width: 40rem) {
-  .brand {
-    font-size: var(--fs-16);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Metadata in mono, like a field log: years, tags, eyebrows, badges. */
-.card-meta,
-.eyebrow,
-.search-option-meta {
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  letter-spacing: 0.02em;
-}
-
-/* Tailwind's reset removes list bullets; bring them back in written content. */
-.prose ul {
-  list-style: disc;
-}
-.prose ol {
-  list-style: decimal;
 }
 
 /* Previous / next in the detail panel (audit X7). */
@@ -932,11 +962,22 @@ html:not(.js) .header-search {
 }
 .panel-pager-label {
   display: block;
-  font-family: var(--font-mono);
-  font-size: var(--fs-12);
-  font-weight: 400;
+  font-size: var(--fs-14);
+  font-weight: var(--weight-normal);
   color: var(--muted-foreground);
 }
 .panel-pager-title {
   display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

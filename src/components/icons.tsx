@@ -1,14 +1,6 @@
 // Inline SVG icons used by the page. Line icons, 1.6 stroke, inherit the text colour.
-import type { ObjectKind } from '../content/objects.ts';
 
 const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
-
-export const IconSearch = () => (
-  <svg className="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-    <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-  </svg>
-);
 
 export const IconDown = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -34,73 +26,9 @@ export const IconClose = () => (
   </svg>
 );
 
-/**
- * Line drawings of forest objects, one per card, in the season colour (styles.css `.card-glyph`).
- */
-const GLYPHS: Record<ObjectKind, React.ReactNode> = {
-  marker: (
-    <>
-      <path d="M12 21V5" />
-      <path d="M10 4.5h4v4.5h-4z" />
-      <path d="M8 21c.6-1.3 1.6-2 2.6-2M16 21c-.5-1.1-1.3-1.7-2.1-1.8" />
-    </>
-  ),
-  'log-pile': (
-    <>
-      <circle cx="7.5" cy="16" r="3.5" />
-      <circle cx="16.5" cy="16" r="3.5" />
-      <circle cx="12" cy="8.5" r="3.5" />
-      <circle cx="12" cy="8.5" r="1" />
-    </>
-  ),
-  log: (
-    <>
-      <path d="M4.5 10.5h12" />
-      <path d="M4.5 14.5h12" />
-      <path d="M4.5 10.5a2 2 0 0 0 0 4" />
-      <ellipse cx="16.5" cy="12.5" rx="2" ry="2" />
-      <path d="M3 19c1.5 0 1.5-.8 3-.8s1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8" />
-    </>
-  ),
-  clearing: (
-    <>
-      <path d="M12 17V8" />
-      <path d="M10.6 7.5h2.8v3h-2.8z" />
-      <circle cx="5" cy="15" r="1.6" />
-      <circle cx="19" cy="15" r="1.6" />
-      <circle cx="7.5" cy="19.5" r="1.6" />
-      <circle cx="16.5" cy="19.5" r="1.6" />
-    </>
-  ),
-  'tree-ring': (
-    <>
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="5.2" />
-      <circle cx="12" cy="12" r="2.4" />
-    </>
-  ),
-  lamp: (
-    <>
-      <path d="M8 21V4h5" />
-      <path d="M13 4v3" />
-      <path d="M11.5 7h3v4h-3z" />
-    </>
-  ),
-};
-
-export const Glyph = ({ kind }: { kind: ObjectKind }) => (
-  <svg
-    className="card-glyph"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    aria-hidden="true"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    {GLYPHS[kind]}
+/** "Opens in a new tab", for external links. */
+export const IconExternal = () => (
+  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" className="icon-external">
+    <path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4" {...line} />
   </svg>
 );

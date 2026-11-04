@@ -72,6 +72,18 @@ describe('ProjectPanel', () => {
     expect(pager().textContent).not.toContain('Next');
   });
 
+  it('puts focus back on the card that opened the panel when it closes', async () => {
+    mount();
+    const card = document.querySelector<HTMLAnchorElement>('[data-open]')!;
+    act(() => card.click());
+    expect(dialog()).not.toBeNull();
+    act(() => {
+      dialog()!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+    await act(async () => new Promise((r) => setTimeout(r, 50)));
+    expect(document.activeElement).toBe(card);
+  });
+
   it('ignores links to projects without a panel', () => {
     document.body.insertAdjacentHTML('beforeend', '<a href="#p/none" data-open="none" id="dead">x</a>');
     mount();

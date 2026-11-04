@@ -1,51 +1,52 @@
-// Numbered index of entries (flows/browse-work.md): the reference sites' numbered lists, as a
-// field log. Each item: number + the forest object's glyph in the left column; title (a link when
-// the entry has a panel, with an arrow cue), year on the right, subtitle, summary, tags.
-// The list is an <ol>, so screen readers hear the position; the visible numbers are decoration.
+// The work list (flows/browse-work.md): one entry per item, strongest proof first. Each item: the
+// title (a link to its panel, with an arrow cue), the date on the right, a one-line subtitle, two
+// sentences of summary and the subject tags. An optional cover image sits beside it.
 import type { ReactNode } from 'react';
-import type { ObjectKind } from '../../content/objects.ts';
+import { type Image, type Subject, SUBJECT_LABEL } from '../../content/types.ts';
 import { cn } from '../../lib/utils.ts';
-import { Glyph, IconNext } from '../icons.tsx';
-import { Badge } from '../ui/badge.tsx';
+import { IconNext } from '../icons.tsx';
+import { Picture } from './Picture.tsx';
 
 export function IndexList({ children, className }: { children: ReactNode; className?: string }) {
   return <ol className={cn('card-list', className)}>{children}</ol>;
 }
 
+export function Subjects({ subjects }: { subjects: Subject[] }) {
+  return (
+    <p className="card-subjects">
+      <span className="visually-hidden">Subject: </span>
+      {subjects.map((s, i) => (
+        <span key={s} className="subject">
+          {i > 0 && <span aria-hidden="true"> · </span>}
+          {SUBJECT_LABEL[s]}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 export interface IndexItemProps {
   id: string;
-  index: number;
-  kind: ObjectKind;
   title: string;
   lang?: string;
   /** When set, the title opens the detail panel for this id. */
   opens?: boolean;
-  year?: number;
+  when?: string;
   subtitle?: ReactNode;
   summary?: ReactNode;
-  tags?: string[];
-  inProgress?: boolean;
-  small?: boolean;
+  subjects: Subject[];
+  /** Kinds of proof behind the entry ("code", "data"…), shown as one line. */
+  proof?: string[];
+  cover?: Image;
+  missing?: Set<string>;
   className?: string;
-  children?: ReactNode;
 }
 
 export function IndexItem(p: IndexItemProps) {
+  const cover = p.cover && p.missing ? <Picture img={p.cover} missing={p.missing} sizes="(min-width: 40rem) 10rem, 100vw" className="card-cover" /> : null;
   return (
-    <li
-      id={p.id}
-      className={cn('card', p.small && 'card--small', p.inProgress && 'card--in-progress', p.className)}
-    >
-      <div className="card-marker" aria-hidden="true">
-        <span className="card-num">{String(p.index).padStart(2, '0')}</span>
-        <Glyph kind={p.kind} />
-      </div>
+    <li id={p.id} className={cn('card', cover && 'card--cover', p.className)}>
       <div className="card-body">
-        {p.inProgress && (
-          <p className="badge">
-            <Badge variant="attention">In progress</Badge>
-          </p>
-        )}
         <div className="card-head">
           <h3 className="card-title">
             {p.opens ? (
@@ -57,22 +58,20 @@ export function IndexItem(p: IndexItemProps) {
               <span lang={p.lang}>{p.title}</span>
             )}
           </h3>
-          {p.year && <span className="card-year">{p.year}</span>}
+          {p.when && <span className="card-when">{p.when}</span>}
         </div>
         {p.subtitle && <p className="card-subtitle">{p.subtitle}</p>}
         {p.summary && <p className="card-summary">{p.summary}</p>}
-        {!!p.tags?.length && (
-          <p className="card-meta">
-            {p.tags.map((t, i) => (
-              <span key={t}>
-                {i > 0 && <span aria-hidden="true"> · </span>}
-                {t}
-              </span>
-            ))}
-          </p>
-        )}
-        {p.children}
+        <div className="card-foot">
+          <Subjects subjects={p.subjects} />
+          {!!p.proof?.length && (
+            <p className="card-proof">
+              <span className="card-proof-label">Proof:</span> {p.proof.join(', ')}
+            </p>
+          )}
+        </div>
       </div>
+      {cover}
     </li>
   );
 }

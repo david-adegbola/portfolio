@@ -1,83 +1,72 @@
 // The page, as React components. Rendered to static HTML at build time (src/content/render.tsx),
 // so every word is in index.html before any JavaScript runs (SEO, screen readers, no JS).
-// Flows: design-research/primer/flows/ (landing, browse-work, section-nav, contact).
+// Order: hero → Work (strongest proof first) → Learning now → About → Background → Notes → Contact.
 import { Marked } from 'marked';
-import { Fragment, type ReactNode } from 'react';
-import { objectKind } from '../content/objects.ts';
-import { type Entry, type Link, type ProjectEntry, type ResearchEntry, type Site, isInProgress, isResearch } from '../content/types.ts';
+import type { ReactNode } from 'react';
+import { type Entry, type Link, type Note, type Now, type Site, isInProgress } from '../content/types.ts';
 import { cn } from '../lib/utils.ts';
 import { SEASON_NAMES, SEASONS } from '../seasons.ts';
-import { IconDown, IconNext, IconPrev, IconSearch } from './icons.tsx';
+import { IconDown, IconExternal } from './icons.tsx';
 import { ContactBlock } from './patterns/ContactBlock.tsx';
-import { IndexItem, IndexList } from './patterns/IndexList.tsx';
+import { IndexItem, IndexList, Subjects } from './patterns/IndexList.tsx';
+import { Picture } from './patterns/Picture.tsx';
+import { Rings } from './patterns/Rings.tsx';
 import { type SectionLink, SectionNav } from './patterns/SectionNav.tsx';
 import { Treeline } from './patterns/Treeline.tsx';
 import { buttonVariants } from './ui/button.tsx';
 
 const marked = new Marked({ async: false });
+const md = (text: string) => marked.parse(text) as string;
 
 export interface RenderOptions {
   /** Where the CV PDF lives, if there is one. */
   cv?: string;
-  /** Files referenced in the JSON that don't exist in /public. They are left out, never shown broken. */
+  /** Files referenced in the content that don't exist in /public. They are left out, never shown broken. */
   missing: Set<string>;
 }
 
-/** Work ("forest") before Built with AI ("lake"); within a zone, JSON order, with in-progress entries last. */
-export function sortEntries(entries: Entry[]): Entry[] {
-  const rank = (e: Entry) => (e.zone === 'forest' ? 0 : 2) + (isInProgress(e) ? 1 : 0);
-  return entries.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map(({ e }) => e);
+/** How many notes the homepage lists. */
+export const NOTES_ON_HOME = 3;
+
+/** Finished work in JSON order (strongest proof first), then the unfinished work for "Learning now". */
+export function split(entries: Entry[]) {
+  return { done: entries.filter((e) => !isInProgress(e)), learning: entries.filter(isInProgress) };
 }
 
-/** The "lake" zone's section name. */
-export const LAKE_HEADING = 'Built with AI agents';
+/** A finished entry opens a panel when the panel has something the card doesn't. */
+export function hasDetail(e: Entry): boolean {
+  if (isInProgress(e)) return false;
+  return !!(e.problem || e.did || e.result || e.role || e.tryIt || e.links?.length || e.proofNote || e.media?.length);
+}
 
 /**
- * A project opens a detail panel only when the panel has more to show than its card: a summary on
- * a small card, a role, tools, a write-up, media or links. Otherwise a click would promise detail
- * that isn't there (design audit X2).
+ * What kind of proof backs an entry, in a few words, for the card: "working version", "code",
+ * "data", "PDF", "live site", or the entry's own short label for proof that isn't a link.
  */
-export function hasDetail(e: ProjectEntry): boolean {
-  if (isInProgress(e)) return false;
-  const cardShowsSummary = e.zone !== 'lake';
-  return !!(e.role || e.tools?.length || e.body || e.media?.length || e.links?.length || (e.summary && !cardShowsSummary));
+export function proofKinds(e: Entry): string[] {
+  const kind = (href: string) =>
+    /\.csv($|\?)/i.test(href) ? 'data' : /\.pdf($|\?)/i.test(href) ? 'PDF' : /github\.com\//.test(href) ? 'code' : 'live site';
+  const kinds = [...(e.tryIt ? ['working version'] : []), ...(e.links ?? []).map((l) => kind(l.href)), ...(e.proofNoteShort ? [e.proofNoteShort] : [])];
+  return [...new Set(kinds)];
 }
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 const linkProps = (href: string) => (isExternal(href) ? { target: '_blank', rel: 'noopener' } : {});
 
-/** Items separated by a middle dot that screen readers skip. */
-const Dotted = ({ items }: { items: ReactNode[] }) =>
-  items.map((item, i) => (
-    <Fragment key={i}>
-      {i > 0 && <span aria-hidden="true"> · </span>}
-      {item}
-    </Fragment>
-  ));
-
-const LinkList = ({ links }: { links: Link[] }) =>
-  links.map((l) => (
-    <a key={l.href} href={l.href} {...linkProps(l.href)}>
-      {l.label}
-    </a>
-  ));
+export const formatDate = (iso: string, month: 'long' | 'short' = 'long') =>
+  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month, year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
+const formatMonth = (iso: string) =>
+  new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
 
 /** The page's sections in order, for the section nav. Empty sections are left out. */
-function split(all: Entry[]) {
-  const entries = sortEntries(all);
-  return {
-    forest: entries.filter((e) => e.zone === 'forest' && !isResearch(e)) as ProjectEntry[],
-    research: entries.filter(isResearch),
-    lake: entries.filter((e) => e.zone === 'lake' && !isResearch(e)) as ProjectEntry[],
-  };
-}
-export function sectionsFor(site: Site, all: Entry[]): SectionLink[] {
-  const { forest, research, lake } = split(all);
+export function sectionsFor(site: Site, entries: Entry[], notes: Note[]): SectionLink[] {
+  const { done, learning } = split(entries);
   return [
-    forest.length ? { id: 'work', label: 'Work' } : null,
-    research.length ? { id: 'research', label: 'Research' } : null,
-    lake.length ? { id: 'built-with-ai', label: 'Built with AI' } : null,
-    site.about ? { id: 'about', label: 'About' } : null,
+    done.length ? { id: 'work', label: 'Work' } : null,
+    learning.length ? { id: 'learning', label: 'Learning' } : null,
+    site.about?.length || site.offer?.length ? { id: 'about', label: 'About' } : null,
+    site.education?.length || site.computing?.length || site.skills?.length ? { id: 'background', label: 'Background' } : null,
+    notes.length ? { id: 'notes', label: 'Notes' } : null,
     { id: 'contact', label: 'Contact' },
   ].filter((s): s is SectionLink => s !== null);
 }
@@ -96,249 +85,275 @@ export function Head({ site }: { site: Site }) {
       <meta property="og:image" content={`${site.url}og.jpg`} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={`${site.name}, ${site.title}, over a misty low-poly forest`} />
+      <meta property="og:image:alt" content={`${site.name}, over a misty low-poly forest`} />
       <meta name="twitter:card" content="summary_large_image" />
     </>
   );
 }
 
-export function Header({ site, entries, opts }: { site: Site; entries: Entry[]; opts: RenderOptions }) {
+/** Email and CV are in the header on every screen, one click away. */
+export function Header({ site, sections, opts, home = '#top' }: { site: Site; sections: SectionLink[]; opts: RenderOptions; home?: string }) {
   return (
-    <>
-      <header className="site-header">
-        <a className="brand" href="#top">
-          {site.name}
+    <header className="site-header">
+      <a className="brand" href={home}>
+        {site.name}
+      </a>
+      <SectionNav sections={sections} className="section-nav--header" />
+      <nav className="header-actions" aria-label="Contact">
+        <a className={buttonVariants({ size: 'sm' })} href={`mailto:${site.email}`}>
+          Email
         </a>
-        <SectionNav sections={sectionsFor(site, entries)} className="section-nav--header" />
-        <nav className="header-actions" aria-label="Contact">
-          {/* The page's main action is the one primary button (Primer: one primary per group). */}
-          <a className={buttonVariants({ size: 'sm' })} href={`mailto:${site.email}`}>
-            Email
+        {opts.cv && (
+          <a className={buttonVariants({ variant: 'outline', size: 'sm' })} href={opts.cv} target="_blank" rel="noopener">
+            CV
           </a>
-          {opts.cv && (
-            <a className={buttonVariants({ variant: 'outline', size: 'sm' })} href={opts.cv} target="_blank" rel="noopener">
-              CV
-            </a>
-          )}
-          <button
-            className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'header-search')}
-            type="button"
-            aria-label="Search"
-            aria-controls="search-input"
-          >
-            <IconSearch />
-          </button>
-        </nav>
-      </header>
-      <div className="search-status" role="region" aria-label="Search results" hidden>
-        <p className="search-summary"></p>
-        <div className="search-status-actions">
-          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'search-step')} type="button" data-step="-1" aria-label="Previous result">
-            <IconPrev />
-          </button>
-          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'search-step')} type="button" data-step="1" aria-label="Next result">
-            <IconNext />
-          </button>
-          <button className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'search-clear')} type="button">
-            Clear
-          </button>
-        </div>
-      </div>
-    </>
+        )}
+      </nav>
+    </header>
   );
 }
 
-/** The search form. Shown only when JavaScript runs (the `js` class, see index.html); the page works without it. */
-function Search({ site }: { site: Site }) {
-  return (
-    <form className="search" role="search">
-      <label className="search-label" htmlFor="search-input">
-        What are you looking for?
-      </label>
-      <div className="search-field">
-        <IconSearch />
-        <input
-          id="search-input"
-          className="search-input"
-          type="search"
-          autoComplete="off"
-          spellCheck="false"
-          enterKeyHint="search"
-          placeholder="A project, a tool, a topic"
-          role="combobox"
-          aria-expanded="false"
-          aria-controls="search-results"
-          aria-autocomplete="list"
-        />
-      </div>
-      <ul className="search-results" id="search-results" role="listbox" aria-label="Matches" hidden></ul>
-      <p className="search-empty" role="status"></p>
-      {/* Suggestion chips: small outline Buttons. Search.ts removes any that would find nothing. */}
-      <div className="search-chips" role="group" aria-label="Suggestions">
-        {(site.searchChips ?? []).map((chip) => (
-          <button key={chip} type="button" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'search-chip')}>
-            {chip}
-          </button>
-        ))}
-      </div>
-    </form>
-  );
-}
-
-function ProjectItem({ e, index }: { e: ProjectEntry; index: number }) {
-  const small = e.zone === 'lake';
-  const inProgress = isInProgress(e);
-  return (
-    <IndexItem
-      id={e.id}
-      index={index}
-      kind={objectKind(e)}
-      title={e.title}
-      lang={e.lang}
-      opens={hasDetail(e)}
-      year={inProgress ? undefined : e.year}
-      subtitle={e.subtitle ?? (inProgress ? e.summary : undefined)}
-      summary={!small && !inProgress ? e.summary : undefined}
-      tags={!small && !inProgress ? e.tags : undefined}
-      inProgress={inProgress}
-      small={small}
-    />
-  );
-}
-
-function ResearchItem({ e, index, opts }: { e: ResearchEntry; index: number; opts: RenderOptions }) {
-  const pdf = e.pdf && !opts.missing.has(e.pdf) ? e.pdf : undefined;
-  const inProgress = isInProgress(e);
-  const byline = [e.authors.join(', '), e.context].filter(Boolean).join(' · ');
-  return (
-    <IndexItem
-      id={e.id}
-      index={index}
-      kind={objectKind(e)}
-      title={e.title}
-      lang={e.lang}
-      year={e.year}
-      subtitle={byline}
-      summary={inProgress ? undefined : e.abstract}
-      inProgress={inProgress}
-      className="card--research"
-    >
-      {pdf && !inProgress && (
-        <p className="card-actions">
-          <a className={buttonVariants({ variant: 'outline' })} href={pdf} target="_blank" rel="noopener">
-            Read PDF<span className="visually-hidden">: {e.title}</span>
-          </a>
-          <a className={buttonVariants({ variant: 'ghost' })} href={pdf} download>
-            Download<span className="visually-hidden">: {e.title}</span>
-          </a>
-        </p>
-      )}
-    </IndexItem>
-  );
-}
-
-function Section(props: { id: string; heading: string; intro?: string; className?: string; count: number; children: ReactNode }) {
-  const { id, heading, intro, className, count, children } = props;
-  if (!count) return null;
+/** A section with a ring mark beside its heading. */
+function Section(props: { id: string; heading: string; intro?: ReactNode; className?: string; seed: number; children: ReactNode }) {
+  const { id, heading, intro, className, seed, children } = props;
   return (
     <section className={cn('section', className)} id={id} aria-labelledby={`${id}-h`}>
       <div className="section-head">
+        <Rings count={4} seed={seed} className="rings--mark" />
         <h2 className="section-title" id={`${id}-h`} tabIndex={-1}>
           {heading}
         </h2>
-        <span className="section-count" aria-hidden="true">
-          {String(count).padStart(2, '0')}
-        </span>
       </div>
       {intro && <p className="section-intro">{intro}</p>}
-      <IndexList>{children}</IndexList>
+      {children}
     </section>
   );
 }
 
-export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[]; opts: RenderOptions }) {
-  const { forest, research, lake } = split(all);
-  const skills = site.skills ?? [];
+function Hero({ site, now, sections, opts }: { site: Site; now?: Now; sections: SectionLink[]; opts: RenderOptions }) {
   const statements = site.statements ?? [];
-
+  const hasPortrait = !!site.portrait && !opts.missing.has(site.portrait.src);
+  const portrait = hasPortrait ? <Picture img={site.portrait} missing={opts.missing} sizes="(min-width: 80rem) 10rem, 5rem" className="portrait" eager /> : null;
   return (
-    <>
-      <section className="hero" aria-labelledby="hero-name">
+    <section className={cn('hero', hasPortrait && 'hero--portrait')} aria-labelledby="hero-name">
+      <div className="hero-text">
         <h1 className="hero-name" id="hero-name">
           {site.name}
         </h1>
-        <p className="hero-title">{site.title}</p>
+        <p className="hero-headline">{site.headline}</p>
         {statements.length > 0 && (
           <ol className="statements">
             {statements.map((s, i) => (
               <li key={i}>
                 <span className="statement-num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
+                  {i + 1}
                 </span>
                 <span>{s}</span>
               </li>
             ))}
           </ol>
         )}
-        <p className="hero-intro">{site.intro}</p>
-        <SectionNav sections={sectionsFor(site, all)} className="section-nav--hero" numbered label="On this page" />
-        <Search site={site} />
-        {forest.length > 0 && (
-          <p>
-            <a className="see-work" href="#work" data-fly={forest[0].id}>
-              See my work
-              <IconDown />
-            </a>
+        {now && (
+          <p className="now">
+            <strong className="now-label">Currently</strong>{' '}
+            <span>{now.text}</span>{' '}
+            <span className="now-date">
+              (<time dateTime={now.updated}>{formatMonth(now.updated)}</time>)
+            </span>
           </p>
         )}
-        <Treeline className="treeline--hero" />
-      </section>
-
-      <div id="projects" tabIndex={-1}>
-        <Section id="work" heading="Work" count={forest.length}>
-          {forest.map((e, i) => (
-            <ProjectItem key={e.id} e={e} index={i + 1} />
-          ))}
-        </Section>
-        <Section id="research" heading="Research" count={research.length}>
-          {research.map((e, i) => (
-            <ResearchItem key={e.id} e={e} index={i + 1} opts={opts} />
-          ))}
-        </Section>
-        <Section
-          id="built-with-ai"
-          heading={LAKE_HEADING}
-          intro="Own projects. I write the spec and the rules the coding agent (Claude Code) follows, guide it and check the result."
-          className="section--lake"
-          count={lake.length}
-        >
-          {lake.map((e, i) => (
-            <ProjectItem key={e.id} e={e} index={i + 1} />
-          ))}
-        </Section>
-      </div>
-
-      {site.about && (
-        <section className="section" id="about" aria-labelledby="about-h">
-          <h2 className="section-title" id="about-h" tabIndex={-1}>
-            About
-          </h2>
-          <p className="about">{site.about}</p>
-          {skills.length > 0 && (
-            <>
-              <h3 className="skills-title" id="skills-h">
-                Skills
-              </h3>
-              <ul className="skills" aria-labelledby="skills-h">
-                {skills.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </>
+        <p className="hero-actions">
+          <a className={buttonVariants({ size: 'lg' })} href={`mailto:${site.email}`}>
+            Email me
+          </a>
+          {opts.cv && (
+            <a className={buttonVariants({ variant: 'outline', size: 'lg' })} href={opts.cv} target="_blank" rel="noopener">
+              Open my CV (PDF)
+            </a>
           )}
-        </section>
-      )}
+          {sections[0]?.id === 'work' && (
+            <a className="see-work" href="#work" data-fly="work">
+              See the proof
+              <IconDown />
+            </a>
+          )}
+        </p>
+        <SectionNav sections={sections} className="section-nav--hero" label="On this page" />
+      </div>
+      <div className="hero-figure" aria-hidden={portrait ? undefined : 'true'}>
+        <Rings count={12} seed={5} className="rings--hero" />
+        {portrait}
+      </div>
+      <Treeline className="treeline--hero" />
+    </section>
+  );
+}
 
+function Work({ site, entries, opts }: { site: Site; entries: Entry[]; opts: RenderOptions }) {
+  if (!entries.length) return null;
+  return (
+    <Section id="work" heading="Work" seed={11} intro="Finished work, the strongest proof first. Open one to see the problem, what I did, the result and the proof.">
+      {site.softwareNote && <p className="software-note">{site.softwareNote}</p>}
+      <IndexList>
+        {entries.map((e) => (
+          <IndexItem
+            key={e.id}
+            id={e.id}
+            title={e.title}
+            lang={e.lang}
+            opens={hasDetail(e)}
+            when={e.when}
+            subtitle={e.subtitle}
+            summary={e.summary}
+            subjects={e.subjects}
+            proof={proofKinds(e)}
+            cover={e.media?.find((m) => m.cover)}
+            missing={opts.missing}
+          />
+        ))}
+      </IndexList>
+    </Section>
+  );
+}
+
+function Learning({ site, entries }: { site: Site; entries: Entry[] }) {
+  if (!entries.length) return null;
+  return (
+    <Section id="learning" heading="Learning now" seed={17} intro={site.learningNote} className="section--learning">
+      <ul className="learning-list">
+        {entries.map((e) => (
+          <li key={e.id} id={e.id} className="learning-item">
+            <p className="learning-title" lang={e.lang}>
+              {e.title}
+            </p>
+            {e.subtitle && <p className="learning-subtitle">{e.subtitle}</p>}
+          </li>
+        ))}
+      </ul>
+    </Section>
+  );
+}
+
+function About({ site }: { site: Site }) {
+  if (!site.about?.length && !site.offer?.length) return null;
+  return (
+    <Section id="about" heading="About" seed={23}>
+      <div className="about">
+        {site.about?.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+      {!!site.offer?.length && (
+        <>
+          <h3 className="sub-title" id="offer-h">
+            What I can do for you
+          </h3>
+          <ul className="offer" aria-labelledby="offer-h">
+            {site.offer.map((o) => (
+              <li key={o}>{o}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </Section>
+  );
+}
+
+function Background({ site }: { site: Site }) {
+  const { education = [], computing = [], skills = [] } = site;
+  if (!education.length && !computing.length && !skills.length) return null;
+  return (
+    <Section id="background" heading="Background" seed={29}>
+      {education.length > 0 && (
+        <>
+          <h3 className="sub-title">Education</h3>
+          <ul className="ledger">
+            {education.map((ed) => (
+              <li key={ed.title} className="ledger-row">
+                <span className="ledger-when">{ed.years}</span>
+                <span className="ledger-what">
+                  <strong>{ed.title}</strong>, {ed.place}
+                  {ed.note && <span className="ledger-note"> {ed.note}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {computing.length > 0 && (
+        <>
+          <h3 className="sub-title" id="computing-h">
+            Hands-on IT work
+          </h3>
+          <ul className="ruled" aria-labelledby="computing-h">
+            {computing.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      {skills.length > 0 && (
+        <>
+          <h3 className="sub-title">Skills</h3>
+          <dl className="skills">
+            {skills.map((g) => (
+              <div key={g.group}>
+                <dt>{g.group}</dt>
+                <dd>{g.items.join(' · ')}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      )}
+    </Section>
+  );
+}
+
+function Notes({ notes }: { notes: Note[] }) {
+  if (!notes.length) return null;
+  return (
+    <Section id="notes" heading="Notes" seed={37}>
+      <NoteList notes={notes.slice(0, NOTES_ON_HOME)} />
+      {notes.length > NOTES_ON_HOME && (
+        <p className="notes-all">
+          <a href="/notes/">All {notes.length} notes</a>
+        </p>
+      )}
+    </Section>
+  );
+}
+
+export function NoteList({ notes }: { notes: Note[] }) {
+  return (
+    <ul className="notes-list">
+      {notes.map((n) => (
+        <li key={n.slug}>
+          <p className="note-title">
+            <a href={`/notes/${n.slug}/`}>{n.title}</a>
+          </p>
+          <p className="note-date">
+            <time dateTime={n.date}>{formatDate(n.date)}</time>
+          </p>
+          {n.summary && <p className="note-summary">{n.summary}</p>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function Main({ site, entries, now, notes, opts }: { site: Site; entries: Entry[]; now?: Now; notes: Note[]; opts: RenderOptions }) {
+  const { done, learning } = split(entries);
+  const sections = sectionsFor(site, entries, notes);
+  return (
+    <>
+      <Hero site={site} now={now} sections={sections} opts={opts} />
+      <div id="projects" tabIndex={-1}>
+        <Work site={site} entries={done} opts={opts} />
+        <Learning site={site} entries={learning} />
+      </div>
+      <About site={site} />
+      <Background site={site} />
+      <Notes notes={notes} />
       <ContactBlock
         heading={site.contact?.heading ?? 'Get in touch'}
         text={site.contact?.text}
@@ -351,14 +366,32 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
   );
 }
 
-/** The panel body. The header (eyebrow, title, subtitle) is drawn by the Sheet from the template's data attributes. */
-function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
+function ProofLink({ link, primary }: { link: Link; primary?: boolean }) {
+  return (
+    <a
+      className={buttonVariants({ variant: primary ? 'default' : 'outline', size: primary ? 'lg' : 'default' })}
+      href={link.href}
+      {...linkProps(link.href)}
+    >
+      {link.label}
+      {isExternal(link.href) && (
+        <>
+          <IconExternal />
+          <span className="visually-hidden"> (opens in a new tab)</span>
+        </>
+      )}
+    </a>
+  );
+}
+
+/** The panel body: problem, what I did, result, proof. The header is drawn by the Sheet from the template's data attributes. */
+function PanelContent({ e, opts }: { e: Entry; opts: RenderOptions }) {
   const media = (e.media ?? []).filter((m) => !opts.missing.has(m.src));
-  const hasFacts = !!e.role || !!e.tools?.length;
+  const hasProof = !!(e.tryIt || e.links?.length || e.proofNote);
+  // No summary here: the card shows it, and the parts below say the same in more detail.
   return (
     <>
-      {e.summary && <p className="panel-summary">{e.summary}</p>}
-      {hasFacts && (
+      {(e.role || e.when) && (
         <dl className="facts">
           {e.role && (
             <div>
@@ -366,47 +399,58 @@ function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
               <dd>{e.role}</dd>
             </div>
           )}
-          {!!e.tools?.length && (
+          {e.when && (
             <div>
-              <dt>Tools</dt>
-              <dd>{e.tools.join(', ')}</dd>
+              <dt>When</dt>
+              <dd>{e.when}</dd>
             </div>
           )}
         </dl>
       )}
-      {e.body && <div className="prose" dangerouslySetInnerHTML={{ __html: marked.parse(e.body) as string }} />}
+      {e.problem && (
+        <section className="panel-part">
+          <h3>The problem</h3>
+          <div className="prose" dangerouslySetInnerHTML={{ __html: md(e.problem) }} />
+        </section>
+      )}
+      {e.did && (
+        <section className="panel-part">
+          <h3>What I did</h3>
+          <div className="prose" dangerouslySetInnerHTML={{ __html: md(e.did) }} />
+        </section>
+      )}
+      {e.result && (
+        <section className="panel-part">
+          <h3>Result</h3>
+          <div className="prose" dangerouslySetInnerHTML={{ __html: md(e.result) }} />
+        </section>
+      )}
       {media.map((m) => (
-        <figure className="media" key={m.src}>
-          <img src={m.src} alt={m.alt} loading="lazy" decoding="async" />
-        </figure>
+        <Picture key={m.src} img={m} missing={opts.missing} sizes="(min-width: 40rem) 34rem, 100vw" className="media" />
       ))}
-      {!!e.links?.length && (
-        <p className="panel-links">
-          <LinkList links={e.links} />
-        </p>
+      {hasProof && (
+        <section className="panel-part">
+          <h3>Proof</h3>
+          {(e.tryIt || !!e.links?.length) && (
+            <p className="proof-links">
+              {e.tryIt && <ProofLink link={e.tryIt} primary />}
+              {e.links?.map((l) => <ProofLink key={l.href} link={l} />)}
+            </p>
+          )}
+          {e.proofNote && <p className="proof-note">{e.proofNote}</p>}
+        </section>
       )}
-      {!!e.tags?.length && (
-        <p className="card-meta">
-          <Dotted items={e.tags} />
-        </p>
-      )}
+      <Subjects subjects={e.subjects} />
     </>
   );
 }
 
-/** One <template> per openable project, in page order; the ProjectPanel island clones it into the Sheet (and uses the order for prev / next). */
+/** One <template> per openable entry, in page order; the ProjectPanel island clones it into the Sheet (and uses the order for prev / next). */
 export function Templates({ entries, opts }: { entries: Entry[]; opts: RenderOptions }) {
-  return sortEntries(entries)
-    .filter((e): e is ProjectEntry => !isResearch(e) && hasDetail(e))
+  return split(entries)
+    .done.filter(hasDetail)
     .map((e) => (
-      <template
-        id={`detail-${e.id}`}
-        key={e.id}
-        data-title={e.title}
-        data-lang={e.lang}
-        data-subtitle={e.subtitle}
-        data-eyebrow={[e.year ? String(e.year) : '', e.zone === 'lake' ? LAKE_HEADING : ''].filter(Boolean).join(' · ') || undefined}
-      >
+      <template id={`detail-${e.id}`} key={e.id} data-title={e.title} data-lang={e.lang} data-subtitle={e.subtitle}>
         <PanelContent e={e} opts={opts} />
       </template>
     ));

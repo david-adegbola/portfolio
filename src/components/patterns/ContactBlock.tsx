@@ -2,13 +2,17 @@
 // two actions (Email primary, CV) and the other links.
 import type { Link } from '../../content/types.ts';
 import { buttonVariants } from '../ui/button.tsx';
+import { Rings } from './Rings.tsx';
 
 export function ContactBlock(p: { heading: string; text?: string; email: string; cv?: string; location?: string; links: Link[] }) {
   return (
     <section className="section contact" id="contact" aria-labelledby="contact-h">
-      <h2 className="section-title" id="contact-h" tabIndex={-1}>
-        {p.heading}
-      </h2>
+      <div className="section-head">
+        <Rings count={4} seed={41} className="rings--mark" />
+        <h2 className="section-title" id="contact-h" tabIndex={-1}>
+          {p.heading}
+        </h2>
+      </div>
       {p.text && <p className="contact-text">{p.text}</p>}
       <p className="contact-email">
         <a href={`mailto:${p.email}`}>{p.email}</a>

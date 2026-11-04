@@ -1,122 +1,119 @@
 [
   {
-    "id": "forest-ecology-field-work",
-    "zone": "forest",
-    "title": "Forest ecology field work",
-    "subtitle": "Tree mensuration and soil sampling on UEF field trips",
-    "tags": ["forestry", "forest measurement", "mensuration", "soil", "field work"],
-    "year": 2026,
-    "role": "Student, forest ecology course (UEF)",
-    "summary": "Field trips for the forest ecology course: measuring trees, and sampling and describing forest soil site by site.",
-    "body": "**Tree mensuration.** Measuring standing trees on field plots as part of the forest ecology course.\n\n**Soil sampling.** Each sample followed the same checklist:\n\n- On site: QR-coded sample, GPS coordinates, surroundings, soil structure, biodiversity, pollutants, organic matter, texture and pH.\n- Off site: microbial diversity and heavy metals, analysed from the samples.",
-    "sceneObject": "clearing"
-  },
-  {
     "id": "upm-kaukas",
-    "zone": "forest",
-    "title": "UPM Kaukas pulp mill",
-    "subtitle": "Fitter on the electrostatic precipitator rebuild project",
-    "tags": ["forest industry", "pulp", "safety"],
-    "year": 2025,
-    "role": "Fitter, Axioma Servisas UAB · Aug–Oct 2025 · Lappeenranta",
-    "summary": "Assembly work on the electrostatic precipitator rebuild project inside a forest-industry mill. Employer rating: excellent.",
-    "body": "- Used angle grinders and lifting equipment.\n- Followed the mill's strict safety rules, kept the work site clean, and tracked tools and materials.\n\nFrom my employer's certificate: *“A responsible and conscientious employee, eager to learn and to take responsibility.”*\n\nThis job is why I chose to study Sustainable Forest Bioeconomy.",
-    "sceneObject": "log"
-  },
-  {
-    "id": "mista-puu-tulee",
-    "zone": "forest",
-    "title": "Mistä puu tulee",
-    "lang": "fi",
-    "subtitle": "Where does a tree come from? A guided simulation for grades 4–6",
-    "tags": ["forestry", "education", "carbon", "simulation"],
-    "year": 2026,
-    "role": "Own project, built with AI coding agents (Claude Code): I wrote the spec and the rules, guided the agent and checked the result.",
-    "summary": "A browser simulation for Finnish pupils aged 10–12 that tackles a common misconception: a tree's mass comes mainly from carbon dioxide in the air, not from the soil.",
-    "body": "A six-step lesson of 30–45 minutes: predict, explore, weigh, explain, think about what happens next, then answer the opening question again.\n\n- CO₂ entering the leaves by day and leaving at night, stomata closing in drought, tree rings.\n- Sliders for light, water and CO₂; hints that explain a wrong answer instead of just marking it.\n- A teacher panel that counts before-and-after answers on the device, with no names stored.\n- Finnish and English, made for school Chromebooks and iPads.",
-    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/sufobe" }],
-    "sceneObject": "marker"
-  },
-  {
-    "id": "sufobe-uef",
-    "zone": "forest",
-    "title": "SuFoBE @ UEF",
-    "subtitle": "B.Sc Sustainable Forest Bioeconomy, University of Eastern Finland, Joensuu (2026–)",
-    "tags": ["forestry", "bioeconomy", "education"],
-    "year": 2026,
-    "sceneObject": "clearing"
-  },
-  {
-    "id": "forest-cover-change",
-    "zone": "forest",
-    "status": "in-progress",
-    "title": "Forest cover change from Sentinel-2",
-    "subtitle": "Planned: mapping forest cover change in North Karelia from Sentinel-2 imagery in QGIS",
-    "tags": ["GIS", "remote sensing", "Sentinel-2", "QGIS"],
-    "sceneObject": "marker"
-  },
-  {
-    "id": "stand-map",
-    "zone": "forest",
-    "status": "in-progress",
-    "title": "Stand map from open forest data",
-    "subtitle": "Planned: a forest stand map from Finnish Forest Centre open data, checked against field plots",
-    "tags": ["GIS", "forestry", "open data", "QGIS"],
-    "sceneObject": "marker"
-  },
-  {
-    "id": "forest-learning-game",
-    "zone": "forest",
-    "status": "in-progress",
-    "title": "Forest learning game",
-    "subtitle": "A forest management game for ages 8–16, growing trees with Finnish growth models; built with AI coding agents",
-    "tags": ["forestry", "education", "game", "simulation"],
-    "sceneObject": "marker"
-  },
-  {
-    "id": "hetkin",
-    "zone": "lake",
-    "title": "Hetkin",
-    "subtitle": "Run production when electricity is cheap",
-    "tags": ["startup", "energy", "user research"],
-    "year": 2026,
-    "role": "Founder in Residence, Vaasa Startup Factory · Jun–Aug 2026",
-    "summary": "Researched user needs through interviews and calls to companies, then built and pitched hetkin.app with a team.",
-    "links": [{ "label": "hetkin.app", "href": "https://hetkin.app" }],
-    "sceneObject": "log"
+    "title": "Fitter at the UPM Kaukas pulp mill",
+    "subjects": ["field"],
+    "when": "Aug–Oct 2025",
+    "subtitle": "Axioma Servisas UAB · Lappeenranta",
+    "summary": "Assembly work on the electrostatic precipitator rebuild project inside a forest-industry mill. My employer rated my work excellent.",
+    "role": "Fitter, Axioma Servisas UAB",
+    "problem": "An electrostatic precipitator rebuild project inside the UPM Kaukas pulp mill, under the mill's strict safety rules.",
+    "did": "- Used angle grinders and lifting equipment.\n- Followed the mill's safety rules, kept the work site clean, and tracked tools and materials.",
+    "result": "Employer rating: **excellent**. From the work certificate: *“A responsible and conscientious employee, eager to learn and to take responsibility.”*",
+    "proofNote": "Work certificate from Axioma Servisas UAB, available on request.",
+    "proofNoteShort": "work certificate (on request)"
   },
   {
     "id": "cv-pipeline",
-    "zone": "lake",
     "title": "CV pipeline",
-    "subtitle": "Role-specific CVs in Finnish and English, built and published on every push",
-    "tags": ["automation", "GitHub Actions", "AI agents"],
-    "year": 2026,
-    "role": "Own project, built with AI coding agents (Claude Code): I wrote the spec and the rules, guided the agent and checked the result.",
-    "summary": "One tailored CV per job role, compiled by GitHub Actions and published on GitHub Pages, with a rules file that keeps the agent accurate.",
-    "body": "The rules file holds the fixed facts, the claims that are banned, and the checks the agent runs before every task. The build fails if the published facts and the rules disagree.",
-    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/cv" }],
-    "sceneObject": "log"
+    "subjects": ["software"],
+    "when": "2026",
+    "subtitle": "Role-specific CVs in Finnish and English, rebuilt and published on every push",
+    "summary": "Seven role-specific CVs, compiled from LaTeX by GitHub Actions and published on GitHub Pages. A rules file keeps every CV to the same checked facts.",
+    "problem": "Each job needs a CV fitted to the role, in Finnish and English, and the facts have to stay the same in every one of them.",
+    "did": "- Wrote the rules file (CV-RULES.md): the fixed facts, the claims that are banned, and the checks run before every change.\n- Set up GitHub Actions to compile each CV to PDF and publish it on GitHub Pages.",
+    "result": "Seven role-specific CVs, rebuilt on every push. The build fails if the published facts and the rules file disagree.",
+    "links": [
+      { "label": "The forestry CV it publishes (PDF)", "href": "https://david-adegbola.github.io/cv/david-adegbola-forestry-master.pdf" },
+      { "label": "Code and rules file on GitHub", "href": "https://github.com/david-adegbola/cv" }
+    ]
+  },
+  {
+    "id": "temperature-logger",
+    "title": "Temperature logger on a Raspberry Pi",
+    "subjects": ["software"],
+    "when": "2025",
+    "subtitle": "C on Linux, reading a physical DS18B20 sensor",
+    "summary": "A C program that reads a real temperature sensor through Linux's 1-Wire interface every two seconds and logs each reading to a CSV file.",
+    "problem": "Read a physical temperature sensor from a C program and keep a timestamped log of it.",
+    "did": "- A DS18B20 one-wire temperature sensor connected to a Raspberry Pi running Linux.\n- The program finds the sensor under `/sys/bus/w1/devices`, checks each reading's CRC and converts it to °C and °F.\n- A sensor thread and a logger thread pass readings through a 100-entry ring buffer. On Ctrl+C or a stop signal, the logger writes what's left before the program exits.",
+    "result": "The repo holds a real log: 51 readings taken on 4–5 November 2025, between 31.1 and 32.4 °C.",
+    "links": [
+      { "label": "Code on GitHub", "href": "https://github.com/david-adegbola/temp-sensor" },
+      { "label": "The log file (CSV)", "href": "https://github.com/david-adegbola/temp-sensor/blob/main/temperature_log.csv" }
+    ]
+  },
+  {
+    "id": "mista-puu-tulee",
+    "title": "Mistä puu tulee",
+    "lang": "fi",
+    "subjects": ["software"],
+    "when": "2026",
+    "subtitle": "Where does a tree come from? A guided simulation for grades 4–6",
+    "summary": "A browser lesson for Finnish pupils aged 10–12 on a common misconception: a tree's mass comes mainly from carbon dioxide in the air, not from the soil.",
+    "problem": "Many pupils think a tree is built from soil. Most of its mass actually comes from carbon dioxide in the air.",
+    "did": "A six-step lesson of 30–45 minutes: predict, explore, weigh, explain, think about what happens next, then answer the opening question again.\n\n- CO₂ entering the leaves by day and leaving at night, stomata closing in drought, tree rings.\n- Sliders for light, water and CO₂; hints that explain a wrong answer instead of just marking it.\n- A teacher panel that counts before-and-after answers on the device, with no names stored.\n- Finnish and English, made for school Chromebooks and iPads.",
+    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/sufobe" }]
   },
   {
     "id": "job-aggregator",
-    "zone": "lake",
     "title": "Job scraper",
-    "subtitle": "Collects entry-level jobs in Finland every six hours and sends the best matches to Telegram",
-    "tags": ["automation", "Python", "SQLite", "AI agents"],
-    "year": 2026,
-    "role": "Own project, built with AI coding agents (Claude Code): I wrote the spec and the rules, guided the agent and checked the result.",
-    "summary": "Gathers listings from Finnish and remote job boards, scores each one for fit, skips the ones already seen and sends the strongest to a Telegram chat.",
-    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/job-aggregator" }],
-    "sceneObject": "log"
+    "subjects": ["software"],
+    "when": "2026",
+    "subtitle": "Entry-level IT jobs in Finland, scored and sent to Telegram",
+    "summary": "Collects entry-level IT jobs in Finland every six hours, gives each a relevance score, skips the ones already seen and sends the best matches to a Telegram chat.",
+    "problem": "Entry-level IT jobs in Finland are spread over many job boards.",
+    "did": "- Collects listings from Finnish and remote job boards every six hours.\n- Gives each a 0–100 relevance score (junior titles, internships, IT keywords, how recent it is, the city), never sends the same job twice (SQLite) and sends the best matches to a Telegram chat.",
+    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/job-aggregator" }]
+  },
+  {
+    "id": "hetkin",
+    "title": "Hetkin",
+    "subjects": ["research", "software"],
+    "when": "Jun–Aug 2026",
+    "subtitle": "Run production when electricity is cheap",
+    "summary": "As Founder in Residence at Vaasa Startup Factory, I researched what companies need through interviews and calls, then built and pitched hetkin.app with a team.",
+    "role": "Founder in Residence, Vaasa Startup Factory",
+    "problem": "Electricity in Finland is priced by the hour. Hetkin's idea: help companies run production in the cheap hours.",
+    "did": "- Interviewed users and called companies to find out what they need.\n- Built and pitched hetkin.app with a team.",
+    "links": [{ "label": "hetkin.app", "href": "https://hetkin.app" }]
+  },
+  {
+    "id": "forest-ecology-field-work",
+    "title": "Forest ecology field work",
+    "subjects": ["field", "research"],
+    "when": "2026",
+    "subtitle": "Tree measurement and soil sampling on UEF field trips",
+    "summary": "Field trips for the forest ecology course: measuring standing trees on plots, and sampling and describing forest soil site by site.",
+    "role": "Student, forest ecology course (UEF)",
+    "did": "**Tree measurement.** Measuring standing trees on field plots.\n\n**Soil sampling.** Each sample followed the same checklist:\n\n- On site: QR-coded sample, GPS coordinates, surroundings, soil structure, biodiversity, pollutants, organic matter, texture and pH.\n- Off site: microbial diversity and heavy metals, analysed from the samples."
+  },
+  {
+    "id": "forest-cover-change",
+    "status": "in-progress",
+    "title": "Forest cover change from Sentinel-2",
+    "subjects": ["research"],
+    "subtitle": "Planned: mapping forest cover change in North Karelia from Sentinel-2 imagery in QGIS"
+  },
+  {
+    "id": "stand-map",
+    "status": "in-progress",
+    "title": "Stand map from open forest data",
+    "subjects": ["field", "research"],
+    "subtitle": "Planned: a forest stand map from Finnish Forest Centre open data, checked against field plots"
+  },
+  {
+    "id": "forest-learning-game",
+    "status": "in-progress",
+    "title": "Forest learning game",
+    "subjects": ["software"],
+    "subtitle": "In progress: a forest management game for ages 8–16, growing trees with Finnish growth models"
   },
   {
     "id": "tree-science-explorer",
-    "zone": "lake",
     "status": "in-progress",
     "title": "Tree Science Explorer",
-    "subtitle": "An interactive 3D explorer of Finnish trees, boreal forests and peatlands",
-    "tags": ["forestry", "education", "3D", "AI agents"],
-    "sceneObject": "log"
+    "subjects": ["software"],
+    "subtitle": "In progress: an interactive 3D explorer of Finnish trees, boreal forests and peatlands"
   }
 ]

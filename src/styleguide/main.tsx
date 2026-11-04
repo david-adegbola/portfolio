@@ -1,6 +1,5 @@
 import '@fontsource-variable/inter-tight';
 import '@fontsource-variable/fraunces';
-import '@fontsource/ibm-plex-mono/latin-400.css';
 import '../globals.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

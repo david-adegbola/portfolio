@@ -12,20 +12,15 @@ export interface SectionLink {
  * Rendered twice: in the header (tablet and up) and in the hero (phones), never both visible, so
  * only one is in the accessibility tree at a time. Each gets its own label anyway.
  */
-export function SectionNav(p: { sections: SectionLink[]; className?: string; numbered?: boolean; label?: string }) {
-  const { sections, className, numbered = false, label = 'Sections' } = p;
+export function SectionNav(p: { sections: SectionLink[]; className?: string; label?: string }) {
+  const { sections, className, label = 'Sections' } = p;
   if (!sections.length) return null;
   return (
     <nav className={cn('section-nav', className)} aria-label={label}>
       <ul role="list">
-        {sections.map((s, i) => (
+        {sections.map((s) => (
           <li key={s.id}>
             <a href={`#${s.id}`} data-fly={s.id} data-section-link={s.id}>
-              {numbered && (
-                <span className="section-nav-num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-              )}
               {s.label}
             </a>
           </li>

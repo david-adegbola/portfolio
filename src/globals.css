@@ -2,7 +2,7 @@
    Structure from Primer (design-research/primer/foundations-ui.md): colour roles, a 4px spacing
    scale, radius small/medium/large/full, two elevation levels, 2px focus ring. Identity (brand
    overrides, DESIGN.md §7): warm paper and ink, spruce-green accent that passes AA as text, a
-   season colour for small forest details, Fraunces + Inter Tight + IBM Plex Mono.
+   season colour for small forest details, Fraunces + Inter Tight.
    Contrast (measured on --background and --card): every text token ≥ 5.4:1, season colours included. */
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -47,10 +47,9 @@
   --shadow-resting: 0 1px 0 rgb(29 33 31 / 0.04);
   --shadow-floating: 0 8px 24px rgb(29 33 31 / 0.08), 0 1px 2px rgb(29 33 31 / 0.06);
 
-  /* Type. Primer scale 12/14/16/20/32/40, plus 56 for the name (brand override). */
+  /* Type. Two typefaces: Fraunces and Inter Tight. Primer scale 12/14/16/20/32/40, plus 56 for the name. */
   --font-sans: 'Inter Tight Variable', 'Inter Tight', system-ui, sans-serif;
   --font-serif: 'Fraunces Variable', 'Fraunces', Georgia, serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --fs-12: 0.75rem;
   --fs-14: 0.875rem;
   --fs-16: 1rem;
@@ -137,7 +136,7 @@
 
 /* Register utilities for tokens Tailwind doesn't have (font-serif, shadow-resting/floating). The
    values here are placeholders in the theme layer; the unlayered :root tokens above win. Fonts and
-   radii (--font-sans, --font-mono, --radius-sm/md/lg) share Tailwind's names, so its utilities
+   radii (--font-sans, --radius-sm/md/lg) share Tailwind's names, so its utilities
    already read the tokens above. */
 @theme {
   --font-serif: Georgia, serif;
