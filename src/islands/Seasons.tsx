@@ -49,14 +49,13 @@ export function SeasonSwitcher() {
         type="single"
         value={season ?? ''}
         aria-label="Season in the forest"
-        className="rounded-md"
         onValueChange={(value) => {
           // A segmented control always keeps one choice: ignore attempts to unselect.
           if (value) chooseSeason(value as Season);
         }}
       >
         {SEASONS.map(([id, label]) => (
-          <ToggleGroupItem key={id} value={id} className="relative rounded-sm">
+          <ToggleGroupItem key={id} value={id} className="relative">
             {label}
             {today === id && (
               <span className="season-now">

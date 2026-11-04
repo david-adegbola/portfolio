@@ -78,7 +78,7 @@ function Theme({ theme }: { theme: 'light' | 'dark' }) {
           <Button>Email</Button>
           <Button variant="outline">CV</Button>
           <Button variant="ghost">Clear</Button>
-          <Button variant="link">See my work</Button>
+          <Button variant="link" size="inline">See my work</Button>
           <Button variant="ghost" size="icon" aria-label="Search">
             <IconSearch />
           </Button>
@@ -103,9 +103,9 @@ function Theme({ theme }: { theme: 'light' | 'dark' }) {
       </Block>
 
       <Block title="SEGMENTED CONTROL (ToggleGroup)" note="Arrow keys move between segments; one is always selected.">
-        <ToggleGroup type="single" value={season} onValueChange={(v) => v && setSeason(v)} aria-label={`Season (${theme})`} className="rounded-md">
+        <ToggleGroup type="single" value={season} onValueChange={(v) => v && setSeason(v)} aria-label={`Season (${theme})`}>
           {['Spring', 'Summer', 'Autumn', 'Winter'].map((s) => (
-            <ToggleGroupItem key={s} value={s.toLowerCase()} className="rounded-sm">
+            <ToggleGroupItem key={s} value={s.toLowerCase()}>
               {s}
             </ToggleGroupItem>
           ))}

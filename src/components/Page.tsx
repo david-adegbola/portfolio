@@ -110,11 +110,11 @@ export function Header({ site, entries, opts }: { site: Site; entries: Entry[]; 
         <SectionNav sections={sectionsFor(site, entries)} className="section-nav--header" />
         <nav className="header-actions" aria-label="Contact">
           {/* The page's main action is the one primary button (Primer: one primary per group). */}
-          <a className={buttonVariants()} href={`mailto:${site.email}`}>
+          <a className={buttonVariants({ size: 'sm' })} href={`mailto:${site.email}`}>
             Email
           </a>
           {opts.cv && (
-            <a className={buttonVariants({ variant: 'outline' })} href={opts.cv} target="_blank" rel="noopener">
+            <a className={buttonVariants({ variant: 'outline', size: 'sm' })} href={opts.cv} target="_blank" rel="noopener">
               CV
             </a>
           )}

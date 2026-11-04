@@ -10,14 +10,14 @@ function ToggleGroup({ className, ...props }: React.ComponentProps<typeof Toggle
   return (
     <ToggleGroupPrimitive.Root
       data-slot="toggle-group"
-      className={cn('flex w-full items-center gap-0.5 rounded-lg bg-muted p-0.5', className)}
+      className={cn('flex w-full items-center gap-0.5 rounded-md bg-muted p-0.5', className)}
       {...props}
     />
   );
 }
 
 function ToggleGroupItem({ className, size, ...props }: React.ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>) {
-  return <ToggleGroupPrimitive.Item data-slot="toggle-group-item" className={cn(toggleVariants({ size }), 'flex-1', className)} {...props} />;
+  return <ToggleGroupPrimitive.Item data-slot="toggle-group-item" className={cn(toggleVariants({ size }), 'flex-1 rounded-sm', className)} {...props} />;
 }
 
 export { ToggleGroup, ToggleGroupItem };

@@ -104,7 +104,7 @@ export function ProjectPanel() {
           {(prev || next) && (
             <nav className="panel-pager" aria-label="More projects">
               {prev ? (
-                <Button variant="outline" className="panel-pager-prev h-auto min-h-11 justify-start py-2.5 text-left whitespace-normal pointer-coarse:h-auto" onClick={() => go(prev)}>
+                <Button variant="outline" size="pager" className="panel-pager-prev justify-start text-left" onClick={() => go(prev)}>
                   <IconPrev />
                   <span>
                     <span className="panel-pager-label">Previous</span>
@@ -117,7 +117,7 @@ export function ProjectPanel() {
                 <span />
               )}
               {next && (
-                <Button variant="outline" className="panel-pager-next h-auto min-h-11 justify-end py-2.5 whitespace-normal pointer-coarse:h-auto" onClick={() => go(next)}>
+                <Button variant="outline" size="pager" className="panel-pager-next justify-end" onClick={() => go(next)}>
                   <span>
                     <span className="panel-pager-label">Next</span>
                     <span className="panel-pager-title" lang={next.dataset.lang || undefined}>

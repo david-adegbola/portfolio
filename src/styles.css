@@ -95,16 +95,29 @@ a:hover {
   -webkit-backdrop-filter: blur(10px);
 }
 .brand {
+  min-width: 0;
+  overflow: hidden;
   font-family: var(--font-serif);
   font-size: var(--fs-20);
   text-decoration: none;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 /* Header actions are shadcn Buttons (components/ui/button.tsx); only their layout is here. */
 .header-actions {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 0.375rem;
+}
+/* 375px phones: name + Email + CV + two 44px icon buttons must fit in one row. */
+@media (max-width: 40rem) {
+  .site-header {
+    gap: 0.5rem;
+  }
+  .header-actions {
+    gap: 0.25rem;
+  }
 }
 .header-search .search-icon {
   position: static;
@@ -654,6 +667,9 @@ html:not(.js) .theme-toggle {
 .card.is-active .card-glyph {
   color: var(--found);
   opacity: 1;
+  /* Not colour alone (audit U5): found objects also turn solid, a heavier line and a filled shape. */
+  stroke-width: 2;
+  fill: color-mix(in srgb, var(--found) 30%, transparent);
 }
 .card--in-progress .card-glyph {
   stroke-dasharray: 2 2.5;

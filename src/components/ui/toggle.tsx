@@ -7,7 +7,7 @@ import { cn } from '../../lib/utils.ts';
 
 const toggleVariants = cva(
   [
-    'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md font-sans text-sm font-medium whitespace-nowrap',
+    'inline-flex cursor-pointer items-center justify-center gap-2 font-sans text-sm font-medium whitespace-nowrap',
     'text-muted-foreground transition-[background-color,color,box-shadow] duration-150 ease-(--ease)',
     'hover:bg-(--state-hover) hover:text-foreground',
     'data-[state=on]:bg-(--state-selected) data-[state=on]:text-foreground data-[state=on]:shadow-resting data-[state=on]:ring-1 data-[state=on]:ring-border',
@@ -27,7 +27,7 @@ const toggleVariants = cva(
 );
 
 function Toggle({ className, variant, size, ...props }: React.ComponentProps<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>) {
-  return <TogglePrimitive.Root data-slot="toggle" className={cn(toggleVariants({ variant, size, className }))} {...props} />;
+  return <TogglePrimitive.Root data-slot="toggle" className={cn(toggleVariants({ variant, size }), 'rounded-md', className)} {...props} />;
 }
 
 export { Toggle, toggleVariants };

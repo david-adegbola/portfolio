@@ -23,7 +23,7 @@ export function ContactBlock(p: { heading: string; text?: string; email: string;
           </a>
         )}
         {p.links.map((l) => (
-          <a key={l.href} className={buttonVariants({ variant: 'link' })} href={l.href} target="_blank" rel="noopener">
+          <a key={l.href} className={buttonVariants({ variant: 'link', size: 'inline' })} href={l.href} target="_blank" rel="noopener">
             {l.label}
           </a>
         ))}

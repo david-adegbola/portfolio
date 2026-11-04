@@ -60,6 +60,7 @@ LEAD: Primer · CONSULT: Carbon · USERS: recruiters and hiring managers in Finn
 | X2 | Content update, 2026-11-04 | `hasDetail()`: a card opens a panel only when the panel adds something |
 | U1, U2, U6, U7 | Phase 1 | Radius, elevation and type tokens; text-safe spruce accent, gold only for "found" |
 | U3, U4, X5, X6 | Phase 2 | One shadcn Button (variants, 44px on touch); ToggleGroup with distinct hover / selected; season names no longer only in `title` |
+| U5 | Phase 4 | Found glyphs also turn solid (heavier line, filled shape), not only gold |
 | X3, X4, X7, X8 | Phase 3 | Section nav with current marker; numbered statements + 14vh window on phones; prev / next in the panel; numbered index with years (`design-research/primer/flows/`) |
 
 ## Top 10 fixes (impact ÷ effort)
