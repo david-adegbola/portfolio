@@ -54,7 +54,6 @@
     "summary": "A browser lesson for Finnish pupils aged 10–12 on a common misconception: a tree's mass comes mainly from carbon dioxide in the air, not from the soil.",
     "problem": "Many pupils think a tree is built from soil. Most of its mass actually comes from carbon dioxide in the air.",
     "did": "A six-step lesson of 30–45 minutes: predict, explore, weigh, explain, think about what happens next, then answer the opening question again.\n\n- CO₂ entering the leaves by day and leaving at night, stomata closing in drought, tree rings.\n- Sliders for light, water and CO₂; hints that explain a wrong answer instead of just marking it.\n- A teacher panel that counts before-and-after answers on the device, with no names stored.\n- Finnish and English, made for school Chromebooks and iPads.",
-    "tryIt": { "label": "Try it (opens as Kasva!)", "href": "https://david-adegbola.github.io/sufobe/" },
     "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/sufobe" }]
   },
   {
