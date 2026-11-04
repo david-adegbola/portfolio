@@ -11,7 +11,7 @@ function readJson(file: string): unknown {
   try {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (err) {
-    throw new Error(`Could not read ${path.basename(file)}: ${(err as Error).message}`);
+    throw new Error(`Could not read ${path.basename(file)}: ${(err as Error).message}`, { cause: err });
   }
 }
 

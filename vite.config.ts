@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 import { loadContent, missingFiles } from './src/content/load.ts';
-import { renderEntriesData, renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.ts';
+import { renderEntriesData, renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.tsx';
 
 const root = process.cwd();
 // Repo is david-adegbola/portfolio, so GitHub Pages serves the site at /portfolio/.
@@ -65,7 +67,8 @@ function inlineCss(): Plugin {
 
 export default defineConfig({
   base,
-  plugins: [content(), inlineCss()],
+  plugins: [react(), tailwindcss(), content(), inlineCss()],
+  resolve: { alias: { '@': path.join(root, 'src') } },
   // three.js is one ~190 KB gzipped chunk, loaded after the page is readable; budget is ~300 KB total.
   build: { chunkSizeWarningLimit: 800 },
 });

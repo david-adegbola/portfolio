@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y", "import"],
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    // The search is the WAI-ARIA APG combobox pattern: a <ul role="listbox"> of role="option" items.
+    "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
+    // Explicit ARIA roles are deliberate here: role="status" live regions must always be present
+    // (CLAUDE.md), and role="list" keeps list semantics in Safari when bullets are removed.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "jsx-a11y/no-redundant-roles": "off",
+    // CSS and font imports are side-effect imports by design.
+    "import/no-unassigned-import": "off"
+  },
+  "ignorePatterns": ["dist", "node_modules"]
+}

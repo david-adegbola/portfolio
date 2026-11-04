@@ -1,0 +1,6 @@
+/* Tailwind CSS v4 + shadcn/ui tokens.
+   Phase 0 (stack move): theme and utilities only. Preflight (Tailwind's reset) is left out until
+   Phase 1 so the page looks exactly as before; src/styles.css still carries the design. */
+@layer theme, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);

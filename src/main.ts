@@ -1,6 +1,7 @@
 import '@fontsource-variable/inter-tight';
 import '@fontsource/fraunces/latin-400.css';
 import '@fontsource/fraunces/latin-ext-400.css';
+import './globals.css';
 import './styles.css';
 import { readEntries } from './content/entries.ts';
 import { flyTo } from './nav.ts';
