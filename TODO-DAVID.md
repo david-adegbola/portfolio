@@ -28,15 +28,24 @@ What's still open after your answers on 2026-11-04. Nothing here is on the site 
   2. Reading a DS18B20 sensor on a Raspberry Pi 3
   3. Keeping an AI coding agent to the facts
 
-## Where the site and your CV disagree
+## The site and your CV
 
-I didn't change the CV repo. If these facts are true, add them to `CV-RULES.md` §7 so every CV agrees.
+Updated on 2026-11-04 in `david-adegbola/cv` (commits `5c4850d` and `5ff24c3`). These new facts are now in `CV-RULES.md` §7:
 
-- [ ] **Forest ecology field course** (tree measurement, soil sampling). On the site, but not in the forestry CV, which lists forest measurement only under *Want to learn*.
-- [ ] **Temperature logger** (VAMK course project, Raspberry Pi 3, C, Linux). Not in the CV or CV-RULES.
-- [ ] **Hands-on IT:**
-  - Cloudflare + Resend for hetkin.app, and the store TV for a fashion store in Kokkola. Neither is in CV-RULES.
-  - The servers, network cables and Active Directory work *are* in CV-RULES, but the forestry CV leaves them out.
-- [ ] **Woodesk.** CV-RULES lists "a job scraper and application tracker (Python, SQLite)". The site now calls it Woodesk, a forestry careers portal.
-- [ ] **Hetkin outcome** ("not continued"). On the site only.
+- the forest ecology field work;
+- the temperature logger;
+- Cloudflare and Resend for hetkin.app, and the Kokkola store TV;
+- Woodesk, which replaces the job scraper;
+- "Hetkin not continued".
+
+The CV changes:
+
+- forestry-master and trainee-master: new Field work row, and "forest measurement beyond the course" under Want to learn;
+- it-field-technician: the new IT rows and the logger;
+- trainee-master and it-field-technician: Woodesk.
+
+Small differences that remain, all on purpose:
+
+- The forestry CV leaves out the servers, network cables, Active Directory work and the temperature logger. Those are on the IT Field Technician CV, and on the site.
+- "Hetkin not continued" is on the site and in CV-RULES, but on no CV.
 - [ ] **Availability.** The forestry CV still says you can work full-time, start immediately and travel. The site no longer says it. That isn't a contradiction, but check the CV is still true.
