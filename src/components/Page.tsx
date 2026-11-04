@@ -4,7 +4,10 @@ import { Marked } from 'marked';
 import { Fragment, type ReactNode } from 'react';
 import { objectKind } from '../content/objects.ts';
 import { type Entry, type Link, type ProjectEntry, type ResearchEntry, type Site, isInProgress, isResearch } from '../content/types.ts';
+import { cn } from '../lib/utils.ts';
 import { Glyph, IconDown, IconMoon, IconNext, IconPrev, IconSearch, IconSun } from './icons.tsx';
+import { Badge } from './ui/badge.tsx';
+import { buttonVariants } from './ui/button.tsx';
 
 const marked = new Marked({ async: false });
 
@@ -82,18 +85,24 @@ export function Header({ site, opts }: { site: Site; opts: RenderOptions }) {
           {site.name}
         </a>
         <nav className="header-actions" aria-label="Contact">
-          <a className="header-link" href={`mailto:${site.email}`}>
+          {/* The page's main action is the one primary button (Primer: one primary per group). */}
+          <a className={buttonVariants()} href={`mailto:${site.email}`}>
             Email
           </a>
           {opts.cv && (
-            <a className="header-link" href={opts.cv} target="_blank" rel="noopener">
+            <a className={buttonVariants({ variant: 'outline' })} href={opts.cv} target="_blank" rel="noopener">
               CV
             </a>
           )}
-          <button className="header-search" type="button" aria-label="Search" aria-controls="search-input">
+          <button
+            className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'header-search')}
+            type="button"
+            aria-label="Search"
+            aria-controls="search-input"
+          >
             <IconSearch />
           </button>
-          <button className="theme-toggle" type="button" aria-pressed="false">
+          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'theme-toggle')} type="button" aria-pressed="false">
             <span className="visually-hidden">Dark mode</span>
             <IconMoon />
             <IconSun />
@@ -103,13 +112,13 @@ export function Header({ site, opts }: { site: Site; opts: RenderOptions }) {
       <div className="search-status" role="region" aria-label="Search results" hidden>
         <p className="search-summary"></p>
         <div className="search-status-actions">
-          <button className="search-step" type="button" data-step="-1" aria-label="Previous result">
+          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'search-step')} type="button" data-step="-1" aria-label="Previous result">
             <IconPrev />
           </button>
-          <button className="search-step" type="button" data-step="1" aria-label="Next result">
+          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'search-step')} type="button" data-step="1" aria-label="Next result">
             <IconNext />
           </button>
-          <button className="search-clear" type="button">
+          <button className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'search-clear')} type="button">
             Clear
           </button>
         </div>
@@ -121,7 +130,7 @@ export function Header({ site, opts }: { site: Site; opts: RenderOptions }) {
 /** The search form. Shown only when JavaScript runs (the `js` class, see index.html); the page works without it. */
 function Search({ site }: { site: Site }) {
   return (
-    <form className="search" role="search" data-chips={JSON.stringify(site.searchChips ?? [])}>
+    <form className="search" role="search">
       <label className="search-label" htmlFor="search-input">
         What are you looking for?
       </label>
@@ -143,7 +152,14 @@ function Search({ site }: { site: Site }) {
       </div>
       <ul className="search-results" id="search-results" role="listbox" aria-label="Matches" hidden></ul>
       <p className="search-empty" role="status"></p>
-      <div className="search-chips" role="group" aria-label="Suggestions"></div>
+      {/* Suggestion chips: small outline Buttons. Search.ts removes any that would find nothing. */}
+      <div className="search-chips" role="group" aria-label="Suggestions">
+        {(site.searchChips ?? []).map((chip) => (
+          <button key={chip} type="button" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'search-chip')}>
+            {chip}
+          </button>
+        ))}
+      </div>
     </form>
   );
 }
@@ -164,7 +180,7 @@ function ProjectCard({ e }: { e: ProjectEntry }) {
     return (
       <li className="card card--in-progress" id={e.id}>
         <Glyph kind={objectKind(e)} />
-        <p className="badge">In progress</p>
+        <p className="badge"><Badge variant="attention">In progress</Badge></p>
         <h3 className="card-title" lang={e.lang}>
           {e.title}
         </h3>
@@ -199,7 +215,7 @@ function ResearchCard({ e, opts }: { e: ResearchEntry; opts: RenderOptions }) {
     return (
       <li className="card card--in-progress" id={e.id}>
         <Glyph kind={objectKind(e)} />
-        <p className="badge">In progress</p>
+        <p className="badge"><Badge variant="attention">In progress</Badge></p>
         <h3 className="card-title" lang={e.lang}>
           {e.title}
         </h3>
@@ -220,10 +236,10 @@ function ResearchCard({ e, opts }: { e: ResearchEntry; opts: RenderOptions }) {
       <p className="card-summary">{e.abstract}</p>
       {pdf && (
         <p className="card-actions">
-          <a className="button" href={pdf} target="_blank" rel="noopener">
+          <a className={buttonVariants({ variant: 'outline' })} href={pdf} target="_blank" rel="noopener">
             Read PDF<span className="visually-hidden">: {e.title}</span>
           </a>
-          <a className="button button--quiet" href={pdf} download>
+          <a className={buttonVariants({ variant: 'ghost' })} href={pdf} download>
             Download<span className="visually-hidden">: {e.title}</span>
           </a>
         </p>
@@ -332,19 +348,12 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
   );
 }
 
+/** The panel body. The header (eyebrow, title, subtitle) is drawn by the Sheet from the template's data attributes. */
 function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
-  const eyebrow = [e.year ? String(e.year) : '', e.zone === 'lake' ? LAKE_HEADING : ''].filter(Boolean).join(' · ');
   const media = (e.media ?? []).filter((m) => !opts.missing.has(m.src));
   const hasFacts = !!e.role || !!e.tools?.length;
   return (
     <>
-      <header className="panel-header">
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h2 className="panel-title" id="panel-title" lang={e.lang}>
-          {e.title}
-        </h2>
-        {e.subtitle && <p className="panel-subtitle">{e.subtitle}</p>}
-      </header>
       {e.summary && <p className="panel-summary">{e.summary}</p>}
       {hasFacts && (
         <dl className="facts">
@@ -382,47 +391,30 @@ function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
   );
 }
 
-/** One <template> per openable project; ProjectPanel clones it into the dialog. */
+/** One <template> per openable project; the ProjectPanel island clones it into the Sheet. */
 export function Templates({ entries, opts }: { entries: Entry[]; opts: RenderOptions }) {
   return entries
     .filter((e): e is ProjectEntry => !isResearch(e) && hasDetail(e))
     .map((e) => (
-      <template id={`detail-${e.id}`} key={e.id}>
+      <template
+        id={`detail-${e.id}`}
+        key={e.id}
+        data-title={e.title}
+        data-lang={e.lang}
+        data-subtitle={e.subtitle}
+        data-eyebrow={[e.year ? String(e.year) : '', e.zone === 'lake' ? LAKE_HEADING : ''].filter(Boolean).join(' · ') || undefined}
+      >
         <PanelContent e={e} opts={opts} />
       </template>
     ));
 }
 
-const SEASONS = [
-  ['spring', 'Spring', 'Kevät'],
-  ['summer', 'Summer', 'Kesä'],
-  ['autumn', 'Autumn', 'Syksy'],
-  ['winter', 'Winter', 'Talvi'],
-] as const;
-
 export function Footer({ site, year }: { site: Site; year: number }) {
-  // The season switcher and the search announcer sit last, after the content they relate to.
   return (
-    <>
-      <footer className="site-footer">
-        <p>
-          © {year} {site.name}
-        </p>
-      </footer>
-      <div className="seasons" role="group" aria-label="Season in the forest">
-        <p className="season-caption" id="season-caption" role="status"></p>
-        <div className="season-buttons">
-          {SEASONS.map(([id, en, fi]) => (
-            <button key={id} className="season" type="button" data-season={id} aria-pressed="false" title={fi}>
-              {en}
-              <span className="season-now" hidden>
-                <span className="visually-hidden">, now in Finland</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-      <p className="visually-hidden" role="status" id="search-announce"></p>
-    </>
+    <footer className="site-footer">
+      <p>
+        © {year} {site.name}
+      </p>
+    </footer>
   );
 }

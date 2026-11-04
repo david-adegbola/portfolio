@@ -186,22 +186,18 @@ export function initSearch(): void {
     showStatus();
   };
 
-  // Chips: only those that currently find something, so the site never offers a dead end.
-  const chips = JSON.parse(form.dataset.chips || '[]') as string[];
-  const availableChips = chips.filter((c) => search(c).length > 0);
-  chipsBox.replaceChildren(
-    ...availableChips.map((c) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'search-chip';
-      b.textContent = c;
-      b.addEventListener('click', () => {
-        input.value = c;
-        commit(c, search(c), 0);
-      });
-      return b;
-    }),
-  );
+  // Chips are pre-rendered (components/Page.tsx). Only those that find something stay, so the
+  // site never offers a dead end.
+  const availableChips: string[] = [];
+  chipsBox.querySelectorAll<HTMLButtonElement>('.search-chip').forEach((b) => {
+    const c = b.textContent ?? '';
+    if (!search(c).length) return b.remove();
+    availableChips.push(c);
+    b.addEventListener('click', () => {
+      input.value = c;
+      commit(c, search(c), 0);
+    });
+  });
   chipsBox.hidden = availableChips.length === 0;
 
   input.addEventListener('input', renderList);
@@ -244,7 +240,7 @@ export function initSearch(): void {
   // trigger those by accident, WCAG 2.1.4. The header search button is the way back to search.)
   document.addEventListener('keydown', (e) => {
     const typing = e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]');
-    const panelOpen = document.querySelector<HTMLDialogElement>('dialog.panel')?.open;
+    const panelOpen = !!document.querySelector('[data-slot="sheet-content"]');
     if (typing || panelOpen) return;
     if (e.key === 'Escape' && committed) clear();
   });

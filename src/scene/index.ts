@@ -155,7 +155,7 @@ export async function bootScene(entries: ClientEntry[]): Promise<boolean> {
     document.addEventListener('panel:open', () => lenis!.stop());
     document.addEventListener('panel:close', () => lenis!.start());
     // A deep link (#p/<id>) may have opened the panel before the scene loaded.
-    if (document.querySelector<HTMLDialogElement>('dialog.panel')?.open) lenis.stop();
+    if (document.querySelector('[data-slot="sheet-content"]')) lenis.stop();
   }
 
   // Scroll positions at which each stop's element sits mid-screen. Recomputed on every refresh

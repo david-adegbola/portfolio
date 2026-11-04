@@ -71,5 +71,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss(), content(), inlineCss()],
   resolve: { alias: { '@': path.join(root, 'src') } },
   // three.js is one ~190 KB gzipped chunk, loaded after the page is readable; budget is ~300 KB total.
-  build: { chunkSizeWarningLimit: 800 },
+  build: {
+    chunkSizeWarningLimit: 800,
+    // The styleguide (DESIGN.md §3.6) is a second page at /portfolio/styleguide/, noindex and unlinked.
+    rollupOptions: { input: { main: path.join(root, 'index.html'), styleguide: path.join(root, 'styleguide/index.html') } },
+  },
 });

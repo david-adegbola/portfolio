@@ -4,9 +4,12 @@
    overrides, DESIGN.md §7): warm paper and ink, spruce-green accent that passes AA as text, birch
    gold kept for the "found" state only, Fraunces + Inter Tight + IBM Plex Mono.
    Contrast (measured, worst case = text over the 95% veil on black/white): every text token ≥ 5.6:1. */
-@layer theme, base, utilities;
+@layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
+/* Page component styles sit between the reset and the utilities, so a utility class on a shadcn
+   component always wins over an older element rule (e.g. `a { color: inherit }`). */
+@import './styles.css' layer(components);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 /* Dark mode follows data-theme (manual choice) or, without one, the system setting. The scene
@@ -22,7 +25,8 @@
   }
 }
 
-:root {
+:root,
+[data-theme='light'] {
   /* Colour roles (shadcn names; Primer role in brackets). */
   --background: #f3f1ea; /* page, paper [bgColor-default] */
   --foreground: #1d211f; /* ink [fgColor-default] 14.4:1 */
@@ -92,8 +96,13 @@
 
   color-scheme: light;
 }
+@media (max-width: 40rem) {
+  :root {
+    --header-h: 3.5rem;
+  }
+}
 
-:root[data-theme='dark'] {
+[data-theme='dark'] {
   --background: #141716;
   --foreground: #e8e6df;
   --card: #1b1f1d;

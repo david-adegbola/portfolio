@@ -53,6 +53,14 @@ LEAD: Primer · CONSULT: Carbon · USERS: recruiters and hiring managers in Finn
 
 **Nielsen's 10, whole site.** Strong on 1 (visibility: found state, status bar), 4 (consistency), 5 (error prevention: dead chips hidden), 9 (empty-state wording). Weak on 3 (user control: no section nav), 6 (recognition over recall: sections only discoverable by scrolling), 2 (panel expectations, X2).
 
+## Resolved
+
+| ID | When | How |
+|---|---|---|
+| X2 | Content update, 2026-11-04 | `hasDetail()`: a card opens a panel only when the panel adds something |
+| U1, U2, U6, U7 | Phase 1 | Radius, elevation and type tokens; text-safe spruce accent, gold only for "found" |
+| U3, U4, X5, X6 | Phase 2 | One shadcn Button (variants, 44px on touch); ToggleGroup with distinct hover / selected; season names no longer only in `title` |
+
 ## Top 10 fixes (impact ÷ effort)
 
 1. X2 Openable only when there's more to read · 2. X3 Section nav · 3. X4 Mobile hero · 4. U4 One Button component · 5. U3 State tokens · 6. X5 44px targets · 7. U7 Text-safe accent · 8. U1/U2 Radius + elevation tokens · 9. U5 Non-colour found cue · 10. X7 Prev/next in panel. X1 needs content from David.

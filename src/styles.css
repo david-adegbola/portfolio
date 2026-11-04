@@ -100,65 +100,15 @@ a:hover {
   text-decoration: none;
   white-space: nowrap;
 }
+/* Header actions are shadcn Buttons (components/ui/button.tsx); only their layout is here. */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-}
-.header-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.25rem;
-  padding: 0.35rem 0.95rem;
-  font-size: var(--fs-14);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-  /* Email and CV are the page's two actions: pills, like the other controls. */
-  border: 1px solid color-mix(in srgb, var(--foreground) 28%, transparent);
-  border-radius: var(--radius-full);
-  transition: background-color 0.15s var(--ease);
-}
-.header-link + .header-link {
-  margin-left: 0.25rem;
-}
-.header-link:hover {
-  background: var(--border);
-}
-.header-search {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  color: inherit;
-  background: none;
-  border: 0;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-}
-.header-search:hover {
-  background: var(--border);
+  gap: 0.375rem;
 }
 .header-search .search-icon {
   position: static;
   color: inherit;
-}
-.theme-toggle {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-left: 0.25rem;
-  padding: 0;
-  color: inherit;
-  background: none;
-  border: 0;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-}
-.theme-toggle:hover {
-  background: var(--border);
 }
 .theme-toggle[aria-pressed='true'] .icon-moon,
 .theme-toggle[aria-pressed='false'] .icon-sun {
@@ -303,28 +253,17 @@ html:not(.js) .theme-toggle {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
-  /* Chips are added by JS after first paint; reserve their row so nothing below shifts. */
-  min-height: 2.25rem;
+  /* Chips (small outline Buttons) are added by JS after first paint; reserve their row so nothing
+     below shifts. */
+  min-height: var(--control-md);
+}
+@media (pointer: coarse) {
+  .search-chips {
+    min-height: var(--control-touch);
+  }
 }
 .search-chips[hidden] {
   display: none;
-}
-.search-chip {
-  min-height: 2.25rem;
-  padding: 0.35rem 0.9rem;
-  font: 500 var(--fs-14) var(--font-sans);
-  color: var(--foreground);
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition:
-    border-color 0.2s var(--ease),
-    background-color 0.2s var(--ease);
-}
-.search-chip:hover {
-  border-color: color-mix(in srgb, var(--foreground) 35%, transparent);
-  background: color-mix(in srgb, var(--card) 70%, transparent);
 }
 
 /* A plain path to the work, beside the search. */
@@ -373,29 +312,13 @@ html:not(.js) .theme-toggle {
   align-items: center;
   gap: 0.15rem;
 }
-.search-step,
-.search-clear {
-  display: grid;
-  place-items: center;
-  min-width: 2.25rem;
-  height: 2.25rem;
-  padding: 0 0.6rem;
-  font: 500 var(--fs-14) var(--font-sans);
-  color: inherit;
-  background: none;
-  border: 0;
+/* Prev / next / clear are ghost Buttons; the bar is a pill, so they are round too. */
+.search-status .search-step,
+.search-status .search-clear {
   border-radius: var(--radius-full);
-  cursor: pointer;
-}
-.search-step {
-  padding: 0;
 }
 .search-step[hidden] {
   display: none;
-}
-.search-step:hover,
-.search-clear:hover {
-  background: var(--border);
 }
 @media (min-width: 64rem) {
   .search-status {
@@ -436,56 +359,27 @@ html:not(.js) .theme-toggle {
   font-weight: 600;
   color: var(--foreground);
 }
-.season-buttons {
-  display: flex;
-  gap: 0.15rem;
-}
-.season {
-  position: relative;
-  flex: 1;
-  min-height: 2.25rem;
-  padding: 0.35rem 0.6rem;
-  font: 500 var(--fs-14) var(--font-sans);
-  color: var(--muted-foreground);
-  background: none;
-  border: 0;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition:
-    background-color 0.2s var(--ease),
-    color 0.2s var(--ease);
-}
-.season:hover {
-  color: var(--foreground);
-}
-.season[aria-pressed='true'] {
-  color: var(--foreground);
-  background: var(--border);
-}
-/* Today's season in Finland. */
-.season-now:not([hidden]) {
+/* The segments are a shadcn ToggleGroup (islands/Seasons.tsx). Today's season in Finland gets a dot. */
+.season-now {
   position: absolute;
-  top: 0.35rem;
-  right: 0.4rem;
+  top: 0.3rem;
+  right: 0.35rem;
   width: 0.3rem;
   height: 0.3rem;
   border-radius: 50%;
-  background: var(--muted-foreground);
+  background: currentColor;
 }
 @media (max-width: 40rem) {
   /* Room under the footer for the fixed season switcher, so nothing ends up behind it. */
   .has-scene .site-footer {
-    padding-bottom: 5rem;
+    padding-bottom: 5.5rem;
   }
   .seasons {
     left: 50%;
     right: auto;
     bottom: 0.75rem;
+    width: calc(100% - 2 * var(--gutter));
     translate: -50% 0;
-    border-radius: var(--radius-full);
-  }
-  .season {
-    border-radius: var(--radius-full);
   }
   .season-caption {
     position: absolute;
@@ -495,9 +389,6 @@ html:not(.js) .theme-toggle {
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
-  }
-  .season {
-    padding-inline: 0.7rem;
   }
 }
 
@@ -657,38 +548,16 @@ html:not(.js) .theme-toggle {
 .card--in-progress {
   color: var(--muted-foreground);
 }
+/* Holds the "In progress" Badge (components/ui/badge.tsx). */
 .badge {
-  margin-bottom: 0.25rem;
-  font-size: var(--fs-14);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
 .card-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-top: 1rem;
-}
-.button {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0.5rem 1.1rem;
-  font-size: var(--fs-14);
-  font-weight: 500;
-  color: var(--foreground);
-  text-decoration: none;
-  border: 1px solid var(--foreground);
-  border-radius: var(--radius-full);
-  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
-}
-.button:hover {
-  background: var(--foreground);
-  color: var(--background);
-}
-.button--quiet {
-  border-color: var(--border);
 }
 
 /* Contact: the clearing at the end. */
@@ -798,32 +667,28 @@ body::before {
   }
 }
 
-/* Detail panel: a side sheet on wide screens, full screen on phones. */
-.panel {
-  position: fixed;
-  inset: 0 0 0 auto;
-  width: min(36rem, 100%);
-  max-width: 100%;
-  height: 100%;
-  max-height: 100%;
-  margin: 0;
-  padding: 0;
-  color: var(--foreground);
-  background: var(--card);
-  border: 0;
-  border-left: 1px solid var(--border);
-}
-.panel::backdrop {
-  background: var(--overlay);
-}
-.panel[open] {
+/* Detail panel: a shadcn Sheet (components/ui/sheet.tsx, islands/ProjectPanel.tsx). Side sheet on
+   wide screens, full screen on phones. Motion here, so reduced motion applies in one place. */
+[data-slot='sheet-content'][data-state='open'] {
   animation: panel-in 0.45s var(--ease);
 }
-.panel[open]::backdrop {
+[data-slot='sheet-content'][data-state='closed'] {
+  animation: panel-out 0.3s var(--ease) forwards;
+}
+[data-slot='sheet-overlay'][data-state='open'] {
   animation: fade-in 0.45s var(--ease);
+}
+[data-slot='sheet-overlay'][data-state='closed'] {
+  animation: fade-out 0.3s var(--ease) forwards;
 }
 @keyframes panel-in {
   from {
+    opacity: 0;
+    translate: 2rem 0;
+  }
+}
+@keyframes panel-out {
+  to {
     opacity: 0;
     translate: 2rem 0;
   }
@@ -833,38 +698,20 @@ body::before {
     opacity: 0;
   }
 }
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
 .panel-inner {
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 1.5rem var(--gutter) 4rem;
-}
-.panel-close {
-  position: sticky;
-  top: 0;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin: 0 -0.5rem 0 auto;
-  padding: 0;
-  color: inherit;
-  background: var(--card);
-  border: 0;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-}
-.panel-close:hover {
-  background: var(--border);
-}
-.panel-header {
-  margin-top: 1rem;
+  /* Top padding clears the close button. */
+  padding: 4.5rem var(--gutter) 4rem;
 }
 .eyebrow {
   margin-bottom: 0.5rem;
-  font-size: var(--fs-14);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--muted-foreground);
 }
 .panel-title {
@@ -925,36 +772,13 @@ body::before {
   gap: 0.5rem 1.5rem;
   margin-top: 2rem;
 }
-.panel .card-meta {
+.panel-inner .card-meta {
   margin-top: 2rem;
 }
 
 @media (max-width: 40rem) {
-  :root {
-    --header-h: 3.5rem;
-  }
   .brand {
     font-size: var(--fs-16);
-  }
-  .header-link {
-    padding-inline: 0.6rem;
-  }
-  .panel {
-    border-left: 0;
-  }
-}
-
-/* Press feedback. */
-@media (prefers-reduced-motion: no-preference) {
-  .button:active,
-  .search-chip:active,
-  .season:active,
-  .header-search:active,
-  .theme-toggle:active,
-  .search-step:active,
-  .search-clear:active,
-  .panel-close:active {
-    scale: 0.96;
   }
 }
 
@@ -970,7 +794,6 @@ body::before {
 /* Metadata in mono, like a field log: years, tags, eyebrows, badges. */
 .card-meta,
 .eyebrow,
-.badge,
 .search-option-meta {
   font-family: var(--font-mono);
   font-size: var(--fs-12);

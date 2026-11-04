@@ -19,6 +19,8 @@ Branch `redesign`. One phase per commit; build (and, once set up, lint + tests) 
 - Patterns in `src/components/patterns/`: `SectionNav`, `IndexList` + `IndexItem` (numbered entry, optional thumbnail), `SearchBox`, `SearchStatus`, `SeasonSwitcher`, `ContactBlock`.
 - `/styleguide/` page (noindex, not linked) showing every component in every state, light and dark (DESIGN §3.6).
 
+*Done 2026-11-04, with two changes:* the pattern components (`SectionNav`, `IndexList`/`IndexItem`, `ContactBlock`) move to Phase 3, where each is built with the flow that uses it, so nothing is built twice. The search keeps its own APG combobox (restyled), as planned. Islands load lazily to keep React off the critical path: page JS 13.3 KB gz, islands 96 KB gz on demand, scene 198 KB gz; ~308 KB once everything has loaded (brief budget ~300).
+
 ## Phase 3 – Flows (highest audit severity first)
 1. Browse work → open detail (X2, X7, X8)
 2. Section navigation (X3)
