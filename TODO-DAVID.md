@@ -8,7 +8,7 @@ What's still open after your answers on 2026-11-04. Nothing here is on the site 
 - Availability (full-time, start immediately, travel): **left out** of the site.
 - Temperature logger: a **VAMK course project, built with help from an AI coding agent**, on a **Raspberry Pi 3**.
 - "Currently" line: kept as it is.
-- Mistä puu tulee: not used with a class yet, so no Result section. "Kasva!" (at `david-adegbola.github.io/sufobe/`) is a different app, so there's no Try it link.
+- Mistä puu tulee: removed from the site (2026-11-04).
 - Woodesk: nothing public, so it stays as it is.
 - Hetkin: Result says *"Pitched at the end of the residency; not continued."* Cloudflare and Resend are now described as being for hetkin.app.
 - The store TV line now says it was for a fashion store in Kokkola.
@@ -18,13 +18,10 @@ What's still open after your answers on 2026-11-04. Nothing here is on the site 
 
 ## Still open
 
-- [ ] **Deploy Mistä puu tulee.** It has no live version. `/sufobe/` on GitHub Pages serves Kasva!, a different app, so Mistä puu tulee needs its own address (e.g. a separate Pages site or path). Send me the URL and I'll add a **Try it** button above the code link.
-- [ ] **Later, Mistä puu tulee result.** After its first class, anything you can state (how many pupils, before/after answers from the teacher panel) becomes its Result.
 - [ ] **Later, Woodesk.** Screenshots or a result you can state (members, jobs found) would turn it from a description into proof.
 - [ ] **Photos, when you have them.** None are on the site, and nothing breaks without them:
   - a portrait (square, 800×800 or more, for the hero rings);
   - tree measuring and soil sampling on the field course;
-  - Kasva! / Mistä puu tulee screenshots;
   - the mill site, only if Axioma / UPM allow it.
 - [ ] **Notes.** The section is built and hidden until your first note. To add one, create `content/notes/<name>.md` (see `content/notes/README.md`). Three titles from your real work:
   1. What one soil sample has to record
