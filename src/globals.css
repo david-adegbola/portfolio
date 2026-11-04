@@ -1,6 +1,174 @@
-/* Tailwind CSS v4 + shadcn/ui tokens.
-   Phase 0 (stack move): theme and utilities only. Preflight (Tailwind's reset) is left out until
-   Phase 1 so the page looks exactly as before; src/styles.css still carries the design. */
-@layer theme, utilities;
+/* Design tokens: "Field notebook" (Phase 1, 2026-11-04).
+   Structure from Primer (design-research/primer/foundations-ui.md): colour roles, a 4px spacing
+   scale, radius small/medium/large/full, two elevation levels, 2px focus ring. Identity (brand
+   overrides, DESIGN.md §7): warm paper and ink, spruce-green accent that passes AA as text, birch
+   gold kept for the "found" state only, Fraunces + Inter Tight + IBM Plex Mono.
+   Contrast (measured, worst case = text over the 95% veil on black/white): every text token ≥ 5.6:1. */
+@layer theme, base, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Dark mode follows data-theme (manual choice) or, without one, the system setting. The scene
+   watches the same attribute, so it's kept instead of shadcn's `.dark` class. */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
+      @slot;
+    }
+  }
+}
+
+:root {
+  /* Colour roles (shadcn names; Primer role in brackets). */
+  --background: #f3f1ea; /* page, paper [bgColor-default] */
+  --foreground: #1d211f; /* ink [fgColor-default] 14.4:1 */
+  --card: #faf9f5; /* raised surfaces: panel, menus [bgColor-muted] */
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --muted: #e9e6dc; /* subtle fill: hover, tracks */
+  --muted-foreground: #50564f; /* secondary text [fgColor-muted] 6.7:1 */
+  --primary: #2e5e47; /* spruce: links, current, primary action [accent] 6.6:1 */
+  --primary-foreground: #f6f4ee;
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --accent: #e2ded1; /* shadcn "accent" = pressed/selected fill, not the brand accent */
+  --accent-foreground: var(--foreground);
+  --attention: #7a4f0e; /* in progress [attention] 6.3:1 */
+  --found: #c9a46a; /* birch gold: found state, decoration only (2.1:1, never text) */
+  --glyph: #8a9095; /* unfound object glyphs, decoration only */
+  --border: rgb(29 33 31 / 0.14); /* dividers [borderColor-muted] */
+  --input: rgb(29 33 31 / 0.22); /* control borders [borderColor-default] */
+  --ring: var(--foreground); /* focus [focus-outlineColor] */
+  --overlay: rgb(20 23 22 / 0.28); /* dialog backdrop */
+
+  /* Interaction states (Primer: rest → hover → active step along the neutral scale). */
+  --state-hover: rgb(29 33 31 / 0.06);
+  --state-active: rgb(29 33 31 / 0.1);
+  --state-selected: var(--card);
+
+  /* Elevation: resting (flat controls on the page) and floating (menus, bars, sheets). */
+  --shadow-resting: 0 1px 0 rgb(29 33 31 / 0.04);
+  --shadow-floating: 0 8px 24px rgb(29 33 31 / 0.08), 0 1px 2px rgb(29 33 31 / 0.06);
+
+  /* Type. Primer scale 12/14/16/20/32/40, plus 56 for the name (brand override). */
+  --font-sans: 'Inter Tight Variable', 'Inter Tight', system-ui, sans-serif;
+  --font-serif: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-32: 2rem;
+  --fs-40: 2.5rem;
+  --fs-56: 3.5rem;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Shape (Primer borderRadius). */
+  --radius-sm: 0.1875rem; /* 3px: chips' focus, small marks */
+  --radius-md: 0.375rem; /* 6px: inputs, menus, buttons in groups */
+  --radius-lg: 0.75rem; /* 12px: panels, bars */
+  --radius-full: 9999px; /* pills */
+  --radius: var(--radius-md); /* shadcn default */
+
+  /* Size. Controls: Primer medium 32 / large 40; touch 44 (DESIGN.md §6.5). */
+  --control-md: 2rem;
+  --control-lg: 2.5rem;
+  --control-touch: 2.75rem;
+  --focus-width: 2px;
+  --focus-offset: 2px;
+
+  /* Layout. */
+  --measure: 62ch;
+  --gutter: clamp(1rem, 5vw, 4rem);
+  --header-h: 4rem;
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --background: #141716;
+  --foreground: #e8e6df;
+  --card: #1b1f1d;
+  --muted: #232826;
+  --muted-foreground: #a0a69f;
+  --primary: #8cc5a6;
+  --primary-foreground: #102119;
+  --accent: #2b312e;
+  --attention: #e0ae55;
+  --glyph: #8a9095;
+  --border: rgb(232 230 223 / 0.14);
+  --input: rgb(232 230 223 / 0.24);
+  --ring: var(--found);
+  --overlay: rgb(0 0 0 / 0.5);
+  --state-hover: rgb(232 230 223 / 0.07);
+  --state-active: rgb(232 230 223 / 0.12);
+  --shadow-resting: 0 1px 0 rgb(0 0 0 / 0.3);
+  --shadow-floating: 0 8px 24px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --background: #141716;
+    --foreground: #e8e6df;
+    --card: #1b1f1d;
+    --muted: #232826;
+    --muted-foreground: #a0a69f;
+    --primary: #8cc5a6;
+    --primary-foreground: #102119;
+    --accent: #2b312e;
+    --attention: #e0ae55;
+    --glyph: #8a9095;
+    --border: rgb(232 230 223 / 0.14);
+    --input: rgb(232 230 223 / 0.24);
+    --ring: var(--found);
+    --overlay: rgb(0 0 0 / 0.5);
+    --state-hover: rgb(232 230 223 / 0.07);
+    --state-active: rgb(232 230 223 / 0.12);
+    --shadow-resting: 0 1px 0 rgb(0 0 0 / 0.3);
+    --shadow-floating: 0 8px 24px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+    color-scheme: dark;
+  }
+}
+
+/* Expose the tokens to Tailwind utilities (bg-background, text-primary, rounded-lg, …). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-attention: var(--attention);
+  --color-found: var(--found);
+  --color-glyph: var(--glyph);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
+}
+
+/* Register utilities for tokens Tailwind doesn't have (font-serif, shadow-resting/floating). The
+   values here are placeholders in the theme layer; the unlayered :root tokens above win. Fonts and
+   radii (--font-sans, --font-mono, --radius-sm/md/lg) share Tailwind's names, so its utilities
+   already read the tokens above. */
+@theme {
+  --font-serif: Georgia, serif;
+  --shadow-resting: none;
+  --shadow-floating: none;
+}

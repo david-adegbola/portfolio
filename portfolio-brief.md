@@ -53,15 +53,20 @@ Both live in a small fixed header on every screen and state, including during 3D
 
 ## 3. Visual design
 
+"Field notebook" look (v0.4, 2026-11-04; replaces v0.3's grey page tokens). Structure follows Primer (`DESIGN.md`, `design-research/primer/`); every value lives in `src/globals.css`.
+
 | Token | Value |
 |---|---|
-| Background / fog (light) | `#EEF0EE` |
-| Background / fog (dark, "polar night") | `#14171A` |
-| Ink | `#1C1F22` (light) · `#E6E8E6` (dark) |
-| Muted | `#8A9095` |
-| Accent (found state, links) | `#C9A46A`, a warm lamp / birch-bark tone, used sparingly |
-| Typeface | **Inter Tight** for UI and body. Optional **Fraunces** for the name and section titles only |
-| Type scale | 14 / 16 / 20 / 32 / 56 px, line height 1.5–1.6 |
+| Background, paper (light) | `#F3F1EA` |
+| Background (dark, "polar night") | `#141716` |
+| Ink | `#1D211F` (light) · `#E8E6DF` (dark) |
+| Muted text | `#50564F` (light) · `#A0A69F` (dark) |
+| Accent: links, current, primary action | spruce `#2E5E47` (light) · `#8CC5A6` (dark); passes AA as text |
+| Found state | birch gold `#C9A46A`, decoration only (never text in light mode) |
+| In progress | `#7A4F0E` (light) · `#E0AE55` (dark) |
+| Typeface | **Inter Tight** for UI and body · **Fraunces** for the name and titles · **IBM Plex Mono** for years, tags and other metadata |
+| Type scale | 12 / 14 / 16 / 20 / 32 / 40 px (Primer), 56 for the name; line height 1.5–1.6 |
+| Shape & depth | radius 3 / 6 / 12 / full; two shadows (resting, floating); 2px focus ring |
 | Layout | Large margins, text max width ~62ch, generous white space |
 | Mode | Light by default, dark via `prefers-color-scheme`, plus a manual toggle |
 

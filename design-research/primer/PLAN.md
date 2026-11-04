@@ -11,7 +11,7 @@ Branch `redesign`. One phase per commit; build (and, once set up, lint + tests) 
 
 ## Phase 1 – Foundations
 - Tokens in `src/globals.css` (light + `.dark`, `@theme inline`): colour roles, type scale, spacing, radius, elevation, focus, from foundations-ui.md + the chosen brand option.
-- Fonts; dark mode on the `.dark` class (keeps the system default + manual toggle).
+- Fonts; dark mode. *Deviation (done 2026-11-04):* stays on `data-theme` instead of shadcn's `.dark` class, because the scene observes that attribute and the system default must work without JS; Tailwind's `dark:` variant is defined to match.
 - Update brief §3 and CLAUDE.md with the new tokens.
 
 ## Phase 2 – Components

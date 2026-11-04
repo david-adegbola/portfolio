@@ -46,7 +46,7 @@ All six build steps are done, plus the v0.3 visual pass (natural colours, season
 - Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.
-- Light-mode contrast: `#8A9095` and the accent fail AA on `#EEF0EE`, so light mode uses `--muted-text: #50575C` (4.85:1 measured over the darkest forest seen through the veil, 6.4:1 flat; `#5C6368` failed at 4.03:1) and the accent appears only as underlines/decoration, never as text. Re-measure muted text over the rendered canvas if the veil or forest colours change.
+- Tokens (Phase 1, "Field notebook") are in `src/globals.css` with shadcn names (`--background`, `--foreground`, `--muted-foreground`, `--primary` = spruce, `--border`, `--ring`, …) plus `--found` (birch gold, decoration only), `--glyph`, `--attention`, `--state-*`, `--shadow-resting/floating`, `--radius-sm/md/lg/full`. `src/styles.css` holds component styles and must use tokens only. Dark mode stays on `data-theme` (the scene observes it); Tailwind's `dark:` variant is defined to match it. Contrast: every text token ≥ 5.6:1 even over the 95% veil on black/white; re-measure if tokens or the veil change.
 
 ## What's being built
 
