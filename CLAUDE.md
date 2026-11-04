@@ -14,14 +14,16 @@ All six build steps are done, plus the v0.3 visual pass (natural colours, season
 - `npm run build`: `tsc --noEmit` + `vite build` into `dist/`
 - `npm run typecheck`
 - `npm run preview`: serves `dist/` on :4173 (`.claude/launch.json` → "preview"); run Lighthouse against `http://localhost:4173/portfolio/`
-- No lint or test setup yet.
+- `npm run lint`, `npm test`
 
 ## How the static site works
 
 - `vite.config.ts` has a small plugin that reads `content/*.json` (`src/content/load.ts` validates it and fails the build with readable errors) and pre-renders the whole page into `index.html` (`src/content/render.ts`, build-time only, uses `marked`). Placeholders: `<!--head-->`, `<!--header-->`, `<!--main-->`, `<!--footer-->`, `<!--templates-->`.
 - Project details are pre-rendered into `<template id="detail-<id>">`; `src/ui/ProjectPanel.ts` clones them into a native `<dialog>` (URL `#p/<id>`).
 - Content paths in the JSON are written root-relative (`/media/...`, `/research/...`); the plugin's `withBase` rewrites `href`/`src` in the rendered fragments to `/portfolio/...`. Don't hardcode `/portfolio/` in content.
-- The CV button is rendered only if `public/cv.pdf` exists at build time. Media/PDF paths that don't exist in `public/` are left out, with a build warning.
+- The CV button links to `site.json` `cv` (the combined forestry PDF from the `david-adegbola/cv` repo), else `public/cv.pdf` if it exists, else it's hidden. Job and own-project wording follows that repo's `CV-RULES.md` (never "boiler renovation"; own projects are built with AI coding agents, never coded by hand).
+- A card opens a detail panel only when the panel adds something beyond the card (`hasDetail` in `src/components/Page.tsx`). The lake zone is now "Built with AI agents" (`#built-with-ai`); Nidave Films and Dust and Scrolls were removed (2026-11-04).
+- The page is React components (`src/components/Page.tsx`) rendered to static HTML at build time (`src/content/render.tsx`). Lint: `npm run lint` (oxlint; typescript-eslint doesn't support TS 7). Tests: `npm test` (Vitest, `test/`). All commands run in the `portfolio-dev` Docker container (AGENTS.md); preview with `--host 0.0.0.0`. Media/PDF paths that don't exist in `public/` are left out, with a build warning.
 - Scene (`src/scene/`): `main.ts` lazy-loads it as its own chunk after `load` + idle, only if WebGL2 exists. `World` renders **on demand** (only when the camera or theme changes), no continuous loop. `Path.buildLayout` sizes the forest/lake/clearing zones from entry counts (read from the `#entries-data` JSON the build embeds). `Forest` = 4 `InstancedMesh`es (pine/birch × trunk/crown) sharing matrices, seeded RNG so the forest is identical every visit. Colours per theme in `scene/palette.ts`; theme changes are observed, not pushed.
 - Scroll → camera: Lenis (skipped under reduced motion) + one ScrollTrigger over the whole document. `ScrollMap` keyframes map scroll px → path progress so the camera frames each object exactly when its HTML card (`#projects .card[id]`, page order) is mid-screen; contact → progress 1. Keyframes are re-measured on every ScrollTrigger refresh.
 - `ProjectObjects`: one object per card (marker, log-pile, floating log, clearing, tree-ring stump; a lamp for `#contact`), placed right of the path. Reaching one tweens its "paint" part from grey to the accent (found, persists) and moves a single warm PointLight to it (fade out → move → fade in). The scene fires `entry:active`; `ui/Cards.ts` marks the card. In-progress entries are faint, set back in the fog, never found.

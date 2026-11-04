@@ -20,7 +20,7 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 function metaFor(e: ClientEntry): string {
   if (e.status === 'in-progress') return 'In progress';
   if (e.type === 'research') return 'Research';
-  return e.zone === 'lake' ? 'Off the clock' : 'Work';
+  return e.zone === 'lake' ? 'Built with AI agents' : 'Work';
 }
 
 /**

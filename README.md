@@ -46,7 +46,7 @@ Copy this into the list in `content/projects.json`. Only `id`, `zone` and `title
 - `id`: lowercase words joined by dashes. It is also the URL: `/portfolio/#p/forest-cover-change`.
 - Title in Finnish (or another language)? Add `"lang": "fi"` so screen readers pronounce it correctly.
 - Leave out `summary` if it would only repeat the `subtitle`.
-- `zone`: `"forest"` for main work, `"lake"` for side work ("Off the clock").
+- `zone`: `"forest"` for main forestry work, `"lake"` for own software projects ("Built with AI agents").
 - Images go in `public/media/<id>/` as `.webp`. A missing file is left out, never shown broken.
 - Not finished yet? Add `"status": "in-progress"`. It shows as a faint "In progress" card with no detail panel.
 
@@ -72,7 +72,15 @@ Put the PDF in `public/research/`. The entry shows Read PDF and Download buttons
 
 ### CV
 
-Drop the file in as `public/cv.pdf`. The CV button appears in the header automatically; until then it stays hidden.
+`content/site.json` → `"cv"` links the CV button to a PDF; it currently points at the combined forestry CV that the `david-adegbola/cv` repo publishes, so the portfolio always shows the latest version. Remove `"cv"` to fall back to `public/cv.pdf` if that file exists; with neither, the button stays hidden.
+
+### Which entries open a detail panel
+
+A card opens a panel only if the panel would add something: a `role`, `tools`, a `body`, `media` or `links` (or a `summary`, on the smaller "Built with AI agents" cards). Otherwise the card itself is the whole entry.
+
+### Wording
+
+Facts about jobs and own projects follow `CV-RULES.md` in the `david-adegbola/cv` repo (e.g. the UPM Kaukas job is the electrostatic precipitator rebuild project; own projects are built with AI coding agents, never "coded by hand").
 
 ## First-time GitHub setup
 

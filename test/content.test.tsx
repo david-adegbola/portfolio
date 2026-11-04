@@ -8,7 +8,7 @@ import { renderMain, renderTemplates, sortEntries } from '../src/content/render.
 import type { Entry } from '../src/content/types.ts';
 
 const root = path.resolve(__dirname, '..');
-const opts = { hasCv: false, missing: new Set<string>() };
+const opts = { missing: new Set<string>() };
 
 /** A throwaway project folder with the given content files. */
 function fixture(site: object, projects: unknown): string {
@@ -52,19 +52,27 @@ describe('page rendering', () => {
   const entries: Entry[] = [
     { id: 'lake-1', zone: 'lake', title: 'Lake one' },
     { id: 'wip', zone: 'forest', title: 'Work in progress', status: 'in-progress' },
-    { id: 'forest-1', zone: 'forest', title: 'Forest one', summary: 'Summary text' },
+    { id: 'forest-1', zone: 'forest', title: 'Forest one', summary: 'Summary text', role: 'Did things' },
+    { id: 'forest-2', zone: 'forest', title: 'Forest two', summary: 'Shown on the card already' },
   ];
 
   it('sorts forest first and in-progress last within a zone', () => {
-    expect(sortEntries(entries).map((e) => e.id)).toEqual(['forest-1', 'wip', 'lake-1']);
+    expect(sortEntries(entries).map((e) => e.id)).toEqual(['forest-1', 'forest-2', 'wip', 'lake-1']);
   });
 
-  it('puts every entry in the HTML, and gives a detail panel only to finished projects', () => {
+  it('puts every entry in the HTML, and opens a panel only when it has more than the card shows', () => {
     const html = renderMain(site, entries, opts);
     for (const e of entries) expect(html).toContain(e.title);
     const templates = renderTemplates(entries, opts);
     expect(templates).toContain('id="detail-forest-1"');
+    expect(templates).not.toContain('detail-forest-2');
     expect(templates).not.toContain('detail-wip');
+    expect(html).not.toContain('data-open="forest-2"');
+  });
+
+  it('rejects a CV link that is not a PDF', () => {
+    const dir = fixture({ ...site, cv: 'https://x.test/cv.html' }, []);
+    expect(() => loadContent(dir)).toThrowError(/"cv" must be a link to a PDF/);
   });
 
   it('leaves out an empty research section', () => {

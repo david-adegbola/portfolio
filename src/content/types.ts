@@ -54,6 +54,8 @@ export interface Site {
   intro: string;
   description: string;
   email: string;
+  /** Link to the CV PDF (e.g. the one the CV repo publishes). Without it, /cv.pdf is used if it exists. */
+  cv?: string;
   about?: string;
   skills?: string[];
   links?: Link[];

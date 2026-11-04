@@ -29,7 +29,8 @@ function content(): Plugin {
       const { site, entries } = loadContent(root);
       const missing = missingFiles(root, entries);
       for (const file of missing) this.warn?.(`Referenced in projects.json but not in /public yet (left out): ${file}`);
-      const opts = { hasCv: fs.existsSync(path.join(root, 'public/cv.pdf')), missing: new Set(missing) };
+      const localCv = fs.existsSync(path.join(root, 'public/cv.pdf')) ? '/cv.pdf' : undefined;
+      const opts = { cv: site.cv ?? localCv, missing: new Set(missing) };
       return html
         .replace('<!--head-->', renderHead(site))
         .replace('<!--header-->', withBase(renderHeader(site, opts)))

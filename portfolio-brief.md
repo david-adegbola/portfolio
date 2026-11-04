@@ -31,7 +31,7 @@ Both live in a small fixed header on every screen and state, including during 3D
 
 ### Two zones along one camera path
 1. **The forest (main path):** GIS, remote sensing, and forestry work. This is most of the scroll length, and visitors reach it first.
-2. **Across the lake ("Off the clock"):** a shorter, quieter final stretch for side work: Hetkin, Nidave Films, Dust and Scrolls. These get smaller objects and shorter cards. They are visibly secondary, but searchable like everything else.
+2. **Across the lake ("Built with AI agents"):** a shorter, quieter final stretch for own software projects: Hetkin, the CV pipeline, the job scraper, Tree Science Explorer (Confam to be added). These get smaller objects and shorter cards. They are visibly secondary, but searchable like everything else. *(Changed 2026-11-04: Nidave Films and Dust and Scrolls removed.)*
 3. **The clearing (end):** contact details, email, and CV.
 
 ### Interaction
@@ -123,10 +123,10 @@ Research papers, reports, and coursework write-ups get their own entry type, `"t
 - The plain fallback list has a dedicated **Research** section.
 - [TODO] David to supply the first research PDF(s) and abstracts.
 
-### Lake zone: off the clock
-- **Hetkin** (hetkin.app): startup
-- **Nidave Films**: film and documentary work
-- **Dust and Scrolls**: writing on cosmology and intellectual inquiry
+### Lake zone: built with AI agents
+- **Hetkin** (hetkin.app): built and pitched with a team at Vaasa Startup Factory
+- **CV pipeline**, **Job scraper**, **Tree Science Explorer** (in progress): own projects built with AI coding agents
+- [TODO] **Confam**: David to describe
 
 ### Other content
 - **About** (short, human, ~80 words): Nigeria → IT at VAMK, Vaasa → a summer at UPM Kaukas, watching logs on Lake Saimaa → Sustainable Forest Bioeconomy at UEF → GIS and forestry. [TODO David to approve the final text]

@@ -52,6 +52,8 @@ export function loadContent(root: string): { site: Site; entries: Entry[] } {
   for (const key of ['name', 'url', 'title', 'email'] as const) {
     if (typeof site[key] !== 'string') problems.push(`site.json: missing "${key}"`);
   }
+  if (site.cv !== undefined && (typeof site.cv !== 'string' || !/^(https:\/\/|\/)\S+\.pdf$/.test(site.cv)))
+    problems.push('site.json: "cv" must be a link to a PDF, e.g. "https://…/cv.pdf" or "/cv.pdf"');
   if (problems.length) throw new Error(`Content problems:\n  - ${problems.join('\n  - ')}`);
   return { site, entries: entries as Entry[] };
 }

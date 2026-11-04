@@ -9,7 +9,8 @@ import { Glyph, IconDown, IconMoon, IconNext, IconPrev, IconSearch, IconSun } fr
 const marked = new Marked({ async: false });
 
 export interface RenderOptions {
-  hasCv: boolean;
+  /** Where the CV PDF lives, if there is one. */
+  cv?: string;
   /** Files referenced in the JSON that don't exist in /public. They are left out, never shown broken. */
   missing: Set<string>;
 }
@@ -18,6 +19,20 @@ export interface RenderOptions {
 export function sortEntries(entries: Entry[]): Entry[] {
   const rank = (e: Entry) => (e.zone === 'forest' ? 0 : 2) + (isInProgress(e) ? 1 : 0);
   return entries.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map(({ e }) => e);
+}
+
+/** The side zone's section name (the scene's "across the lake"). */
+export const LAKE_HEADING = 'Built with AI agents';
+
+/**
+ * A project opens a detail panel only when the panel has more to show than its card: a summary on
+ * a small card, a role, tools, a write-up, media or links. Otherwise a click would promise detail
+ * that isn't there (design audit X2).
+ */
+export function hasDetail(e: ProjectEntry): boolean {
+  if (isInProgress(e)) return false;
+  const cardShowsSummary = e.zone !== 'lake';
+  return !!(e.role || e.tools?.length || e.body || e.media?.length || e.links?.length || (e.summary && !cardShowsSummary));
 }
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
@@ -70,8 +85,8 @@ export function Header({ site, opts }: { site: Site; opts: RenderOptions }) {
           <a className="header-link" href={`mailto:${site.email}`}>
             Email
           </a>
-          {opts.hasCv && (
-            <a className="header-link" href="/cv.pdf" target="_blank" rel="noopener">
+          {opts.cv && (
+            <a className="header-link" href={opts.cv} target="_blank" rel="noopener">
               CV
             </a>
           )}
@@ -162,9 +177,13 @@ function ProjectCard({ e }: { e: ProjectEntry }) {
     <li className={`card${small ? ' card--small' : ''}`} id={e.id}>
       <Glyph kind={objectKind(e)} />
       <h3 className="card-title">
-        <a className="card-link" href={`#p/${e.id}`} data-open={e.id} lang={e.lang}>
-          {e.title}
-        </a>
+        {hasDetail(e) ? (
+          <a className="card-link" href={`#p/${e.id}`} data-open={e.id} lang={e.lang}>
+            {e.title}
+          </a>
+        ) : (
+          <span lang={e.lang}>{e.title}</span>
+        )}
       </h3>
       {e.subtitle && <p className="card-subtitle">{e.subtitle}</p>}
       {!small && e.summary && <p className="card-summary">{e.summary}</p>}
@@ -281,7 +300,12 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
             <ResearchCard key={e.id} e={e} opts={opts} />
           ))}
         </Section>
-        <Section id="off-the-clock" heading="Off the clock" intro="Side work, across the lake." className="section--lake">
+        <Section
+          id="built-with-ai"
+          heading={LAKE_HEADING}
+          intro="Own projects. I write the spec and the rules the coding agent (Claude Code) follows, guide it and check the result."
+          className="section--lake"
+        >
           {lake.map((e) => (
             <ProjectCard key={e.id} e={e} />
           ))}
@@ -296,8 +320,8 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
           <a href={`mailto:${site.email}`}>{site.email}</a>
         </p>
         <p className="contact-links">
-          {opts.hasCv && (
-            <a href="/cv.pdf" target="_blank" rel="noopener">
+          {opts.cv && (
+            <a href={opts.cv} target="_blank" rel="noopener">
               CV (PDF)
             </a>
           )}
@@ -309,7 +333,7 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
 }
 
 function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
-  const eyebrow = [e.year ? String(e.year) : '', e.zone === 'lake' ? 'Off the clock' : ''].filter(Boolean).join(' · ');
+  const eyebrow = [e.year ? String(e.year) : '', e.zone === 'lake' ? LAKE_HEADING : ''].filter(Boolean).join(' · ');
   const media = (e.media ?? []).filter((m) => !opts.missing.has(m.src));
   const hasFacts = !!e.role || !!e.tools?.length;
   return (
@@ -361,7 +385,7 @@ function PanelContent({ e, opts }: { e: ProjectEntry; opts: RenderOptions }) {
 /** One <template> per openable project; ProjectPanel clones it into the dialog. */
 export function Templates({ entries, opts }: { entries: Entry[]; opts: RenderOptions }) {
   return entries
-    .filter((e): e is ProjectEntry => !isResearch(e) && !isInProgress(e))
+    .filter((e): e is ProjectEntry => !isResearch(e) && hasDetail(e))
     .map((e) => (
       <template id={`detail-${e.id}`} key={e.id}>
         <PanelContent e={e} opts={opts} />
