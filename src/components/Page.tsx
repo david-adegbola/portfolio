@@ -44,6 +44,7 @@ export function hasDetail(e: Entry): boolean {
  * "data", "PDF", "live site", or the entry's own short label for proof that isn't a link.
  */
 export function proofKinds(e: Entry): string[] {
+  if (e.proofLine) return e.proofLine;
   const kind = (href: string) =>
     /\.csv($|\?)/i.test(href) ? 'data' : /\.pdf($|\?)/i.test(href) ? 'PDF' : /github\.com\//.test(href) ? 'code' : 'live site';
   const kinds = [...(e.tryIt ? ['working version'] : []), ...(e.links ?? []).map((l) => kind(l.href)), ...(e.proofNoteShort ? [e.proofNoteShort] : [])];
@@ -82,10 +83,10 @@ export function Head({ site }: { site: Site }) {
       <meta property="og:url" content={site.url} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={site.description} />
-      <meta property="og:image" content={`${site.url}og.jpg`} />
+      <meta property="og:image" content={`${site.url}og.png`} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={`${site.name}, over a misty low-poly forest`} />
+      <meta property="og:image:alt" content={`${site.name}: ${site.headline} A tree-ring drawing and a line of spruce and birch.`} />
       <meta name="twitter:card" content="summary_large_image" />
     </>
   );

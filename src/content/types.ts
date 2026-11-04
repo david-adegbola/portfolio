@@ -55,6 +55,8 @@ export interface Entry {
   proofNote?: string;
   /** The same, in a few words for the card's "Proof:" line, e.g. "work certificate (on request)". */
   proofNoteShort?: string;
+  /** Overrides the card's "Proof:" line when the automatic one would mislead. */
+  proofLine?: string[];
   /** Images. The first one with `cover: true` also shows on the homepage card. */
   media?: (Image & { cover?: boolean })[];
 }

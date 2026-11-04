@@ -35,8 +35,9 @@
     "when": "2025",
     "subtitle": "C on Linux, reading a physical DS18B20 sensor",
     "summary": "A C program that reads a real temperature sensor through Linux's 1-Wire interface every two seconds and logs each reading to a CSV file.",
+    "role": "Course project, IT studies at VAMK, built with help from an AI coding agent",
     "problem": "Read a physical temperature sensor from a C program and keep a timestamped log of it.",
-    "did": "- A DS18B20 one-wire temperature sensor connected to a Raspberry Pi running Linux.\n- The program finds the sensor under `/sys/bus/w1/devices`, checks each reading's CRC and converts it to °C and °F.\n- A sensor thread and a logger thread pass readings through a 100-entry ring buffer. On Ctrl+C or a stop signal, the logger writes what's left before the program exits.",
+    "did": "- A DS18B20 one-wire temperature sensor connected to a Raspberry Pi 3 running Linux.\n- The program finds the sensor under `/sys/bus/w1/devices`, checks each reading's CRC and converts it to °C and °F.\n- A sensor thread and a logger thread pass readings through a 100-entry ring buffer. On Ctrl+C or a stop signal, the logger writes what's left before the program exits.",
     "result": "The repo holds a real log: 51 readings taken on 4–5 November 2025, between 31.1 and 32.4 °C.",
     "links": [
       { "label": "Code on GitHub", "href": "https://github.com/david-adegbola/temp-sensor" },
@@ -53,18 +54,8 @@
     "summary": "A browser lesson for Finnish pupils aged 10–12 on a common misconception: a tree's mass comes mainly from carbon dioxide in the air, not from the soil.",
     "problem": "Many pupils think a tree is built from soil. Most of its mass actually comes from carbon dioxide in the air.",
     "did": "A six-step lesson of 30–45 minutes: predict, explore, weigh, explain, think about what happens next, then answer the opening question again.\n\n- CO₂ entering the leaves by day and leaving at night, stomata closing in drought, tree rings.\n- Sliders for light, water and CO₂; hints that explain a wrong answer instead of just marking it.\n- A teacher panel that counts before-and-after answers on the device, with no names stored.\n- Finnish and English, made for school Chromebooks and iPads.",
+    "tryIt": { "label": "Try it (opens as Kasva!)", "href": "https://david-adegbola.github.io/sufobe/" },
     "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/sufobe" }]
-  },
-  {
-    "id": "job-aggregator",
-    "title": "Job scraper",
-    "subjects": ["software"],
-    "when": "2026",
-    "subtitle": "Entry-level IT jobs in Finland, scored and sent to Telegram",
-    "summary": "Collects entry-level IT jobs in Finland every six hours, gives each a relevance score, skips the ones already seen and sends the best matches to a Telegram chat.",
-    "problem": "Entry-level IT jobs in Finland are spread over many job boards.",
-    "did": "- Collects listings from Finnish and remote job boards every six hours.\n- Gives each a 0–100 relevance score (junior titles, internships, IT keywords, how recent it is, the city), never sends the same job twice (SQLite) and sends the best matches to a Telegram chat.",
-    "links": [{ "label": "Code on GitHub", "href": "https://github.com/david-adegbola/job-aggregator" }]
   },
   {
     "id": "hetkin",
@@ -76,7 +67,20 @@
     "role": "Founder in Residence, Vaasa Startup Factory",
     "problem": "Electricity in Finland is priced by the hour. Hetkin's idea: help companies run production in the cheap hours.",
     "did": "- Interviewed users and called companies to find out what they need.\n- Built and pitched hetkin.app with a team.",
+    "result": "Pitched at the end of the residency; not continued.",
     "links": [{ "label": "hetkin.app", "href": "https://hetkin.app" }]
+  },
+  {
+    "id": "woodesk",
+    "title": "Woodesk",
+    "subjects": ["software", "field"],
+    "when": "2026",
+    "subtitle": "A forestry careers portal for students, researchers, forest owners and professionals",
+    "summary": "Gathers forestry jobs, internships and summer jobs from Finnish job boards, state agencies, UEF and the big forest companies, plus a forestry news desk. Invitation-only.",
+    "problem": "Forestry jobs in Finland, including internships and summer jobs, are spread over job boards, state agencies, municipalities, the university and forest companies, some only in Finnish and some only in English.",
+    "did": "- Reads Jobly's forestry, internship and summer-job pages, Metsälehti, Metsähallitus, Valtiolle (state agencies such as Luke, SYKE and Maanmittauslaitos), Kuntarekry, Metsäkeskus, Duunitori, UEF, Metsä Group, UPM and Stora Enso, in Finnish and English, and merges duplicates.\n- Keeps only forestry, forest bioeconomy, natural resources, forest data and GIS postings, and scores each one 0–100 against the member's own CV, showing the matched words.\n- A forestry news desk from Luke, Metsäteollisuus, Tornator and other Finnish and EU feeds, with similar headlines grouped.\n- Private accounts by invitation; CVs, applications and preferences stay private to each member.\n- Grew out of my first job scraper, which sent entry-level IT jobs to a Telegram chat. That one is stopped.",
+    "links": [{ "label": "Where it started: the first job scraper (code)", "href": "https://github.com/david-adegbola/job-aggregator" }],
+    "proofLine": ["code of the first version (Woodesk itself is private)"]
   },
   {
     "id": "forest-ecology-field-work",

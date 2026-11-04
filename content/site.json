@@ -2,16 +2,16 @@
   "name": "David Adegbola",
   "url": "https://david-adegbola.github.io/portfolio/",
   "title": "Forestry student with a computing background",
-  "headline": "Forestry student at the University of Eastern Finland, with a computing background. I can work in the forest, on a research project or on the technical side.",
+  "headline": "I study forest bioeconomy at UEF and came to forestry from computing, so I'm useful in the field and at the keyboard.",
   "statements": [
-    "I started in computing: an OND in Computer Science in Ibadan, Nigeria, then IT studies at VAMK in Vaasa.",
-    "In 2025 I worked as a fitter at the UPM Kaukas pulp mill. My employer rated my work excellent.",
-    "Now I study Sustainable Forest Bioeconomy at UEF. I measure trees and sample soil on field courses, and I'm learning GIS."
+    "Computing first: an OND in Computer Science (Ibadan, 2019–2022), then IT studies at VAMK.",
+    "A fitter's job at UPM Kaukas in 2025 showed me the forest industry from the inside. Employer rating: excellent.",
+    "Now at UEF: tree measurement and soil sampling on field courses, GIS next."
   ],
   "location": "Joensuu, Finland",
   "contact": {
     "heading": "Hiring for forestry, research or technical work?",
-    "text": "I'm looking for forestry trainee and field work, research assistant roles and technical jobs. I can work full-time, start immediately and travel anywhere in Finland."
+    "text": "I'm looking for forestry trainee and field work, research assistant roles and technical jobs."
   },
   "description": "David Adegbola: Sustainable Forest Bioeconomy student at UEF with a computing background, looking for forestry, research assistant and technical work in Finland.",
   "email": "adavidadegbola@gmail.com",
@@ -47,8 +47,8 @@
     }
   ],
   "computing": [
-    "Set up a domain and email routing with Cloudflare and Resend.",
-    "Connected a store's TV to a server so it could show ads.",
+    "Set up the domain and email routing for hetkin.app with Cloudflare and Resend.",
+    "Connected a fashion store's TV in Kokkola to a server so it could show ads.",
     "Rack-mounted servers; replaced drives, memory and power supplies.",
     "Patched and traced network cables, connected switches and access points, checked connectivity.",
     "Active Directory user accounts and groups, password resets, joining computers to a domain."
@@ -77,7 +77,7 @@
     },
     {
       "group": "Learning",
-      "items": ["GIS", "Brush saw", "Chainsaw"]
+      "items": ["GIS", "Forest measurement beyond the course", "Brush saw", "Chainsaw"]
     }
   ],
   "links": [

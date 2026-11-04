@@ -51,7 +51,7 @@ All six build steps are done, then v0.3 (seasons), the v0.4 redesign (React + Ta
 - **Season:** `src/seasons.ts` `seasonForMonth` (Helsinki time: Nov–Mar winter, Apr–May spring, Jun–Aug summer, Sep–Oct autumn); the head script in `index.html` repeats it and sets `<html data-season>` before paint (`test/seasons.test.tsx` checks they agree). `--season` (≥ 5.4:1, may colour small text): statement numerals, ring centres, the "Currently" rule, subject marks, footer season line, drawing details. An accent, not a theme.
 - **Light theme only** (David, 2026-11-04): no dark mode, no theme toggle, no `dark:` variant. Don't add one back without asking.
 - Tokens are in `src/globals.css` (shadcn names plus `--season`, `--found`, `--glyph`, `--line-art`, `--attention`, `--state-*`, `--shadow-*`, `--radius-*`); `styles.css` uses tokens only.
-- Share image: `public/og.jpg` is still the old 3D forest render. Remake it from the rings/treeline when David asks.
+- Share image: `public/og.png` (1200×630): name, headline, hero rings and treeline in the winter look, rendered from the built page by a sandbox script (`tools/og.mjs` in the session scratchpad). Remake it if the name, headline or look changes.
 
 ## What's being built
 
@@ -69,4 +69,5 @@ Adding content must never need code changes: edit `content/`, drop files in `pub
 - Mobile (375px+) must fit: name + Email + CV in one header row; 44px touch targets.
 - Budget: JS under ~300 KB gzipped (now ~2 KB page + ~85 KB lazy panel), first readable content under 1.5s on 4G, Lighthouse 90+ for Performance and Accessibility. Images lazy-loaded (portrait eager), WebP.
 - Never use stock photos or placeholder boxes. Entries without media render as text-only cards. Hide the CV buttons when there's no CV.
-- The availability sentence in `site.json` `contact.text` stays as David wrote it until he confirms it (TODO-DAVID.md).
+- No availability claim (full-time, start date, travel) on the site: David asked to leave it out (2026-11-04).
+- The job scraper became Woodesk (private repo `david-adegbola/jobdesk`, invite-only); the old `job-aggregator` repo is linked only as where it started.

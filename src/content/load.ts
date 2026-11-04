@@ -52,6 +52,8 @@ function validateEntries(raw: unknown): string[] {
     if (e.when !== undefined && typeof e.when !== 'string') problems.push(`${where}: "when" must be text, e.g. "2026" or "Aug–Oct 2025"`);
     if (e.tryIt !== undefined && !isLink(e.tryIt)) problems.push(`${where}: "tryIt" needs "label" and "href"`);
     if (e.links !== undefined && (!Array.isArray(e.links) || !e.links.every(isLink))) problems.push(`${where}: every link needs "label" and "href"`);
+    if (e.proofLine !== undefined && (!Array.isArray(e.proofLine) || e.proofLine.some((s: unknown) => typeof s !== 'string')))
+      problems.push(`${where}: "proofLine" must be a list of short texts`);
     for (const m of e.media ?? []) problems.push(...imageProblems(m, where));
   });
   return problems;
