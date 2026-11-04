@@ -16,7 +16,7 @@ npm run build    # type-check + production build into dist/
 
 All content lives in two files:
 
-- `content/site.json`: name, intro, about text, skills, email, links
+- `content/site.json`: name, title, the three numbered `statements` under the name, `intro` (what you're looking for), `location`, the closing `contact` prompt (`heading`, `text`), about text, skills, email, CV link, links
 - `content/projects.json`: every project and research entry
 
 Edit the JSON, commit and push. If an entry is malformed, the build stops and tells you which entry and field is wrong.

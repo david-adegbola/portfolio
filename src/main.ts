@@ -7,6 +7,7 @@ import { flyTo } from './nav.ts';
 import { initCards } from './ui/Cards.ts';
 import { initHeader } from './ui/Header.ts';
 import { initSearch } from './ui/Search.ts';
+import { initSectionNav } from './ui/SectionNav.ts';
 
 // The page is already fully rendered HTML. Wire up the UI first, so it works before, without, or
 // if the scene fails; then load the scene as a separate chunk once the page is idle.
@@ -42,15 +43,22 @@ document.addEventListener('click', (event) => {
 if (location.hash.startsWith('#p/')) loadIslands();
 afterLoad(loadIslands);
 
-// Links marked data-fly travel to an entry (camera and page together) instead of jumping, then
-// land keyboard focus on it. Without JS they're plain anchors.
+// Links marked data-fly travel to an entry or a section (camera and page together) instead of
+// jumping, then land keyboard focus there: an entry's link, or a section's heading. The URL takes
+// the section's anchor, so it can be shared. Without JS they're plain anchors.
 document.addEventListener('click', (event) => {
   const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-fly]');
   if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return;
   event.preventDefault();
   const id = link.dataset.fly!;
-  flyTo(id).then(() => document.querySelector<HTMLElement>(`[id="${id}"] .card-link`)?.focus({ preventScroll: true }));
+  const target = document.getElementById(id);
+  if (target?.tagName === 'SECTION') history.replaceState(null, '', `#${id}`);
+  flyTo(id).then(() => {
+    const focus = target?.querySelector<HTMLElement>(target.tagName === 'SECTION' ? 'h2' : '.card-link');
+    focus?.focus({ preventScroll: true });
+  });
 });
+initSectionNav();
 
 /**
  * Only load the forest where it can run: WebGL2 present and the visitor not saving data. The

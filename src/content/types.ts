@@ -51,7 +51,14 @@ export interface Site {
   /** The live site's address, with trailing slash. Used for the share image and canonical link. */
   url: string;
   title: string;
+  /** Three short numbered statements under the name: who David is, in order. */
+  statements?: string[];
+  /** One line under the statements: what David is looking for. */
   intro: string;
+  /** Where David is, e.g. "Joensuu, Finland". Shown in the contact block and footer. */
+  location?: string;
+  /** The closing prompt above the email address. */
+  contact?: { heading: string; text?: string };
   description: string;
   email: string;
   /** Link to the CV PDF (e.g. the one the CV repo publishes). Without it, /cv.pdf is used if it exists. */

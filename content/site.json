@@ -2,7 +2,17 @@
   "name": "David Adegbola",
   "url": "https://david-adegbola.github.io/portfolio/",
   "title": "Forest bioeconomy, GIS and remote sensing",
-  "intro": "Sustainable Forest Bioeconomy student at the University of Eastern Finland in Joensuu, looking for trainee, summer and field work in forestry, GIS and remote sensing in Finland.",
+  "statements": [
+    "Grew up in Nigeria and came to Finland to study IT at VAMK in Vaasa.",
+    "Worked as a fitter at the UPM Kaukas pulp mill, on the electrostatic precipitator rebuild.",
+    "Now studying Sustainable Forest Bioeconomy at UEF, and learning GIS and remote sensing."
+  ],
+  "intro": "Looking for trainee, summer and field work in forestry, GIS and remote sensing in Finland.",
+  "location": "Joensuu, Finland",
+  "contact": {
+    "heading": "Looking for a forestry trainee or field worker?",
+    "text": "I'm looking for trainee, summer and field work in forestry. I can work full-time, start immediately and travel anywhere in Finland."
+  },
   "description": "David Adegbola: Sustainable Forest Bioeconomy student at UEF, working towards GIS, remote sensing and forestry roles in Finland.",
   "email": "adavidadegbola@gmail.com",
   "cv": "https://david-adegbola.github.io/cv/david-adegbola-forestry-master.pdf",

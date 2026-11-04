@@ -1,7 +1,8 @@
 // /styleguide/: every token and component in every variant and state, light and dark side by side
 // (DESIGN.md §3.6). Not linked from the site and marked noindex.
 import { type ReactNode, useState } from 'react';
-import { Glyph, IconSearch } from '../components/icons.tsx';
+import { IconSearch } from '../components/icons.tsx';
+import { IndexItem, IndexList } from '../components/patterns/IndexList.tsx';
 import { Badge } from '../components/ui/badge.tsx';
 import { Button } from '../components/ui/button.tsx';
 import { Sheet, SheetContent, SheetTitle } from '../components/ui/sheet.tsx';
@@ -111,36 +112,36 @@ function Theme({ theme }: { theme: 'light' | 'dark' }) {
         </ToggleGroup>
       </Block>
 
-      <Block title="CARD STATES" note="Glyph grey until the object is reached, gold once found; dashed while in progress.">
-        <ul className="card-list" role="list" style={{ marginTop: 0, paddingLeft: '2rem' }}>
-          <li className="card">
-            <Glyph kind="marker" />
-            <h3 className="card-title">
-              <a className="card-link" href="#styleguide">
-                Unfound project
+      <Block
+        title="INDEX ITEM (IndexList)"
+        note="Number + glyph, year on the right, arrow when it opens a panel. Glyph grey until reached, gold once found, dashed while in progress (glyphs show only with the forest; forced on here)."
+      >
+        <div className="show-glyphs">
+          <IndexList>
+            <IndexItem id={`sg-${theme}-1`} index={1} kind="marker" title="Opens a panel" opens year={2026} subtitle="Default item" summary="One or two sentences: problem, method, result." tags={['forestry', 'GIS']} />
+            <IndexItem id={`sg-${theme}-2`} index={2} kind="log-pile" title="Found item" year={2025} subtitle="After the camera has reached it" className="is-found" />
+            <IndexItem id={`sg-${theme}-3`} index={3} kind="marker" title="Planned item" subtitle="One line, no panel" inProgress />
+            <IndexItem id={`sg-${theme}-4`} index={4} kind="log" title="Small item" opens subtitle="Built with AI agents" small />
+          </IndexList>
+        </div>
+      </Block>
+
+      <Block title="SECTION NAV" note="Current section: spruce underline (aria-current).">
+        <nav className="section-nav" aria-label={`Example sections (${theme})`}>
+          <ul role="list">
+            <li>
+              <a href="#styleguide" aria-current="location">
+                Work
               </a>
-            </h3>
-            <p className="card-subtitle">Default card, opens a panel</p>
-            <p className="card-meta">2026 · forestry · GIS</p>
-          </li>
-          <li className="card is-found">
-            <Glyph kind="log-pile" />
-            <h3 className="card-title">
-              <a className="card-link" href="#styleguide">
-                Found project
-              </a>
-            </h3>
-            <p className="card-subtitle">After the camera has reached it</p>
-          </li>
-          <li className="card card--in-progress">
-            <Glyph kind="marker" />
-            <p className="badge">
-              <Badge variant="attention">In progress</Badge>
-            </p>
-            <h3 className="card-title">Planned project</h3>
-            <p className="card-summary">One line, no panel</p>
-          </li>
-        </ul>
+            </li>
+            <li>
+              <a href="#styleguide">Built with AI</a>
+            </li>
+            <li>
+              <a href="#styleguide">Contact</a>
+            </li>
+          </ul>
+        </nav>
       </Block>
 
       <Block title="ELEVATION · RADIUS">

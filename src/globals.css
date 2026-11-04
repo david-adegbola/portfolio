@@ -92,6 +92,9 @@
   --measure: 62ch;
   --gutter: clamp(1rem, 5vw, 4rem);
   --header-h: 4rem;
+  /* Phones: the clear window onto the forest above the name (was 22vh; smaller so the
+     statements reach the first screen, audit X4). */
+  --hero-window: 14vh;
   --ease: cubic-bezier(0.65, 0, 0.35, 1);
 
   color-scheme: light;

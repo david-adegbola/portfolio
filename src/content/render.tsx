@@ -9,7 +9,8 @@ import { type Entry, type Site, isResearch } from './types.ts';
 export { type RenderOptions, sortEntries };
 
 export const renderHead = (site: Site) => renderToStaticMarkup(<Head site={site} />);
-export const renderHeader = (site: Site, opts: RenderOptions) => renderToStaticMarkup(<Header site={site} opts={opts} />);
+export const renderHeader = (site: Site, entries: Entry[], opts: RenderOptions) =>
+  renderToStaticMarkup(<Header site={site} entries={entries} opts={opts} />);
 export const renderMain = (site: Site, entries: Entry[], opts: RenderOptions) =>
   renderToStaticMarkup(<Main site={site} entries={entries} opts={opts} />);
 export const renderTemplates = (entries: Entry[], opts: RenderOptions) =>
@@ -20,7 +21,7 @@ export const renderTemplates = (entries: Entry[], opts: RenderOptions) =>
  * last in the page, after the content they relate to.
  */
 export const renderFooter = (site: Site) =>
-  renderToStaticMarkup(<Footer site={site} year={new Date().getFullYear()} />) +
+  renderToStaticMarkup(<Footer site={site} built={new Date()} />) +
   `<div class="seasons" id="seasons">${renderToString(<SeasonSwitcher />)}</div>` +
   `<div id="panel-root"></div>` +
   `<p class="visually-hidden" role="status" id="search-announce"></p>`;

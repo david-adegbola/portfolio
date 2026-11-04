@@ -159,6 +159,84 @@ a:hover {
   color: var(--muted-foreground);
 }
 
+/* Landing (flows/landing.md): three numbered statements, like the references' numbered lists. */
+.statements {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  max-width: 52ch;
+}
+.statements li {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  text-wrap: pretty;
+}
+.statement-num {
+  padding-top: 0.2em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  color: var(--muted-foreground);
+}
+.statements + .hero-intro {
+  margin-top: 1.25rem;
+  padding-left: 3.5rem;
+}
+
+/* Section nav (flows/section-nav.md): Primer UnderlineNav look. Header on wide screens, hero on
+   narrow ones; never both. */
+.section-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+}
+.section-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-md);
+  font-size: var(--fs-14);
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+.section-nav a:hover {
+  color: var(--foreground);
+}
+.section-nav a[aria-current] {
+  color: var(--foreground);
+  border-bottom-color: var(--primary);
+}
+.section-nav-num {
+  margin-right: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  font-weight: 400;
+}
+@media (pointer: coarse) {
+  .section-nav a {
+    min-height: var(--control-touch);
+  }
+}
+.section-nav--header {
+  display: none;
+}
+.section-nav--hero {
+  margin-top: 2rem;
+}
+@media (min-width: 64rem) {
+  .section-nav--header {
+    display: block;
+    margin-inline: auto;
+  }
+  .section-nav--hero {
+    display: none;
+  }
+}
+
 /* JS-only controls: laid out from first paint when JS is available, absent without it. */
 html:not(.js) .search,
 html:not(.js) .header-search,
@@ -420,10 +498,40 @@ html:not(.js) .theme-toggle {
   font-size: var(--fs-20);
   line-height: 1.6;
 }
-.skills {
-  margin-top: 1.5rem;
-  font-size: var(--fs-14);
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.section-count {
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
   color: var(--muted-foreground);
+}
+.section-title:focus {
+  outline: none;
+}
+/* Skills: a plain list in ruled rows, like a field log. */
+.skills-title {
+  margin-top: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
+  gap: 0 1.5rem;
+  margin-top: 0.75rem;
+  font-size: var(--fs-14);
+}
+.skills li {
+  padding-block: 0.6rem;
+  border-top: 1px solid var(--border);
+  text-wrap: pretty;
 }
 #projects:focus {
   outline: none;
@@ -435,17 +543,62 @@ html:not(.js) .theme-toggle {
   padding: 0;
   list-style: none;
 }
+/* Numbered index item (flows/browse-work.md, components/patterns/IndexList.tsx): number and the
+   forest object's glyph on the left, the entry on the right. */
 .card {
   position: relative;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  column-gap: 0.75rem;
   padding-block: 1.5rem;
 }
 .card + .card {
   border-top: 1px solid var(--border);
 }
+.card-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding-top: 0.45rem;
+}
+.card-num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  line-height: 1;
+  color: var(--muted-foreground);
+}
+.card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.card-year {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  color: var(--muted-foreground);
+}
 .card-title {
   font-size: var(--fs-20);
   font-weight: 500;
   line-height: 1.4;
+}
+/* The arrow says "this opens"; it nudges forward on hover. */
+.card-link svg {
+  display: inline-block;
+  margin-left: 0.3rem;
+  vertical-align: -0.12em;
+  color: var(--muted-foreground);
+  transition:
+    translate 0.2s var(--ease),
+    color 0.2s var(--ease);
+}
+.card:has(.card-link:hover) .card-link svg,
+.card-link:focus-visible svg {
+  translate: 0.2rem 0;
+  color: var(--primary);
 }
 /* The whole card is the click target. */
 .card-link::after {
@@ -487,9 +640,6 @@ html:not(.js) .theme-toggle {
    walked up to it, then gold for the rest of the visit (the "found" colour). Shown only with the
    forest, where it means something. */
 .card-glyph {
-  position: absolute;
-  top: 1.6rem;
-  left: -2rem;
   display: none;
   color: var(--glyph);
   opacity: 0.75;
@@ -505,18 +655,8 @@ html:not(.js) .theme-toggle {
   color: var(--found);
   opacity: 1;
 }
-.section--lake .card-glyph {
-  top: 1.05rem;
-}
 .card--in-progress .card-glyph {
   stroke-dasharray: 2 2.5;
-}
-@media (max-width: 40rem) {
-  .card-glyph {
-    left: -1.15rem;
-    width: 16px;
-    height: 16px;
-  }
 }
 #contact {
   position: relative;
@@ -536,6 +676,9 @@ html:not(.js) .theme-toggle {
 
 .section--lake .card {
   padding-block: 1rem;
+}
+.card--small .card-marker {
+  padding-top: 0.3rem;
 }
 .card--small .card-title {
   font-size: var(--fs-16);
@@ -560,28 +703,59 @@ html:not(.js) .theme-toggle {
   margin-top: 1rem;
 }
 
-/* Contact: the clearing at the end. */
+/* Contact (flows/contact.md): the clearing at the end. One question, the email large, two actions. */
 .contact {
   padding-bottom: clamp(5rem, 16vh, 9rem);
 }
+.contact-text {
+  margin-top: 1rem;
+  max-width: 52ch;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
 .contact-email {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   font-size: clamp(var(--fs-20), 4.5vw, var(--fs-32));
   font-family: var(--font-serif);
   overflow-wrap: anywhere;
 }
-.contact-links {
+.contact-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
+  align-items: center;
+  gap: 0.75rem 1rem;
   margin-top: 1.5rem;
 }
+.contact-location {
+  margin-top: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  color: var(--muted-foreground);
+}
 
+/* Footer: a signature, like the end of a letter. */
 .site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
   padding: 2rem var(--gutter) 3rem;
-  text-align: center;
   font-size: var(--fs-14);
   color: var(--muted-foreground);
+}
+.footer-sign {
+  font-family: var(--font-serif);
+  font-size: var(--fs-16);
+  color: var(--foreground);
+}
+.footer-place {
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  color: var(--muted-foreground);
+}
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
 }
 
 /* 3D scene: a fixed background layer. All content stays in the HTML above it. */
@@ -625,7 +799,7 @@ body::before {
    veil scrolls with the content and leaves a clear window onto the forest above the name. */
 @media (max-width: 63.99rem) {
   .page {
-    padding-top: calc(var(--header-h) + 22vh);
+    padding-top: calc(var(--header-h) + var(--hero-window));
   }
   body::before {
     display: none;
@@ -634,8 +808,8 @@ body::before {
     background: linear-gradient(
       to bottom,
       transparent 0,
-      transparent calc(var(--header-h) + 22vh - 5rem),
-      color-mix(in srgb, var(--background) 95%, transparent) calc(var(--header-h) + 22vh - 0.5rem)
+      transparent calc(var(--header-h) + var(--hero-window) - 5rem),
+      color-mix(in srgb, var(--background) 95%, transparent) calc(var(--header-h) + var(--hero-window) - 0.5rem)
     );
   }
   .has-scene .site-footer {
@@ -648,7 +822,7 @@ body::before {
     margin-left: clamp(2rem, 7vw, 8rem);
   }
   .site-footer {
-    text-align: left;
+    align-items: flex-start;
     padding-left: calc(clamp(2rem, 7vw, 8rem) + var(--gutter));
   }
   /* Near-solid behind the text column, then a quick fade into the forest. Stops follow the
@@ -806,4 +980,34 @@ body::before {
 }
 .prose ol {
   list-style: decimal;
+}
+
+/* Previous / next in the detail panel (audit X7). */
+.panel-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.panel-pager-next {
+  grid-column: 2;
+  justify-self: end;
+  text-align: right;
+}
+.panel-pager-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.panel-pager-title {
+  display: block;
+}
+
+/* Styleguide only: show glyphs without the forest. */
+.show-glyphs .card-glyph {
+  display: block;
 }

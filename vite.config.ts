@@ -33,7 +33,7 @@ function content(): Plugin {
       const opts = { cv: site.cv ?? localCv, missing: new Set(missing) };
       return html
         .replace('<!--head-->', renderHead(site))
-        .replace('<!--header-->', withBase(renderHeader(site, opts)))
+        .replace('<!--header-->', withBase(renderHeader(site, entries, opts)))
         .replace('<!--main-->', withBase(renderMain(site, entries, opts)))
         .replace('<!--footer-->', renderFooter(site))
         .replace('<!--templates-->', withBase(renderTemplates(entries, opts)) + renderEntriesData(entries));

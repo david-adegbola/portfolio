@@ -3,6 +3,8 @@
 // stay in the HTML and markdown never ships to the browser. URLs are #p/<id> so a project can be
 // linked directly; Back closes it. Fires panel:open / panel:close (Lenis pauses while it's open).
 import { useCallback, useEffect, useState } from 'react';
+import { IconNext, IconPrev } from '../components/icons.tsx';
+import { Button } from '../components/ui/button.tsx';
 import { Sheet, SheetContent, SheetTitle } from '../components/ui/sheet.tsx';
 
 const idFromHash = () => /^#p\/([a-z0-9-]+)$/.exec(location.hash)?.[1] ?? null;
@@ -69,6 +71,22 @@ export function ProjectPanel() {
     [tpl],
   );
 
+  // Previous / next follow page order (the templates are rendered in it), so visitors can read on
+  // without closing the panel (audit X7).
+  const order = [...document.querySelectorAll<HTMLTemplateElement>('template[id^="detail-"]')];
+  const at = order.findIndex((t) => t === tpl);
+  const neighbour = (step: number) => (at >= 0 ? order[at + step] : undefined);
+  const prev = neighbour(-1);
+  const next = neighbour(1);
+  const go = (t: HTMLTemplateElement) => {
+    const id = t.id.slice('detail-'.length);
+    show(id);
+    history.replaceState(null, '', `#p/${id}`);
+    document.querySelector('[data-slot="sheet-content"] .panel-inner')?.scrollTo({ top: 0 });
+    // Land on the new title, so it's announced and focus isn't lost if the button disappears.
+    requestAnimationFrame(() => document.querySelector<HTMLElement>('[data-slot="sheet-title"]')?.focus());
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={(o) => !o && close()}>
       <SheetContent aria-describedby={undefined}>
@@ -76,13 +94,41 @@ export function ProjectPanel() {
           {tpl && (
             <header className="panel-header">
               {tpl.dataset.eyebrow && <p className="eyebrow">{tpl.dataset.eyebrow}</p>}
-              <SheetTitle className="panel-title" lang={tpl.dataset.lang || undefined}>
+              <SheetTitle className="panel-title" tabIndex={-1} lang={tpl.dataset.lang || undefined}>
                 {tpl.dataset.title}
               </SheetTitle>
               {tpl.dataset.subtitle && <p className="panel-subtitle">{tpl.dataset.subtitle}</p>}
             </header>
           )}
           <div ref={body} />
+          {(prev || next) && (
+            <nav className="panel-pager" aria-label="More projects">
+              {prev ? (
+                <Button variant="outline" className="panel-pager-prev h-auto min-h-11 justify-start py-2.5 text-left whitespace-normal pointer-coarse:h-auto" onClick={() => go(prev)}>
+                  <IconPrev />
+                  <span>
+                    <span className="panel-pager-label">Previous</span>
+                    <span className="panel-pager-title" lang={prev.dataset.lang || undefined}>
+                      {prev.dataset.title}
+                    </span>
+                  </span>
+                </Button>
+              ) : (
+                <span />
+              )}
+              {next && (
+                <Button variant="outline" className="panel-pager-next h-auto min-h-11 justify-end py-2.5 whitespace-normal pointer-coarse:h-auto" onClick={() => go(next)}>
+                  <span>
+                    <span className="panel-pager-label">Next</span>
+                    <span className="panel-pager-title" lang={next.dataset.lang || undefined}>
+                      {next.dataset.title}
+                    </span>
+                  </span>
+                  <IconNext />
+                </Button>
+              )}
+            </nav>
+          )}
         </div>
       </SheetContent>
     </Sheet>

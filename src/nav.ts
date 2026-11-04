@@ -13,7 +13,8 @@ const scrollFallback: Flight = (target) =>
     const el = target === 'top' ? document.body : document.getElementById(target);
     if (!el) return resolve();
     const behavior = reducedMotion() ? 'auto' : 'smooth';
-    el.scrollIntoView({ block: target === 'top' ? 'start' : 'center', behavior });
+    // Entries are centred; the top and whole sections line up with the top (scroll-padding clears the header).
+    el.scrollIntoView({ block: target === 'top' || el.tagName === 'SECTION' ? 'start' : 'center', behavior });
     const done = () => {
       document.dispatchEvent(new CustomEvent('entry:active', { detail: target === 'top' ? null : target }));
       resolve();

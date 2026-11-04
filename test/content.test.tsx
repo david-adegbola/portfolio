@@ -70,6 +70,30 @@ describe('page rendering', () => {
     expect(html).not.toContain('data-open="forest-2"');
   });
 
+  it('renders the landing statements, numbered entries, the section nav and the contact prompt', () => {
+    const s = {
+      ...site,
+      about: 'About text',
+      statements: ['First.', 'Second.', 'Third.'],
+      contact: { heading: 'Hiring?', text: 'Say hello.' },
+      location: 'Joensuu, Finland',
+    };
+    const html = renderMain(s, entries, { ...opts, cv: 'https://x.test/cv.pdf' });
+    expect(html).toMatch(/<ol class="statements">.*First\..*Second\..*Third\./s);
+    // Entries are an ordered list, numbered per section; the year shows on finished ones only.
+    expect(html).toMatch(/id="work"[\s\S]*<ol class="card-list">[\s\S]*class="card-num">01<[\s\S]*class="card-num">02</);
+    expect(html).toMatch(/aria-label="On this page"[\s\S]*href="#work"[\s\S]*href="#about"[\s\S]*href="#contact"/);
+    expect(html).not.toContain('href="#research"');
+    expect(html).toMatch(/id="contact-h"[^>]*>Hiring\?</);
+    expect(html).toContain('Open my CV (PDF)');
+    expect(html).toContain('Joensuu, Finland');
+  });
+
+  it('validates statements and the contact prompt', () => {
+    expect(() => loadContent(fixture({ ...site, statements: ['ok', ''] }, []))).toThrowError(/"statements" must be a list/);
+    expect(() => loadContent(fixture({ ...site, contact: { text: 'x' } }, []))).toThrowError(/"contact" needs a "heading"/);
+  });
+
   it('rejects a CV link that is not a PDF', () => {
     const dir = fixture({ ...site, cv: 'https://x.test/cv.html' }, []);
     expect(() => loadContent(dir)).toThrowError(/"cv" must be a link to a PDF/);

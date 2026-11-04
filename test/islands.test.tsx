@@ -56,6 +56,23 @@ describe('ProjectPanel', () => {
     expect(events).toEqual(['open', 'close']);
   });
 
+  it('steps to the next and previous project in page order, without closing', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<template id="detail-kaukas" data-title="Second project"><p>Second body</p></template>',
+    );
+    history.replaceState(null, '', '/#p/upm');
+    mount();
+    const pager = () => document.querySelector('nav[aria-label="More projects"]')!;
+    expect(pager().textContent).toContain('Next');
+    expect(pager().textContent).not.toContain('Previous');
+    act(() => pager().querySelector('button')!.click());
+    expect(dialog()!.textContent).toContain('Second body');
+    expect(location.hash).toBe('#p/kaukas');
+    expect(pager().textContent).toContain('Previous');
+    expect(pager().textContent).not.toContain('Next');
+  });
+
   it('ignores links to projects without a panel', () => {
     document.body.insertAdjacentHTML('beforeend', '<a href="#p/none" data-open="none" id="dead">x</a>');
     mount();

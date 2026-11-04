@@ -271,7 +271,15 @@ export async function bootScene(entries: ClientEntry[]): Promise<boolean> {
         settle?.();
         const limit = lenis ? lenis.limit : ScrollTrigger.maxScroll(window);
         const i = stops.findIndex((s) => s.id === target);
-        const wanted = target === 'top' ? 0 : target === CONTACT ? limit : i >= 0 ? stopScroll[i] : null;
+        // Anything else on the page (a section from the nav): bring its top under the header; the
+        // camera follows the scroll as usual.
+        const sectionTop = () => {
+          const el = document.getElementById(target);
+          if (!el) return null;
+          const header = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 0;
+          return el.getBoundingClientRect().top + window.scrollY - header - 16;
+        };
+        const wanted = target === 'top' ? 0 : target === CONTACT ? limit : i >= 0 ? stopScroll[i] : sectionTop();
         if (wanted === null) return resolve();
         const to = Math.min(Math.max(wanted, 0), limit);
 
