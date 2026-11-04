@@ -1,12 +1,12 @@
-// /styleguide/: every token and component in every variant and state, light and dark side by side
-// (DESIGN.md §3.6). Not linked from the site and marked noindex.
+// /styleguide/: every token and component in every variant and state (DESIGN.md §3.6). Light only. Not linked from the site and marked noindex.
 import { type ReactNode, useState } from 'react';
 import { IconSearch } from '../components/icons.tsx';
 import { IndexItem, IndexList } from '../components/patterns/IndexList.tsx';
 import { Badge } from '../components/ui/badge.tsx';
 import { Button } from '../components/ui/button.tsx';
+import { Treeline } from '../components/patterns/Treeline.tsx';
 import { Sheet, SheetContent, SheetTitle } from '../components/ui/sheet.tsx';
-import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group.tsx';
+import { SEASON_NAMES, SEASONS } from '../seasons.ts';
 
 const COLOURS = [
   ['background', 'Page, paper'],
@@ -17,8 +17,10 @@ const COLOURS = [
   ['muted-foreground', 'Secondary text'],
   ['primary', 'Links, current, primary action'],
   ['attention', 'In progress'],
-  ['found', 'Found (decoration only)'],
-  ['glyph', 'Unfound glyph (decoration only)'],
+  ['season', "Today's season: numbers, glyphs, drawing details"],
+  ['found', 'Autumn birch leaves (decoration only)'],
+  ['glyph', 'In-progress glyph (decoration only)'],
+  ['line-art', 'Tree drawing lines (decoration only)'],
   ['border', 'Dividers'],
   ['input', 'Control borders'],
 ] as const;
@@ -43,11 +45,10 @@ function Block({ title, note, children }: { title: string; note?: string; childr
   );
 }
 
-function Theme({ theme }: { theme: 'light' | 'dark' }) {
-  const [season, setSeason] = useState('autumn');
+// `theme` only keeps ids and labels unique; there is one (light) theme.
+function Theme({ theme }: { theme: 'light' }) {
   return (
-    <div data-theme={theme} className="min-w-0 rounded-lg border border-border bg-background p-6 text-foreground">
-      <h2 className="font-serif text-[length:var(--fs-32)] leading-tight">{theme === 'light' ? 'Light' : 'Dark (polar night)'}</h2>
+    <div className="min-w-0 rounded-lg border border-border bg-background p-6 text-foreground">
 
       <Block title="COLOUR">
         <ul className="grid grid-cols-2 gap-3">
@@ -102,28 +103,30 @@ function Theme({ theme }: { theme: 'light' | 'dark' }) {
         </div>
       </Block>
 
-      <Block title="SEGMENTED CONTROL (ToggleGroup)" note="Arrow keys move between segments; one is always selected.">
-        <ToggleGroup type="single" value={season} onValueChange={(v) => v && setSeason(v)} aria-label={`Season (${theme})`}>
-          {['Spring', 'Summer', 'Autumn', 'Winter'].map((s) => (
-            <ToggleGroupItem key={s} value={s.toLowerCase()}>
-              {s}
-            </ToggleGroupItem>
+      <Block title="TREELINE (four seasons)" note="The page shows only today's season in Finland (<html data-season>); here each is forced with data-season.">
+        <div className="grid gap-3 overflow-hidden">
+          {SEASONS.map((s) => (
+            <div key={s} data-season={s} className="min-w-0">
+              <p className="font-mono text-xs" style={{ color: 'var(--season)' }}>
+                {SEASON_NAMES[s][0]} · {SEASON_NAMES[s][1]}
+              </p>
+              {/* Contained here instead of full-bleed (utilities beat the components layer). */}
+              <Treeline className="mx-0 w-full" seed={7} />
+            </div>
           ))}
-        </ToggleGroup>
+        </div>
       </Block>
 
       <Block
         title="INDEX ITEM (IndexList)"
-        note="Number + glyph, year on the right, arrow when it opens a panel. Glyph grey until reached, gold once found, dashed while in progress (glyphs show only with the forest; forced on here)."
+        note="Number + glyph in the season colour, year on the right, arrow when it opens a panel. Solid glyph on the card a search just went to; grey and dashed while in progress."
       >
-        <div className="show-glyphs">
-          <IndexList>
-            <IndexItem id={`sg-${theme}-1`} index={1} kind="marker" title="Opens a panel" opens year={2026} subtitle="Default item" summary="One or two sentences: problem, method, result." tags={['forestry', 'GIS']} />
-            <IndexItem id={`sg-${theme}-2`} index={2} kind="log-pile" title="Found item" year={2025} subtitle="After the camera has reached it" className="is-found" />
-            <IndexItem id={`sg-${theme}-3`} index={3} kind="marker" title="Planned item" subtitle="One line, no panel" inProgress />
-            <IndexItem id={`sg-${theme}-4`} index={4} kind="log" title="Small item" opens subtitle="Built with AI agents" small />
-          </IndexList>
-        </div>
+        <IndexList>
+          <IndexItem id={`sg-${theme}-1`} index={1} kind="marker" title="Opens a panel" opens year={2026} subtitle="Default item" summary="One or two sentences: problem, method, result." tags={['forestry', 'GIS']} />
+          <IndexItem id={`sg-${theme}-2`} index={2} kind="log-pile" title="Active item" year={2025} subtitle="After a search went to it" className="is-active" />
+          <IndexItem id={`sg-${theme}-3`} index={3} kind="marker" title="Planned item" subtitle="One line, no panel" inProgress />
+          <IndexItem id={`sg-${theme}-4`} index={4} kind="log" title="Small item" opens subtitle="Built with AI agents" small />
+        </IndexList>
       </Block>
 
       <Block title="SECTION NAV" note="Current section: spruce underline (aria-current).">
@@ -171,9 +174,8 @@ export function Styleguide() {
           </Button>
         </div>
       </header>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="mx-auto max-w-[48rem]">
         <Theme theme="light" />
-        <Theme theme="dark" />
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent aria-describedby={undefined}>

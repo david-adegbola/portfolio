@@ -1,7 +1,7 @@
 // Project detail panel: a shadcn Sheet (Radix Dialog) on the client. The content is pre-rendered
 // at build time into <template id="detail-<id>"> elements (see components/Page.tsx), so the words
 // stay in the HTML and markdown never ships to the browser. URLs are #p/<id> so a project can be
-// linked directly; Back closes it. Fires panel:open / panel:close (Lenis pauses while it's open).
+// linked directly; Back closes it. Fires panel:open / panel:close.
 import { useCallback, useEffect, useState } from 'react';
 import { IconNext, IconPrev } from '../components/icons.tsx';
 import { Button } from '../components/ui/button.tsx';
@@ -57,7 +57,7 @@ export function ProjectPanel() {
     };
   }, [show]);
 
-  // Tell the page (Lenis, search) when the panel opens and closes.
+  // Tell the page when the panel opens and closes.
   const isOpen = open !== null;
   useEffect(() => {
     document.dispatchEvent(new Event(isOpen ? 'panel:open' : 'panel:close'));
@@ -90,7 +90,7 @@ export function ProjectPanel() {
   return (
     <Sheet open={isOpen} onOpenChange={(o) => !o && close()}>
       <SheetContent aria-describedby={undefined}>
-        <div className="panel-inner" data-lenis-prevent>
+        <div className="panel-inner">
           {tpl && (
             <header className="panel-header">
               {tpl.dataset.eyebrow && <p className="eyebrow">{tpl.dataset.eyebrow}</p>}

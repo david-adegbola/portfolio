@@ -1,5 +1,5 @@
 // The closing contact prompt (flows/contact.md): one direct question, the email large, then the
-// two actions (Email primary, CV) and the other links. The scene's lamp in the clearing frames it.
+// two actions (Email primary, CV) and the other links.
 import type { Link } from '../../content/types.ts';
 import { buttonVariants } from '../ui/button.tsx';
 

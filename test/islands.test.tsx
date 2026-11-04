@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 import { act } from 'react';
-import { createRoot, hydrateRoot, type Root } from 'react-dom/client';
-import { renderToString } from 'react-dom/server';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createRoot, type Root } from 'react-dom/client';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ProjectPanel } from '../src/islands/ProjectPanel.tsx';
-import { SeasonSwitcher } from '../src/islands/Seasons.tsx';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+// jsdom has no layout, so no Element.scrollTo (the panel scrolls back to the top on prev / next).
+Element.prototype.scrollTo ??= () => {};
 
 let root: Root | null = null;
 afterEach(() => {
@@ -14,7 +14,6 @@ afterEach(() => {
   root = null;
   document.body.innerHTML = '';
   history.replaceState(null, '', '/');
-  sessionStorage.clear();
 });
 
 describe('ProjectPanel', () => {
@@ -78,39 +77,5 @@ describe('ProjectPanel', () => {
     mount();
     act(() => document.getElementById('dead')!.click());
     expect(dialog()).toBeNull();
-  });
-});
-
-describe('SeasonSwitcher', () => {
-  it('hydrates without a mismatch and selects one season', async () => {
-    const container = document.createElement('div');
-    container.innerHTML = renderToString(<SeasonSwitcher />);
-    document.body.append(container);
-    // Server markup: nothing selected, no caption.
-    expect(container.querySelectorAll('[aria-checked="true"]').length).toBe(0);
-    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
-    await act(async () => {
-      root = hydrateRoot(container, <SeasonSwitcher />);
-    });
-    expect(errors).not.toHaveBeenCalled();
-    errors.mockRestore();
-    const checked = container.querySelectorAll('[role="radio"][aria-checked="true"]');
-    expect(checked.length).toBe(1);
-    expect(container.querySelector('#season-caption')?.textContent).not.toBe('');
-  });
-
-  it('remembers a pick and announces it', async () => {
-    const container = document.createElement('div');
-    document.body.append(container);
-    root = createRoot(container);
-    await act(async () => root!.render(<SeasonSwitcher />));
-    const heard: string[] = [];
-    document.addEventListener('season:change', (e) => heard.push((e as CustomEvent<string>).detail));
-    const spring = [...container.querySelectorAll<HTMLButtonElement>('[role="radio"]')].find((b) => b.textContent?.startsWith('Spring'))!;
-    await act(async () => spring.click());
-    expect(spring.getAttribute('aria-checked')).toBe('true');
-    expect(sessionStorage.getItem('season')).toBe('spring');
-    expect(heard).toEqual(['spring']);
-    expect(container.querySelector('#season-caption')?.textContent).toContain('Kevät');
   });
 });

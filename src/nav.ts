@@ -1,43 +1,30 @@
 /**
- * The bridge between the UI and the scene. The UI asks to "fly" to an entry (an entry id,
- * `contact`, or `top`) and to filter matches; the scene, once loaded, takes over the flight so the
- * camera travels the path. Without the scene (no WebGL, or before it loads) the page just scrolls.
+ * Moving around the page: the UI asks to go to an entry (an entry id), a section, or `top`, and
+ * to filter matches. Entries are centred; sections and the top line up under the header
+ * (scroll-padding). Smooth unless the visitor prefers reduced motion. Arriving marks the entry
+ * (`entry:active`, see ui/Cards.ts).
  */
-export type FlyTarget = string;
-type Flight = (target: FlyTarget) => Promise<void>;
+export type Target = string;
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const scrollFallback: Flight = (target) =>
+export const flyTo = (target: Target): Promise<void> =>
   new Promise((resolve) => {
     const el = target === 'top' ? document.body : document.getElementById(target);
     if (!el) return resolve();
     const behavior = reducedMotion() ? 'auto' : 'smooth';
-    // Entries are centred; the top and whole sections line up with the top (scroll-padding clears the header).
     el.scrollIntoView({ block: target === 'top' || el.tagName === 'SECTION' ? 'start' : 'center', behavior });
-    const done = () => {
-      document.dispatchEvent(new CustomEvent('entry:active', { detail: target === 'top' ? null : target }));
-      resolve();
-    };
-    if (behavior === 'auto') return done();
     let finished = false;
     const finish = () => {
       if (finished) return;
       finished = true;
-      done();
+      document.dispatchEvent(new CustomEvent('entry:active', { detail: target === 'top' ? null : target }));
+      resolve();
     };
+    if (behavior === 'auto') return finish();
     window.addEventListener('scrollend', finish, { once: true });
     setTimeout(finish, 1200);
   });
-
-let flight: Flight = scrollFallback;
-
-export const flyTo = (target: FlyTarget) => flight(target);
-
-/** Called by the scene once it can fly the camera. */
-export function provideFlight(fn: Flight): void {
-  flight = fn;
-}
 
 /** Highlight these entries and fade the rest (null clears the filter). */
 export function setFilter(ids: string[] | null): void {

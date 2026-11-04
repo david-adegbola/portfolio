@@ -1,27 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-season="summer">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
     <!--head-->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#F3F1EA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#141716" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F3F1EA" />
     <script>
       // Before first paint: mark JS as available (so JS-only controls are laid out from the start,
-      // with no layout shift), and apply a saved theme so there's no flash.
-      document.documentElement.classList.add('js');
-      try {
-        const t = localStorage.getItem('theme');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
-      } catch {}
+      // with no layout shift), and dress the page in today's season in Finland (same rule as
+      // seasonForMonth in src/seasons.ts).
+      {
+        const root = document.documentElement;
+        root.classList.add('js');
+        try {
+          const m = Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Helsinki', month: 'numeric' }).format(new Date()));
+          root.dataset.season = m >= 4 && m <= 5 ? 'spring' : m >= 6 && m <= 8 ? 'summer' : m >= 9 && m <= 10 ? 'autumn' : 'winter';
+        } catch {}
+      }
     </script>
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body id="top">
-    <a class="skip-link" href="#projects">Skip the forest</a>
+    <a class="skip-link" href="#projects">Skip to projects</a>
     <!--header-->
     <main class="page">
       <!--main-->

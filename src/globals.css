@@ -1,9 +1,9 @@
 /* Design tokens: "Field notebook" (Phase 1, 2026-11-04).
    Structure from Primer (design-research/primer/foundations-ui.md): colour roles, a 4px spacing
    scale, radius small/medium/large/full, two elevation levels, 2px focus ring. Identity (brand
-   overrides, DESIGN.md §7): warm paper and ink, spruce-green accent that passes AA as text, birch
-   gold kept for the "found" state only, Fraunces + Inter Tight + IBM Plex Mono.
-   Contrast (measured, worst case = text over the 95% veil on black/white): every text token ≥ 5.6:1. */
+   overrides, DESIGN.md §7): warm paper and ink, spruce-green accent that passes AA as text, a
+   season colour for small forest details, Fraunces + Inter Tight + IBM Plex Mono.
+   Contrast (measured on --background and --card): every text token ≥ 5.4:1, season colours included. */
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
@@ -12,21 +12,8 @@
 @import './styles.css' layer(components);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
-/* Dark mode follows data-theme (manual choice) or, without one, the system setting. The scene
-   watches the same attribute, so it's kept instead of shadcn's `.dark` class. */
-@custom-variant dark {
-  &:where([data-theme='dark'], [data-theme='dark'] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
-      @slot;
-    }
-  }
-}
-
-:root,
-[data-theme='light'] {
+/* One theme only: light (David, 2026-11-04). No dark mode, no theme toggle. */
+:root {
   /* Colour roles (shadcn names; Primer role in brackets). */
   --background: #f3f1ea; /* page, paper [bgColor-default] */
   --foreground: #1d211f; /* ink [fgColor-default] 14.4:1 */
@@ -43,8 +30,9 @@
   --accent: #e2ded1; /* shadcn "accent" = pressed/selected fill, not the brand accent */
   --accent-foreground: var(--foreground);
   --attention: #7a4f0e; /* in progress [attention] 6.3:1 */
-  --found: #c9a46a; /* birch gold: found state, decoration only (2.1:1, never text) */
-  --glyph: #8a9095; /* unfound object glyphs, decoration only */
+  --found: #c9a46a; /* birch gold: autumn birch leaves, decoration only (2.1:1, never text) */
+  --glyph: #8a9095; /* in-progress glyphs, decoration only */
+  --line-art: #8b9089; /* the treeline drawing, decoration only (2.9:1) */
   --border: rgb(29 33 31 / 0.14); /* dividers [borderColor-muted] */
   --input: rgb(29 33 31 / 0.22); /* control borders [borderColor-default] */
   --ring: var(--foreground); /* focus [focus-outlineColor] */
@@ -92,9 +80,6 @@
   --measure: 62ch;
   --gutter: clamp(1rem, 5vw, 4rem);
   --header-h: 4rem;
-  /* Phones: the clear window onto the forest above the name (was 22vh; smaller so the
-     statements reach the first screen, audit X4). */
-  --hero-window: 14vh;
   --ease: cubic-bezier(0.65, 0, 0.35, 1);
 
   color-scheme: light;
@@ -105,49 +90,22 @@
   }
 }
 
-[data-theme='dark'] {
-  --background: #141716;
-  --foreground: #e8e6df;
-  --card: #1b1f1d;
-  --muted: #232826;
-  --muted-foreground: #a0a69f;
-  --primary: #8cc5a6;
-  --primary-foreground: #102119;
-  --accent: #2b312e;
-  --attention: #e0ae55;
-  --glyph: #8a9095;
-  --border: rgb(232 230 223 / 0.14);
-  --input: rgb(232 230 223 / 0.24);
-  --ring: var(--found);
-  --overlay: rgb(0 0 0 / 0.5);
-  --state-hover: rgb(232 230 223 / 0.07);
-  --state-active: rgb(232 230 223 / 0.12);
-  --shadow-resting: 0 1px 0 rgb(0 0 0 / 0.3);
-  --shadow-floating: 0 8px 24px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
-  color-scheme: dark;
+/* The season colour, set by <html data-season> (head script in index.html). Each ≥ 5.4:1 on
+   --background and --card, so it can colour small text too. */
+:root {
+  --season: #2f6a3c;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --background: #141716;
-    --foreground: #e8e6df;
-    --card: #1b1f1d;
-    --muted: #232826;
-    --muted-foreground: #a0a69f;
-    --primary: #8cc5a6;
-    --primary-foreground: #102119;
-    --accent: #2b312e;
-    --attention: #e0ae55;
-    --glyph: #8a9095;
-    --border: rgb(232 230 223 / 0.14);
-    --input: rgb(232 230 223 / 0.24);
-    --ring: var(--found);
-    --overlay: rgb(0 0 0 / 0.5);
-    --state-hover: rgb(232 230 223 / 0.07);
-    --state-active: rgb(232 230 223 / 0.12);
-    --shadow-resting: 0 1px 0 rgb(0 0 0 / 0.3);
-    --shadow-floating: 0 8px 24px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
-    color-scheme: dark;
-  }
+[data-season='winter'] {
+  --season: #3f6680; /* frost on spruce, 5.4:1 */
+}
+[data-season='spring'] {
+  --season: #4c6b1e; /* new birch leaves, 5.4:1 */
+}
+[data-season='summer'] {
+  --season: #2f6a3c; /* summer spruce, 5.7:1 */
+}
+[data-season='autumn'] {
+  --season: #a3421f; /* rowan berries, 5.5:1 */
 }
 
 /* Expose the tokens to Tailwind utilities (bg-background, text-primary, rounded-lg, …). */
@@ -167,8 +125,10 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-attention: var(--attention);
+  --color-season: var(--season);
   --color-found: var(--found);
   --color-glyph: var(--glyph);
+  --color-line-art: var(--line-art);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

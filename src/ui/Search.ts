@@ -3,7 +3,7 @@ import { type ClientEntry, readEntries } from '../content/entries.ts';
 import { flyTo, setFilter } from '../nav.ts';
 
 const CONTACT = 'contact';
-// Typing one of these goes straight to the clearing (email + CV).
+// Typing one of these goes straight to the contact section (email + CV).
 const CONTACT_WORDS = ['cv', 'resume', 'résumé', 'contact', 'email', 'e-mail', 'mail', 'hire', 'ansioluettelo', 'yhteystiedot'];
 // Typing one of these lists every research entry.
 const RESEARCH_WORDS = ['research', 'paper', 'papers', 'thesis', 'publication', 'publications', 'tutkimus'];
@@ -25,7 +25,7 @@ function metaFor(e: ClientEntry): string {
 
 /**
  * Search: type to see matches (a combobox), then Enter, a chip, or a click runs it. Non-matches
- * fade, the camera flies to the chosen match, and a small fixed bar keeps the results within reach
+ * fade, the page glides to the chosen match, and a small fixed bar keeps the results within reach
  * (previous / next / clear) after the search box has scrolled away.
  */
 export function initSearch(): void {
@@ -140,7 +140,7 @@ export function initSearch(): void {
   let flightToken = 0;
   const go = async (result: Result, fadeFirst: boolean) => {
     const token = ++flightToken;
-    // One moving thing at a time: let non-matches fade before the camera moves.
+    // One moving thing at a time: let non-matches fade before the page scrolls.
     if (fadeFirst && !reducedMotion()) await new Promise((r) => setTimeout(r, 450));
     if (token !== flightToken) return;
     await flyTo(result.id);

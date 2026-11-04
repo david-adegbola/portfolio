@@ -10,7 +10,6 @@ export interface ClientEntry {
   subtitle?: string;
   tags: string[];
   status?: 'in-progress';
-  sceneObject?: string;
 }
 
 export function readEntries(): ClientEntry[] {

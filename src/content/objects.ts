@@ -1,5 +1,5 @@
-// Which forest object stands for an entry. Shared by the build-time page (card glyphs) and the
-// scene (the 3D object), so the two always agree.
+// Which forest object stands for an entry: the small line drawing on its card (components/icons.tsx
+// Glyph). Picked by the entry's "sceneObject" in projects.json, else by zone.
 export type ObjectKind = 'marker' | 'log-pile' | 'log' | 'clearing' | 'tree-ring' | 'lamp';
 
 interface Describable {

@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 import { loadContent, missingFiles } from './src/content/load.ts';
 import { renderEntriesData, renderFooter, renderHead, renderHeader, renderMain, renderTemplates } from './src/content/render.tsx';
+import { seasonInFinland } from './src/seasons.ts';
 
 const root = process.cwd();
 // Repo is david-adegbola/portfolio, so GitHub Pages serves the site at /portfolio/.
@@ -32,6 +33,8 @@ function content(): Plugin {
       const localCv = fs.existsSync(path.join(root, 'public/cv.pdf')) ? '/cv.pdf' : undefined;
       const opts = { cv: site.cv ?? localCv, missing: new Set(missing) };
       return html
+        // Without JS the page wears the build day's season; the head script updates it to today's.
+        .replace('data-season="summer"', `data-season="${seasonInFinland()}"`)
         .replace('<!--head-->', renderHead(site))
         .replace('<!--header-->', withBase(renderHeader(site, entries, opts)))
         .replace('<!--main-->', withBase(renderMain(site, entries, opts)))
@@ -43,7 +46,7 @@ function content(): Plugin {
 
 /**
  * Inlines the page's (small) stylesheet into index.html, so first paint doesn't wait on a second
- * request. Lazy-loaded CSS (the scene chunk's) stays a separate file.
+ * request. Lazy-loaded CSS stays a separate file.
  */
 function inlineCss(): Plugin {
   return {
@@ -70,9 +73,7 @@ export default defineConfig({
   base,
   plugins: [react(), tailwindcss(), content(), inlineCss()],
   resolve: { alias: { '@': path.join(root, 'src') } },
-  // three.js is one ~190 KB gzipped chunk, loaded after the page is readable; budget is ~300 KB total.
   build: {
-    chunkSizeWarningLimit: 800,
     // The styleguide (DESIGN.md §3.6) is a second page at /portfolio/styleguide/, noindex and unlinked.
     rollupOptions: { input: { main: path.join(root, 'index.html'), styleguide: path.join(root, 'styleguide/index.html') } },
   },

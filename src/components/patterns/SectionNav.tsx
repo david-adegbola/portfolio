@@ -1,6 +1,6 @@
 // Section navigation (flows/section-nav.md). Primer UnderlineNav look: muted links, the section in
 // view marked with aria-current="location" and a spruce underline (ui/SectionNav.ts sets it).
-// Links glide like the forest flights (data-fly); without JS they're plain anchors.
+// Links glide to their section (data-fly); without JS they're plain anchors.
 import { cn } from '../../lib/utils.ts';
 
 export interface SectionLink {

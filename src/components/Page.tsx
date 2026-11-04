@@ -6,10 +6,12 @@ import { Fragment, type ReactNode } from 'react';
 import { objectKind } from '../content/objects.ts';
 import { type Entry, type Link, type ProjectEntry, type ResearchEntry, type Site, isInProgress, isResearch } from '../content/types.ts';
 import { cn } from '../lib/utils.ts';
-import { IconDown, IconMoon, IconNext, IconPrev, IconSearch, IconSun } from './icons.tsx';
+import { SEASON_NAMES, SEASONS } from '../seasons.ts';
+import { IconDown, IconNext, IconPrev, IconSearch } from './icons.tsx';
 import { ContactBlock } from './patterns/ContactBlock.tsx';
 import { IndexItem, IndexList } from './patterns/IndexList.tsx';
 import { type SectionLink, SectionNav } from './patterns/SectionNav.tsx';
+import { Treeline } from './patterns/Treeline.tsx';
 import { buttonVariants } from './ui/button.tsx';
 
 const marked = new Marked({ async: false });
@@ -21,13 +23,13 @@ export interface RenderOptions {
   missing: Set<string>;
 }
 
-/** Forest before lake; within a zone, JSON order, with in-progress entries last ("deeper in the fog"). */
+/** Work ("forest") before Built with AI ("lake"); within a zone, JSON order, with in-progress entries last. */
 export function sortEntries(entries: Entry[]): Entry[] {
   const rank = (e: Entry) => (e.zone === 'forest' ? 0 : 2) + (isInProgress(e) ? 1 : 0);
   return entries.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map(({ e }) => e);
 }
 
-/** The side zone's section name (the scene's "across the lake"). */
+/** The "lake" zone's section name. */
 export const LAKE_HEADING = 'Built with AI agents';
 
 /**
@@ -125,11 +127,6 @@ export function Header({ site, entries, opts }: { site: Site; entries: Entry[]; 
             aria-controls="search-input"
           >
             <IconSearch />
-          </button>
-          <button className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'theme-toggle')} type="button" aria-pressed="false">
-            <span className="visually-hidden">Dark mode</span>
-            <IconMoon />
-            <IconSun />
           </button>
         </nav>
       </header>
@@ -294,6 +291,7 @@ export function Main({ site, entries: all, opts }: { site: Site; entries: Entry[
             </a>
           </p>
         )}
+        <Treeline className="treeline--hero" />
       </section>
 
       <div id="projects" tabIndex={-1}>
@@ -414,7 +412,7 @@ export function Templates({ entries, opts }: { entries: Entry[]; opts: RenderOpt
     ));
 }
 
-/** A signature, like the end of a letter: name and place, and when the page was last built. */
+/** A signature, like the end of a letter: name and place, when the page was last built, and the season. */
 export function Footer({ site, built }: { site: Site; built: Date }) {
   const month = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'Europe/Helsinki' }).format(built);
   return (
@@ -425,6 +423,14 @@ export function Footer({ site, built }: { site: Site; built: Date }) {
       </p>
       <p className="footer-meta">
         Updated {month} · © {built.getFullYear()}
+      </p>
+      {/* Today's season in Finland, the one the drawings show. All four are in the HTML; CSS shows the one for <html data-season>. */}
+      <p className="footer-season">
+        {SEASONS.map((s) => (
+          <span key={s} data-season-name={s}>
+            {SEASON_NAMES[s][0]} in Finland · <span lang="fi">{SEASON_NAMES[s][1]}</span>
+          </span>
+        ))}
       </p>
     </footer>
   );

@@ -3,24 +3,6 @@ import type { ObjectKind } from '../content/objects.ts';
 
 const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
 
-export const IconMoon = () => (
-  <svg className="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-  </svg>
-);
-
-export const IconSun = () => (
-  <svg className="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-    <path
-      d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
 export const IconSearch = () => (
   <svg className="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
     <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -53,8 +35,7 @@ export const IconClose = () => (
 );
 
 /**
- * Line drawings of the forest objects, one per card: the same object the visitor walks up to in
- * the scene. Grey until found, gold after (see ui/Cards.ts).
+ * Line drawings of forest objects, one per card, in the season colour (styles.css `.card-glyph`).
  */
 const GLYPHS: Record<ObjectKind, React.ReactNode> = {
   marker: (

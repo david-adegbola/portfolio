@@ -49,6 +49,9 @@ Copy this into the list in `content/projects.json`. Only `id`, `zone` and `title
 - `zone`: `"forest"` for main forestry work, `"lake"` for own software projects ("Built with AI agents").
 - Images go in `public/media/<id>/` as `.webp`. A missing file is left out, never shown broken.
 - Not finished yet? Add `"status": "in-progress"`. It shows as a faint "In progress" card with no detail panel.
+- `sceneObject` (optional) picks the small drawing on the card: `marker`, `log-pile`, `log`, `clearing`, `tree-ring` (the name is left over from the old 3D forest).
+
+The page dresses itself in today's season in Finland: a colour on the numbers and card drawings, and snow, leaves or flowers on the treeline under the name. Nothing to set.
 
 ### A research paper
 

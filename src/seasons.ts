@@ -1,41 +1,32 @@
 /**
- * Seasons, shared by the UI (the switcher) and the scene. By default the forest shows the season
- * it is in Finland today; a visitor can pick another for the rest of their visit.
+ * The season the page is dressed in: always today's season in Finland (Helsinki time), roughly
+ * following the thermal seasons in the south and east: snow from November to March, spring in
+ * April–May, summer June–August, autumn September–October.
+ *
+ * It's applied before first paint by the head script in index.html (`data-season` on <html>),
+ * which repeats `seasonForMonth`; test/seasons.test.ts checks the two agree. The build writes the
+ * build day's season into the HTML, so the page is dressed even without JavaScript.
  */
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
-export const SEASONS: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+export const SEASONS: Season[] = ['winter', 'spring', 'summer', 'autumn'];
 
-const KEY = 'season';
-
-/**
- * The season in Finland now (Helsinki time), roughly following the thermal seasons in the south
- * and east: snow from November to March, spring in April–May, summer June–August, autumn
- * September–October.
- */
-export function seasonInFinland(date = new Date()): Season {
-  const month = Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Helsinki', month: 'numeric' }).format(date));
+/** Month 1–12 → season. */
+export function seasonForMonth(month: number): Season {
   if (month >= 4 && month <= 5) return 'spring';
   if (month >= 6 && month <= 8) return 'summer';
   if (month >= 9 && month <= 10) return 'autumn';
   return 'winter';
 }
 
-/** The visitor's pick for this visit, if any, else today's season. */
-export function initialSeason(): Season {
-  try {
-    const saved = sessionStorage.getItem(KEY);
-    if (saved && (SEASONS as string[]).includes(saved)) return saved as Season;
-  } catch {
-    // Storage blocked: fall through to today's season.
-  }
-  return seasonInFinland();
+export function seasonInFinland(date = new Date()): Season {
+  const month = Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Helsinki', month: 'numeric' }).format(date));
+  return seasonForMonth(month);
 }
 
-export function chooseSeason(season: Season): void {
-  try {
-    sessionStorage.setItem(KEY, season);
-  } catch {
-    // Storage blocked: the choice still applies until the page is reloaded.
-  }
-  document.dispatchEvent(new CustomEvent<Season>('season:change', { detail: season }));
-}
+/** The season's name in English and Finnish, for the footer. */
+export const SEASON_NAMES: Record<Season, [en: string, fi: string]> = {
+  winter: ['Winter', 'talvi'],
+  spring: ['Spring', 'kevät'],
+  summer: ['Summer', 'kesä'],
+  autumn: ['Autumn', 'syksy'],
+};
