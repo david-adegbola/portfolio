@@ -1,6 +1,6 @@
 /**
  * Marks the card whose object the camera has reached (the scene announces it with an
- * `entry:active` event), and dims cards that don't match an active search (`search:filter`).
+ * `entry:active` event) and keeps every reached card marked as found, and dims cards that don't match an active search (`search:filter`).
  * The scroll fade-in is pure CSS (see `.card` in styles.css).
  */
 export function initCards(): void {
@@ -18,5 +18,10 @@ export function initCards(): void {
     current?.classList.remove('is-active');
     current = id ? document.getElementById(id) : null;
     current?.classList.add('is-active');
+    // Found stays found for the visit, like the gold paint on the object. Unfinished work has
+    // nothing to find yet.
+    if (current?.classList.contains('card') && !current.classList.contains('card--in-progress')) {
+      current.classList.add('is-found');
+    }
   });
 }

@@ -11,9 +11,10 @@ import {
   RingGeometry,
   type BufferGeometry,
 } from 'three';
+import type { ObjectKind } from '../content/objects.ts';
 import type { Look } from './palette.ts';
 
-export type ObjectKind = 'marker' | 'log-pile' | 'log' | 'clearing' | 'tree-ring' | 'lamp';
+export type { ObjectKind };
 
 export interface Placement {
   id: string;

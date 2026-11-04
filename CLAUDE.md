@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Before any UI or UX work, read DESIGN.md and follow its research protocol. Never design a component, pattern or flow from memory when the reference system's docs can be checked.
+
 ## Status
 
 All six build steps are done, plus the v0.3 visual pass (natural colours, seasons, wind). Last Lighthouse (2026-10-10, production preview): mobile 99 / 100 / 100 / 100, desktop 100 across the board (Performance / Accessibility / Best Practices / SEO). `portfolio-brief.md` is the full spec and the source of truth. Read it before making design or architecture decisions. Anything it marks **[TODO]** is undecided: ask David instead of guessing.
@@ -37,6 +39,8 @@ All six build steps are done, plus the v0.3 visual pass (natural colours, season
 - Lighthouse: close or blank the Browser pane's forest tabs first. A tab rendering the forest continuously competes for CPU/GPU and inflated TBT to ~3–5 s in testing.
 - Entries may set `"lang"` (e.g. `"fi"`) for a title in another language; it's output as `lang` on the card title, panel title and search result.
 - The season switcher and `#search-announce` are rendered after the footer (last in tab order); on phones the footer reserves room so the fixed switcher never covers it.
+- Card glyphs: each card carries an inline-SVG line drawing of its forest object (`src/content/objects.ts` `objectKind`, shared with the scene so they always agree). Shown only with `.has-scene`; grey until reached, then `.is-found` (gold) for the visit; in-progress entries get a dashed glyph and are never found.
+- Season caption: `#season-caption` (in the switcher, `role="status"`) describes the forest for the shown season in plain words (`CAPTIONS` in `ui/Seasons.ts`). It's the canvas's text alternative. Visually hidden on phones, still announced.
 - Card fade-in is CSS-only (`animation-timeline: view()`), so cards can never get stuck hidden. `ProjectPanel` fires `panel:open`/`panel:close` so Lenis stops while the dialog is open.
 - A fixed `body::before` veil (bg colour, gradient on ≥64rem) sits between the canvas and the text to keep AA contrast; it only appears with `.has-scene`.
 - Browser-pane screenshots of the canvas can be one frame stale (on-demand rendering); scroll a little and screenshot twice.

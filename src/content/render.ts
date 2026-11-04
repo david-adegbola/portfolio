@@ -1,6 +1,7 @@
 // Build-time HTML rendering. The whole page is pre-rendered into index.html from content/*.json,
 // so every word is in the HTML source before any JavaScript runs (SEO, screen readers, no-JS).
 import { Marked } from 'marked';
+import { type ObjectKind, objectKind } from './objects.ts';
 import { type Entry, type Link, type ProjectEntry, type ResearchEntry, type Site, isInProgress, isResearch } from './types.ts';
 
 const marked = new Marked({ async: false });
@@ -74,6 +75,21 @@ export function renderHeader(site: Site, opts: RenderOptions): string {
 
 const ICON_SEARCH =
   '<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+/**
+ * Line drawings of the forest objects, one per card: the same object the visitor walks up to in
+ * the scene. Grey until found, gold after (see ui/Cards.ts).
+ */
+const GLYPH_PATHS: Record<ObjectKind, string> = {
+  marker: '<path d="M12 21V5"/><path d="M10 4.5h4v4.5h-4z"/><path d="M8 21c.6-1.3 1.6-2 2.6-2M16 21c-.5-1.1-1.3-1.7-2.1-1.8"/>',
+  'log-pile': '<circle cx="7.5" cy="16" r="3.5"/><circle cx="16.5" cy="16" r="3.5"/><circle cx="12" cy="8.5" r="3.5"/><circle cx="12" cy="8.5" r="1"/>',
+  log: '<path d="M4.5 10.5h12"/><path d="M4.5 14.5h12"/><path d="M4.5 10.5a2 2 0 0 0 0 4"/><ellipse cx="16.5" cy="12.5" rx="2" ry="2"/><path d="M3 19c1.5 0 1.5-.8 3-.8s1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8"/>',
+  clearing: '<path d="M12 17V8"/><path d="M10.6 7.5h2.8v3h-2.8z"/><circle cx="5" cy="15" r="1.6"/><circle cx="19" cy="15" r="1.6"/><circle cx="7.5" cy="19.5" r="1.6"/><circle cx="16.5" cy="19.5" r="1.6"/>',
+  'tree-ring': '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5.2"/><circle cx="12" cy="12" r="2.4"/>',
+  lamp: '<path d="M8 21V4h5"/><path d="M13 4v3"/><path d="M11.5 7h3v4h-3z"/>',
+};
+const glyph = (e: Entry) =>
+  `<svg class="card-glyph" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${GLYPH_PATHS[objectKind(e)]}</svg>`;
+
 const ICON_DOWN =
   '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_PREV =
@@ -105,13 +121,15 @@ function meta(e: Entry): string {
 function projectCard(e: ProjectEntry): string {
   if (isInProgress(e)) {
     return `<li class="card card--in-progress" id="${esc(e.id)}">
+      ${glyph(e)}
       <p class="badge">In progress</p>
-      <h3 class="card-title">${esc(e.title)}</h3>
+      <h3 class="card-title"${langAttr(e)}>${esc(e.title)}</h3>
       ${e.subtitle || e.summary ? `<p class="card-summary">${esc(e.subtitle ?? e.summary ?? '')}</p>` : ''}
     </li>`;
   }
   const small = e.zone === 'lake';
   return `<li class="card${small ? ' card--small' : ''}" id="${esc(e.id)}">
+    ${glyph(e)}
     <h3 class="card-title"><a class="card-link" href="#p/${esc(e.id)}" data-open="${esc(e.id)}"${langAttr(e)}>${esc(e.title)}</a></h3>
     ${e.subtitle ? `<p class="card-subtitle">${esc(e.subtitle)}</p>` : ''}
     ${!small && e.summary ? `<p class="card-summary">${esc(e.summary)}</p>` : ''}
@@ -124,13 +142,15 @@ function researchCard(e: ResearchEntry, opts: RenderOptions): string {
   const pdf = e.pdf && !opts.missing.has(e.pdf) ? e.pdf : undefined;
   if (isInProgress(e)) {
     return `<li class="card card--in-progress" id="${esc(e.id)}">
+      ${glyph(e)}
       <p class="badge">In progress</p>
-      <h3 class="card-title">${esc(e.title)}</h3>
+      <h3 class="card-title"${langAttr(e)}>${esc(e.title)}</h3>
       ${context ? `<p class="card-subtitle">${context}</p>` : ''}
     </li>`;
   }
   return `<li class="card card--research" id="${esc(e.id)}">
-    <h3 class="card-title">${esc(e.title)}</h3>
+    ${glyph(e)}
+    <h3 class="card-title"${langAttr(e)}>${esc(e.title)}</h3>
     <p class="card-subtitle">${esc(e.authors.join(', '))}${context ? ` · ${context}` : ''}</p>
     <p class="card-summary">${esc(e.abstract)}</p>
     ${
@@ -238,6 +258,8 @@ export function renderFooter(site: Site): string {
   // The season switcher and the search announcer sit last, after the content they relate to.
   return `<footer class="site-footer"><p>© ${new Date().getFullYear()} ${esc(site.name)}</p></footer>
   <div class="seasons" role="group" aria-label="Season in the forest">
+    <p class="season-caption" id="season-caption" role="status"></p>
+    <div class="season-buttons">
     ${[
       ['spring', 'Spring', 'Kevät'],
       ['summer', 'Summer', 'Kesä'],
@@ -249,6 +271,7 @@ export function renderFooter(site: Site): string {
           `<button class="season" type="button" data-season="${id}" aria-pressed="false" title="${fi}">${en}<span class="season-now" hidden><span class="visually-hidden">, now in Finland</span></span></button>`,
       )
       .join('')}
+    </div>
   </div>
   <p class="visually-hidden" role="status" id="search-announce"></p>`;
 }

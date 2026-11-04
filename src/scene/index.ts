@@ -8,7 +8,8 @@ import { Forest } from './Forest.ts';
 import { initialSeason, type Season } from '../seasons.ts';
 import { currentTheme, type Look, lookFor, mixLook, onThemeChange } from './palette.ts';
 import { buildLayout, type Layout, poseAt, ScrollMap } from './Path.ts';
-import { type ObjectKind, type Placement, ProjectObjects } from './ProjectObjects.ts';
+import { objectKind } from '../content/objects.ts';
+import { type Placement, ProjectObjects } from './ProjectObjects.ts';
 import { World } from './World.ts';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -23,19 +24,6 @@ interface Stop {
   u: number;
   /** The HTML element whose arrival mid-screen means "you're here". */
   element: HTMLElement;
-}
-
-function kindFor(e: ClientEntry): ObjectKind {
-  switch (e.sceneObject) {
-    case 'marker':
-    case 'clearing':
-    case 'tree-ring':
-      return e.sceneObject;
-    case 'log':
-      return e.zone === 'lake' ? 'log' : 'log-pile';
-  }
-  if (e.type === 'research') return 'tree-ring';
-  return e.zone === 'lake' ? 'log' : 'marker';
 }
 
 /**
@@ -55,7 +43,7 @@ function plan(layout: Layout, entries: ClientEntry[]): { placements: Placement[]
     const e = byId.get(el.id)!;
     const faint = e.status === 'in-progress';
     const x = layout.pathX(z) + (faint ? 11 : side);
-    placements.push({ id: e.id, kind: kindFor(e), x, y: 0, z: faint ? z - 6 : z, yaw: (z * 1.7) % 0.5, faint });
+    placements.push({ id: e.id, kind: objectKind(e), x, y: 0, z: faint ? z - 6 : z, yaw: (z * 1.7) % 0.5, faint });
     stops.push({ id: e.id, u: layout.uAtZ(z + lead), element: el });
   };
 
