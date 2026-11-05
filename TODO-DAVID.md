@@ -48,4 +48,4 @@ Small differences that remain, all on purpose:
 
 - The forestry CV leaves out the servers, network cables, Active Directory work and the temperature logger. Those are on the IT Field Technician CV, and on the site.
 - "Hetkin not continued" is on the site and in CV-RULES, but on no CV.
-- [ ] **Availability.** The forestry CV still says you can work full-time, start immediately and travel. The site no longer says it. That isn't a contradiction, but check the CV is still true.
+- Availability: the CVs say full-time, and that's correct (David, 2026-11-05). The site leaves availability out, as you asked.
