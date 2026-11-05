@@ -66,8 +66,11 @@
     "summary": "Gathers forestry jobs, internships and summer jobs from Finnish job boards, state agencies, UEF and the big forest companies, plus a forestry news desk. Invitation-only.",
     "problem": "Forestry jobs in Finland, including internships and summer jobs, are spread over job boards, state agencies, municipalities, the university and forest companies, some only in Finnish and some only in English.",
     "did": "- Reads Jobly's forestry, internship and summer-job pages, Metsälehti, Metsähallitus, Valtiolle (state agencies such as Luke, SYKE and Maanmittauslaitos), Kuntarekry, Metsäkeskus, Duunitori, UEF, Metsä Group, UPM and Stora Enso, in Finnish and English, and merges duplicates.\n- Keeps only forestry, forest bioeconomy, natural resources, forest data and GIS postings, and scores each one 0–100 against the member's own CV, showing the matched words.\n- A forestry news desk from Luke, Metsäteollisuus, Tornator and other Finnish and EU feeds, with similar headlines grouped.\n- Private accounts by invitation; CVs, applications and preferences stay private to each member.\n- Grew out of my first job scraper, which sent entry-level IT jobs to a Telegram chat. That one is stopped.",
-    "links": [{ "label": "Where it started: the first job scraper (code)", "href": "https://github.com/david-adegbola/job-aggregator" }],
-    "proofLine": ["code of the first version (Woodesk itself is private)"]
+    "links": [
+      { "label": "Woodesk (sign-in needs an invitation code)", "href": "https://129-151-219-49.sslip.io/#/home" },
+      { "label": "Where it started: the first job scraper (code)", "href": "https://github.com/david-adegbola/job-aggregator" }
+    ],
+    "proofLine": ["live site (invitation only)", "code of the first version"]
   },
   {
     "id": "forest-ecology-field-work",

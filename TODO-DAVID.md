@@ -18,7 +18,7 @@ What's still open after your answers on 2026-11-04. Nothing here is on the site 
 
 ## Still open
 
-- [ ] **Later, Woodesk.** Screenshots or a result you can state (members, jobs found) would turn it from a description into proof.
+- [ ] **Later, Woodesk.** The live site is linked now, but signing in needs an invitation code, so employers can't look inside. Screenshots, or a result you can state (members, jobs found), would show them what it does.
 - [ ] **Photos, when you have them.** None are on the site, and nothing breaks without them:
   - a portrait (square, 800×800 or more, for the hero rings);
   - tree measuring and soil sampling on the field course;
