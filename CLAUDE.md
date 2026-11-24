@@ -70,4 +70,4 @@ Adding content must never need code changes: edit `content/`, drop files in `pub
 - Budget: JS under ~300 KB gzipped (now ~2 KB page + ~85 KB lazy panel), first readable content under 1.5s on 4G, Lighthouse 90+ for Performance and Accessibility. Images lazy-loaded (portrait eager), WebP.
 - Never use stock photos or placeholder boxes. Entries without media render as text-only cards. Hide the CV buttons when there's no CV.
 - No availability claim (full-time, start date, travel) on the site: David asked to leave it out (2026-11-04).
-- The job scraper became Woodesk (private repo `david-adegbola/jobdesk`, invite-only); the old `job-aggregator` repo is linked only as where it started.
+- The job scraper became JobDesk (public repo `david-adegbola/jobdesk`, invite-only); the old `job-aggregator` repo is linked only as where it started.

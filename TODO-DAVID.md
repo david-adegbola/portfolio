@@ -9,16 +9,16 @@ What's still open after your answers on 2026-11-04. Nothing here is on the site 
 - Temperature logger: a **VAMK course project, built with help from an AI coding agent**, on a **Raspberry Pi 3**.
 - "Currently" line: kept as it is.
 - Mistä puu tulee: removed from the site (2026-11-04).
-- Woodesk: nothing public, so it stays as it is.
+- JobDesk: nothing public, so it stays as it is.
 - Hetkin: Result says *"Pitched at the end of the residency; not continued."* Cloudflare and Resend are now described as being for hetkin.app.
 - The store TV line now says it was for a fashion store in Kokkola.
-- Job scraper: replaced by **Woodesk**, described from its README. The old `job-aggregator` repo is linked as where it started.
+- Job scraper: replaced by **JobDesk**, described from its README. The old `job-aggregator` repo is linked as where it started.
 - Tree measurement: Skills says the field course is done; Learning says *"Forest measurement beyond the course"*.
 - Share image: remade as `public/og.png` (rings and treeline). The old 3D render is gone.
 
 ## Still open
 
-- [ ] **Later, Woodesk.** The live site is linked now, but signing in needs an invitation code, so employers can't look inside. Screenshots, or a result you can state (members, jobs found), would show them what it does.
+- [ ] **Later, JobDesk.** The live site is linked now, but signing in needs an invitation code, so employers can't look inside. Screenshots, or a result you can state (members, jobs found), would show them what it does.
 - [ ] **Photos, when you have them.** None are on the site, and nothing breaks without them:
   - a portrait (square, 800×800 or more, for the hero rings);
   - tree measuring and soil sampling on the field course;
@@ -35,14 +35,14 @@ Updated on 2026-11-04 in `david-adegbola/cv` (commits `5c4850d` and `5ff24c3`). 
 - the forest ecology field work;
 - the temperature logger;
 - Cloudflare and Resend for hetkin.app, and the Kokkola store TV;
-- Woodesk, which replaces the job scraper;
+- JobDesk, which replaces the job scraper;
 - "Hetkin not continued".
 
 The CV changes:
 
 - forestry-master and trainee-master: new Field work row, and "forest measurement beyond the course" under Want to learn;
 - it-field-technician: the new IT rows and the logger;
-- trainee-master and it-field-technician: Woodesk.
+- trainee-master and it-field-technician: JobDesk.
 
 Small differences that remain, all on purpose:
 
